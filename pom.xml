@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.1.RELEASE</version>
+    </parent>
+
+    <groupId>cz.muni.fi</groupId>
+    <artifactId>hrm</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+
+    <modules>
+        <module>hrmdb</module>
+        <module>hrmweb</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+
+        <spring-boot-starter-web.version>1.4.4.RELEASE</spring-boot-starter-web.version>
+        <spring-boot-dev-tools.version>1.3.3.RELEASE</spring-boot-dev-tools.version>
+        <hibernate.version>5.2.4.Final</hibernate.version>
+        <spring.version>4.3.6.RELEASE</spring.version>
+        <spring-data.version>1.11.0.RELEASE</spring-data.version>
+        <spring-boot.version>1.5.1.RELEASE</spring-boot.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <artifactId>hrm-db</artifactId>
+                <groupId>cz.muni.fi</groupId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <artifactId>hrm-web</artifactId>
+                <groupId>cz.muni.fi</groupId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring-boot-starter-web.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-devtools</artifactId>
+                <version>${spring-boot-dev-tools.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>${hibernate.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>

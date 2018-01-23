@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>hrm</artifactId>
+        <groupId>cz.muni.fi</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>hrm-web</artifactId>
+    <packaging>${packaging.type}</packaging>
+    <name>hrmweb</name>
+
+    <properties>
+        <start-class>.Application</start-class>
+        <packaging.type>war</packaging.type>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>cz.muni.fi</groupId>
+            <artifactId>hrm-db</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+    </dependencies>
+</project>
