@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/hrm.iml" filepath="$PROJECT_DIR$/hrm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../hrm/hrmcore/hrm-core.iml" filepath="$PROJECT_DIR$/../hrm/hrmcore/hrm-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hrmdb/hrm-db.iml" filepath="$PROJECT_DIR$/hrmdb/hrm-db.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hrmweb/hrm-web.iml" filepath="$PROJECT_DIR$/hrmweb/hrm-web.iml" />
+    </modules>
+  </component>
+</project>
