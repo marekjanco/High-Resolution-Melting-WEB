@@ -14,7 +14,7 @@
     <name>hrmweb</name>
 
     <properties>
-        <start-class>.Application</start-class>
+        <start-class>cz.muni.fi.hrm.Application</start-class>
         <packaging.type>war</packaging.type>
     </properties>
 
@@ -37,4 +37,13 @@
             <artifactId>h2</artifactId>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>1.4.4.RELEASE</version>
+            </plugin>
+        </plugins>
+    </build>
 </project>
