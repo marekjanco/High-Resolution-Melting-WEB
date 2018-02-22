@@ -18,7 +18,7 @@ angular.module('hrm').config(function ($stateProvider, $urlRouterProvider) {
 angular.module('hrm').config(['ChartJsProvider', function (ChartJsProvider) {
     // Configure all charts
     ChartJsProvider.setOptions({
-        chartColors: ['#FF5252', '#3339FF', '#FCFF33', '#FF33FC', '#33FF33', '#33FFDA', '#FF8A80'],
+        chartColors: ['#FF5252', '#3339FF', '#FF33FC', '#33FF33', '#33FFDA', '#FF8A80', '#FCFF33'],
         responsive: true
     });
 }]);

@@ -6,21 +6,36 @@ angular.module('hrm')
 
         vm.names = [];
         vm.selectedNames = [];
-
-        vm.labels = [];
-        vm.data = [];
-        vm.series = [];
         vm.numberOfDatasets = 0;
 
-        $scope.labels = [];
-        $scope.data = [];
-        $scope.series = [];
+        // 'JQuery'
+        // add inputs dynamically
+        $(document).ready(function() {
+            var max_fields      = 6;
+            var wrapper         = $(".input_fields_wrap");
+            var add_button      = $(".add_field_button");
 
+            var x = 1;
+            $(add_button).click(function(e){
+                e.preventDefault();
+                if(x < max_fields){
+                    x++;
+                    $(wrapper).append('<div class="ui input" style="display: block;"><input class="userDataInput" type="text" name="inputs[]">&nbsp;<a href="#" class="remove_field"><i class="small inverted circular red minus link icon" style="margin-top:10px"></i></a></div>'); //add input box
+                }
+            });
+
+            $(wrapper).on("click",".remove_field", function(e){
+                e.preventDefault(); $(this).parent('div').remove(); x--;
+            })
+        });
+
+        // dropdown action
         $('.dropdown')
             .dropdown({
                 action: 'combo'
             })
         ;
+        // end of 'JQuery'
 
         /*
         vm.inserts = [];
@@ -36,34 +51,31 @@ angular.module('hrm')
         };
         */
 
+        vm.viewInGraph = function () {
+            vm.clearGraph();
+            var values = vm.getValuesFromInputs();
+            for(var i = 0; i < values.length; ++i){
+                vm.addDataToGraph(values[i], "input_"+i);
+            }
+        };
+
         vm.getLabels = function () {
             ValuesService.findByName('X-axis').then(function (data) {
-                vm.labels = data;
-                $scope.labels = vm.labels;
+                $scope.labels = data;
             });
         };
 
-        vm.addDataToGraph = function () {
-            var array = vm.data.split(" ");
-            vm.data = $scope.data;
-            for (var i = 0; i < array.length; ++i) {
-                array[i] = array[i].replace(',', '.');
-            }
-            vm.data[vm.numberOfDatasets] = array;
-            $scope.data[vm.numberOfDatasets] = array;
-            $scope.addedDataSet = vm.numberOfDatasets;
-            vm.series[vm.numberOfDatasets] = "raw data";
-            $scope.series = vm.series;
+        vm.addDataToGraph = function (data, name) {
+            $scope.data[vm.numberOfDatasets] = data;
+            $scope.series[vm.numberOfDatasets] = name;
             vm.numberOfDatasets++;
-            vm.computeDifference();
+            //vm.computeDifference();
         };
 
         vm.getDataSet = function (name) {
             ValuesService.findByName(name).then(function (data) {
-                vm.data[vm.numberOfDatasets] = data;
-                $scope.data[vm.numberOfDatasets] = vm.data[vm.numberOfDatasets];
-                vm.series[vm.numberOfDatasets] = name;
-                $scope.series = vm.series;
+                $scope.data[vm.numberOfDatasets] = data;
+                $scope.series[vm.numberOfDatasets] = name;
                 vm.numberOfDatasets++;
             });
         };
@@ -84,13 +96,39 @@ angular.module('hrm')
             }
         };
 
+        vm.computeDifference = function () {
+        /*    ValuesService.compute(vm.data[$scope.addedDataSet]).then(function (data) {
+                $scope.matchDataSet = data[1].name;
+                $scope.distance = data[0];
+                vm.getDataSet($scope.matchDataSet);
+            });
+        */
+        };
+
+        vm.getValuesFromInputs = function () {
+            var values = [];
+            $("input[name='inputs[]']").each(function() {
+                values.push($(this).val());
+            });
+            for(var i = 0; i < values.length; ++i){
+                values[i] = vm.parseInput(values[i]);
+            }
+            return values;
+        };
+
+        vm.parseInput = function (data) {
+            var array = data.split(" ");
+            for (var i = 0; i < array.length; ++i) {
+                array[i] = array[i].replace(',', '.');
+            }
+            return array;
+        };
+
         vm.clearGraph = function () {
-            vm.data = [];
             vm.selectedNames = [];
-            $scope.data = [];
-            vm.series = [];
-            $scope.series = [];
             vm.numberOfDatasets = 0;
+            $scope.data = [""];
+            $scope.series = [];
             $scope.matchDataSet = undefined;
             $scope.distance = undefined;
             $('#names').dropdown('restore defaults');
@@ -98,24 +136,22 @@ angular.module('hrm')
 
         vm.getNames = function () {
             ValuesService.getAllNames().then(function (data) {
+                $scope.names = data;
                 vm.names = data;
-                $scope.names = vm.names;
-            });
-        };
-
-        vm.computeDifference = function () {
-            ValuesService.compute(vm.data[$scope.addedDataSet]).then(function (data) {
-                $scope.matchDataSet = data[1].name;
-                $scope.distance = data[0];
-                vm.getDataSet($scope.matchDataSet);
             });
         };
 
         vm.init = function () {
             vm.getLabels();
             vm.getNames();
-            $scope.data = vm.data;
-            $scope.series = vm.series;
+            $scope.data = [""];
+            vm.selectedNames = [];
+            vm.numberOfDatasets = 0;
+            $scope.data = [""];
+            $scope.series = [];
+            $scope.matchDataSet = undefined;
+            $scope.distance = undefined;
+            $('#names').dropdown('restore defaults');
         };
 
         vm.init();
