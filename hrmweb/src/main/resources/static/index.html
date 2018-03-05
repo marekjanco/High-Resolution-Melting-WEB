@@ -10,6 +10,8 @@
 
     <link rel="stylesheet" type="text/css" href="bower_components/semantic/dist/semantic.min.css"/>
     <link rel="stylesheet" type="text/css" href="css/style.css"/>
+
+    <base href="/">
 </head>
 <body ng-app="hrm" ng-controller="IndexController as indexCtrl">
 
@@ -21,25 +23,63 @@
 <script src="bower_components/semantic/dist/semantic.min.js"></script>
 <script src="bower_components/chart.js/Chart.min.js"></script>
 <script src="bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
+<script src="bower_components/bower-angular-route/angular-route.min.js"></script>
+
+<!--Interceptors-->
+<!--<script type="text/javascript" src="scripts/service/auth.interceptor.js"></script>-->
 
 <!-- App configuration -->
 <script type="text/javascript" src="scripts/app.js"></script>
 <script type="text/javascript" src="scripts/app.state.js"></script>
+<script type="text/javascript" src="scripts/auth.interceptor.js"></script>
 
 <!-- Servicies -->
 <script type="text/javascript" src="scripts/service/home.service.js"></script>
+<script type="text/javascript" src="scripts/service/login.service.js"></script>
 
 <!-- Controllers -->
 <script type="text/javascript" src="scripts/controller/home.controller.js"></script>
 <script type="text/javascript" src="scripts/controller/index.controller.js"></script>
-<!--MENU-->
-<!--
-<div class="ui large secondary pointing menu">
-    <a class="active item" style="margin-left: 5%">Home</a>
+<script type="text/javascript" src="scripts/controller/login.controller.js"></script>
+
+<!--loader-->
+<div class="ui active dimmer" ng-show="loading">
+    <div class="ui massive text loader">Loading</div>
 </div>
+<p></p>
+<p></p>
+<p></p>
+<!--end of loader-->
+
+<!--MENU-->
+<div class="ui large secondary pointing menu">
+    <a class="active item" href="/" style="margin-left: 5%">Home</a>
+    <a class="item" ng-show="indexCtrl.authenticated" href="/admin">Admin interface</a>
+    <div class="right menu" style="margin-right:5%;">
+        <a style="color:black" ng-show="!indexCtrl.authenticated" href="/login">
+            <button class="ui secondary basic button">
+                <b>Log in</b>
+            </button>
+        </a>
+
+        <a class="item" ng-show="indexCtrl.authenticated"><i class="blue user icon"></i> Logged: {{indexCtrl.username}}</a>
+        <a class="item" ng-show="indexCtrl.authenticated" ng-click="indexCtrl.logout()"><i class="power big red icon"></i></a>
+<!--
+
+        <div class="ui simple dropdown item">
+            Logged: {{indexCtrl.username}}
+            <i class="dropdown icon"></i>
+            <div class="menu">
+                <a class="item" ng-click="indexCtrl.logout()"><i class="power icon"></i>Log Out</a>
+            </div>
+        </div>
 -->
+
+    </div>
+</div>
 <!--END OF MENU-->
-<div ui-view="main" class="ui container content">
+<div class="ui container content" ng-view>
+</div>
 </div>
 </body>
 </html>
