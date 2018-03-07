@@ -34,13 +34,16 @@
 <script type="text/javascript" src="scripts/auth.interceptor.js"></script>
 
 <!-- Servicies -->
-<script type="text/javascript" src="scripts/service/home.service.js"></script>
+<script type="text/javascript" src="scripts/service/values.service.js"></script>
 <script type="text/javascript" src="scripts/service/login.service.js"></script>
+<script type="text/javascript" src="scripts/service/admin.service.js"></script>
 
 <!-- Controllers -->
 <script type="text/javascript" src="scripts/controller/home.controller.js"></script>
 <script type="text/javascript" src="scripts/controller/index.controller.js"></script>
 <script type="text/javascript" src="scripts/controller/login.controller.js"></script>
+<script type="text/javascript" src="scripts/controller/admin.controller.js"></script>
+<script type="text/javascript" src="scripts/controller/admin.create.controller.js"></script>
 
 <!--loader-->
 <div class="ui active dimmer" ng-show="loading">
@@ -54,7 +57,7 @@
 <!--MENU-->
 <div class="ui large secondary pointing menu">
     <a class="active item" href="/" style="margin-left: 5%">Home</a>
-    <a class="item" ng-show="indexCtrl.authenticated" href="/admin">Admin interface</a>
+    <a class="item" ng-show="indexCtrl.authenticated" href="/admin/datasets">Admin interface</a>
     <div class="right menu" style="margin-right:5%;">
         <a style="color:black" ng-show="!indexCtrl.authenticated" href="/login">
             <button class="ui secondary basic button">

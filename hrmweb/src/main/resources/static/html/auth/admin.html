@@ -1,0 +1,48 @@
+<div>
+    <div>
+        <div class="ui basic modal" id="modal">
+            <div class="ui icon header">
+                <i class="red large trash icon"></i>Are you sure you want to delete selected <b>dataset</b> ?
+            </div>
+            <div class="actions">
+                <div class="ui red basic cancel inverted button" id="noBtn">
+                    <i class="remove icon"></i>
+                    No
+                </div>
+                <div class="ui green ok inverted button" id="yesBtn">
+                    <i class="checkmark icon"></i>
+                    Yes
+                </div>
+            </div>
+        </div>
+
+        <a href="/admin/datasets/create"><i class="large green plus icon"></i> Add new DATASET to DB</a>
+        <br/>
+        <table class="ui celled table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Values</th>
+                <th>Update</th>
+                <th>Delete</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="dataset in adminController.datasets">
+                <td>
+                    {{dataset.name}}
+                </td>
+                <td>
+                    <a href="javascript:void(0);">VALUES</a>
+                </td>
+                <td>
+                    <i class="large pencil icon"></i>
+                </td>
+                <td>
+                    <i class="red large trash icon" ng-click="adminController.delete(dataset.name)"></i>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,6 +1,7 @@
 package cz.muni.fi.hrm.service;
 
 
+import cz.muni.fi.hrm.dto.NumberArrayDTO;
 import cz.muni.fi.hrm.entity.NumberArray;
 import cz.muni.fi.hrm.repository.NumberArrayRepository;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,11 @@ public class NumberArrayServiceImpl implements NumberArrayService{
         }
         names.remove(0);
         return names;
+    }
+
+    @Override
+    public List<NumberArray> getAll() {
+        return numberArrayRepository.findAll();
     }
 
     @Override
@@ -60,5 +66,17 @@ public class NumberArrayServiceImpl implements NumberArrayService{
             }
         }
         return new Object[]{minDistance, list.get(ret)};
+    }
+
+    @Override
+    public void create(NumberArrayDTO dto) {
+        if(dto.data == null || dto.name == null){
+            throw new IllegalArgumentException("cannot create number array with name: "+dto.name+" and data: "+dto.data);
+        }
+        NumberArray na = new NumberArray();
+        na.setName(dto.name);
+        na.setNumbers(dto.data.toString());
+        numberArrayRepository.save(na);
+        numberArrayRepository.flush();
     }
 }

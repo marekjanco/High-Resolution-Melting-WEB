@@ -37,20 +37,6 @@ angular.module('hrm')
         ;
         // end of 'JQuery'
 
-        /*
-        vm.inserts = [];
-        vm.name = undefined;
-
-        vm.createInsert = function () {
-            var array = vm.inserts.split(" ");
-            for(var i = 0; i < array.length; ++i){
-                array[i] = array[i].replace(',', '.');
-            }
-            console.log("Insert into NUMBER_ARRAY (ID, NAME, NUMBERS) values (1, '"+vm.name+"', '"+array.toString()+"');");
-
-        };
-        */
-
         vm.viewInGraph = function () {
             vm.clearGraph();
             var values = vm.getValuesFromInputs();
@@ -111,18 +97,11 @@ angular.module('hrm')
                 values.push($(this).val());
             });
             for(var i = 0; i < values.length; ++i){
-                values[i] = vm.parseInput(values[i]);
+                values[i] = ValuesService.parseInput(values[i]);
             }
             return values;
         };
 
-        vm.parseInput = function (data) {
-            var array = data.split(" ");
-            for (var i = 0; i < array.length; ++i) {
-                array[i] = array[i].replace(',', '.');
-            }
-            return array;
-        };
 
         vm.clearGraph = function () {
             vm.selectedNames = [];

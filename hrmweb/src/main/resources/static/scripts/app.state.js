@@ -5,12 +5,15 @@ angular.module('hrm').config(function ($httpProvider, $routeProvider, $locationP
     $routeProvider.when('/', {
         templateUrl: 'html/home.html',
         controller: 'HomeController as homeController'
-    }).when('/admin', {
+    }).when('/admin/datasets', {
         templateUrl: 'html/auth/admin.html',
-        //controller: 'HomeController as homeController'
+        controller: 'AdminController as adminController'
     }).when('/login', {
         templateUrl: 'html/login.html',
         controller: 'LoginController as loginController'
+    }).when('/admin/datasets/create', {
+        templateUrl: 'html/auth/admin.create.html',
+        controller: 'CreateController as createController'
     }).otherwise({
         redirectTo: '/'
     });
