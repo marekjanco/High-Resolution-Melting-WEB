@@ -29,19 +29,25 @@ public class NumberArrayServiceImpl implements NumberArrayService{
     }
 
     @Override
-    public List<NumberArray> getAll() {
-        return numberArrayRepository.findAll();
+    public List<NumberArrayDTO> getAll() {
+        List<NumberArray> list = numberArrayRepository.findAll();
+        List<NumberArrayDTO> ret = new ArrayList<>();
+        for (NumberArray na : list) {
+            NumberArrayDTO dto = new NumberArrayDTO();
+            dto.data = this.getDataAsDoubleList(na.getNumbers());
+            dto.name = na.getName();
+            ret.add(dto);
+        }
+        return ret;
     }
 
     @Override
-    public List<String> findValuesByName(String name) {
+    public List<Double> findValuesByName(String name) {
         List<NumberArray> list = numberArrayRepository.findByName(name);
         if (list == null) {
             return null;
         }
-        String numbers = list.get(0).getNumbers();
-        String[] tokens = numbers.split(",");
-        return Arrays.asList(tokens);
+        return this.getDataAsDoubleList(list.get(0).getNumbers());
     }
 
     @Override
@@ -73,10 +79,53 @@ public class NumberArrayServiceImpl implements NumberArrayService{
         if(dto.data == null || dto.name == null){
             throw new IllegalArgumentException("cannot create number array with name: "+dto.name+" and data: "+dto.data);
         }
+        List<String> names = this.getAllNames();
+        if(names.contains(dto.name)){
+            throw new IllegalArgumentException("dataset with name "+dto.name+" already exists");
+        }
+        if(dto.name.equals("X-axis")){
+            throw new IllegalArgumentException("dataset with name: 'X-axis' cannot be created");
+        }
         NumberArray na = new NumberArray();
         na.setName(dto.name);
-        na.setNumbers(dto.data.toString());
+        String formattedData = this.parseDataToDbFormat(dto.data);
+        na.setNumbers(formattedData);
+
         numberArrayRepository.save(na);
         numberArrayRepository.flush();
+    }
+
+    @Override
+    public void delete(NumberArrayDTO dto) {
+        if(dto == null || dto.name == null){
+            throw new IllegalArgumentException("cannot delete number array with name: "+dto.name);
+        }
+        if(dto.name.equals("X-axis")){
+            throw new IllegalArgumentException("dataset with name: 'X-axis' cannot be deleted");
+        }
+        List<NumberArray> na = numberArrayRepository.findByName(dto.name);
+        if(na == null || na.size() > 2){
+            throw new IllegalArgumentException("cannot delete number array with name: "+dto.name);
+        }
+        numberArrayRepository.delete(na);
+    }
+
+    private List<Double> getDataAsDoubleList(String data){
+        List<Double> ret = new ArrayList<>();
+        String[] numbers = data.split(",");
+        List<String> strList = Arrays.asList(numbers);
+        for(String str: strList){
+            Double x = Double.parseDouble(str);
+            ret.add(x);
+        }
+        return ret;
+    }
+
+    private String parseDataToDbFormat(List<Double> list){
+        String str = list.toString();
+        str = str.replaceAll(", ",",");
+        str = str.replace("[","");
+        str = str.replace("]","");
+        return str;
     }
 }

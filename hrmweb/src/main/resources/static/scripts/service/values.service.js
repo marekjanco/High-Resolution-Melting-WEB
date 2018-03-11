@@ -39,7 +39,7 @@ angular.module('hrm')
                     if(n.toString() !== data[i]){
                         return false;
                     }
-                    if ((Number(n) === n && n % 1 !== 0) || n === 0) {
+                    if (Number(n) === n) {
                         continue;
                     } else {
                         return false;

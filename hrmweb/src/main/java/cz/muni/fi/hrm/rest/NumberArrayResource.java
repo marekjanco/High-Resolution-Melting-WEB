@@ -31,8 +31,8 @@ public class NumberArrayResource {
     }
 
     @RequestMapping(value = "/" + FIND_BY_NAME, method = RequestMethod.GET)
-    public List<String> findByName(@RequestParam(value = "name") String name) {
-        List<String> tokens = numberArrayService.findValuesByName(name);
+    public List<Double> findByName(@RequestParam(value = "name") String name) {
+        List<Double> tokens = numberArrayService.findValuesByName(name);
         return tokens;
     }
 

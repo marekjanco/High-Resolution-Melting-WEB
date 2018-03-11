@@ -12,6 +12,11 @@ angular.module('hrm')
                 return $http.put('/admin/create',object).then(function (response) {
                     return response.data;
                 })
-            }
+            },
+            delete:  function (object) {
+            return $http.put('/admin/delete',object).then(function (response) {
+                return response.data;
+            })
+        }
         }
     });

@@ -8,10 +8,10 @@
     <meta name="description" content=""/>
     <meta name="author" content="Marek Jančo">
 
+    <base href="/">
+
     <link rel="stylesheet" type="text/css" href="bower_components/semantic/dist/semantic.min.css"/>
     <link rel="stylesheet" type="text/css" href="css/style.css"/>
-
-    <base href="/">
 </head>
 <body ng-app="hrm" ng-controller="IndexController as indexCtrl">
 
@@ -25,12 +25,11 @@
 <script src="bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
 <script src="bower_components/bower-angular-route/angular-route.min.js"></script>
 
-<!--Interceptors-->
-<!--<script type="text/javascript" src="scripts/service/auth.interceptor.js"></script>-->
-
 <!-- App configuration -->
 <script type="text/javascript" src="scripts/app.js"></script>
 <script type="text/javascript" src="scripts/app.state.js"></script>
+
+<!--Interceptors-->
 <script type="text/javascript" src="scripts/auth.interceptor.js"></script>
 
 <!-- Servicies -->
@@ -64,20 +63,8 @@
                 <b>Log in</b>
             </button>
         </a>
-
         <a class="item" ng-show="indexCtrl.authenticated"><i class="blue user icon"></i> Logged: {{indexCtrl.username}}</a>
         <a class="item" ng-show="indexCtrl.authenticated" ng-click="indexCtrl.logout()"><i class="power big red icon"></i></a>
-<!--
-
-        <div class="ui simple dropdown item">
-            Logged: {{indexCtrl.username}}
-            <i class="dropdown icon"></i>
-            <div class="menu">
-                <a class="item" ng-click="indexCtrl.logout()"><i class="power icon"></i>Log Out</a>
-            </div>
-        </div>
--->
-
     </div>
 </div>
 <!--END OF MENU-->

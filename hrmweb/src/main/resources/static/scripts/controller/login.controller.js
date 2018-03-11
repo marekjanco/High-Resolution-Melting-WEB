@@ -11,14 +11,6 @@ angular.module('hrm').controller('LoginController', function ($scope, $rootScope
     vm.errorMessage = 'Authentication failed. Please try again.';
     vm.logoutMessage = 'You have been successfully logged out.';
 
-    $('.message .close').on('click', function () {
-        $(this).closest('.message').transition('fade');
-        vm.error = false;
-        vm.logout = false;
-        $location.$$search.logout = false;
-        $location.$$search.error = false;
-    });
-
     vm.login = function () {
         $rootScope.loading = true;
         AuthService.login(vm.username, vm.password).then(

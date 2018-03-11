@@ -17,13 +17,14 @@ public class AdminResource {
 
     static final String GET_ALL = "getAll";
     static final String CREATE = "create";
+    static final String DELETE = "delete";
 
     @Inject
     private NumberArrayService numberArrayService;
 
     @RequestMapping(value = "/" + GET_ALL, method = RequestMethod.GET)
-    public List<NumberArray> getAll() {
-        List<NumberArray> datasets  = numberArrayService.getAll();
+    public List<NumberArrayDTO> getAll() {
+        List<NumberArrayDTO> datasets  = numberArrayService.getAll();
         return datasets;
     }
 
@@ -31,4 +32,10 @@ public class AdminResource {
     public void create(@RequestBody NumberArrayDTO dto) {
         numberArrayService.create(dto);
     }
+
+    @RequestMapping(value = "/" + DELETE, method = RequestMethod.PUT)
+    public void delete(@RequestBody NumberArrayDTO dto) {
+        numberArrayService.delete(dto);
+    }
+
 }
