@@ -115,6 +115,7 @@ angular.module('hrm')
 
         vm.getNames = function () {
             ValuesService.getAllNames().then(function (data) {
+                console.log('names', data);
                 $scope.names = data;
                 vm.names = data;
             });

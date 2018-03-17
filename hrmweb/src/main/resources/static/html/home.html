@@ -25,16 +25,19 @@
             <button class="ui teal button" style="margin-top:5px" ng-click="homeController.addDataToGraph()">
                 Add and compute
             </button>
+            <button class="ui teal button" style="margin-top:5px">
+                Median in graph
+            </button>
         </div>
         <div class="ui segment">
             <b>Choose from database </b>
             <br><br>
-            <div id="names" class="ui multiple selection dropdown" style="display: block;">
+            <div id="names" class="ui multiple selection dropdown" style="display: block; width: 90%">
                 <i class="dropdown icon"></i>
                 <div class="default text">Select...</div>
                 <div class="menu">
-                    <div class="item" ng-repeat="name in homeController.names" data-value="{{name}}">
-                        {{name}}
+                    <div class="item" ng-repeat="name in homeController.names" data-value="{{name.name}}">
+                        {{name.acronym}}
                     </div>
                 </div>
             </div>

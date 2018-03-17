@@ -20,13 +20,18 @@ public class NumberArray {
     @Column(name = "NAME")
     private String name;
 
+    @Column(name = "ACRONYM")
+    private String acronym;
+
+    @Column(name = "NOTE")
+    private String note;
+
     @Column(name = "NUMBERS")
     private String numbers;
 
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -34,15 +39,27 @@ public class NumberArray {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAcronym() {
+        return acronym;
+    }
+    public void setAcronym(String acronym) {
+        this.acronym = acronym;
+    }
+
+    public String getNote() {
+        return note;
+    }
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public String getNumbers() {
         return numbers;
     }
-
     public void setNumbers(String numbers) {
         this.numbers = numbers;
     }

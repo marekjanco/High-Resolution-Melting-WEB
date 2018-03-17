@@ -14,6 +14,9 @@ angular.module('hrm').config(function ($httpProvider, $routeProvider, $locationP
     }).when('/admin/datasets/create', {
         templateUrl: 'html/auth/admin.create.html',
         controller: 'CreateController as createController'
+    }).when('/admin/datasets/update', {
+        templateUrl: 'html/auth/admin.update.html',
+        controller: 'UpdateController as updateController'
     }).otherwise({
         redirectTo: '/'
     });

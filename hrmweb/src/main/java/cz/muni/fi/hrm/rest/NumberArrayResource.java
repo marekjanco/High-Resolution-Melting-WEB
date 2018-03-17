@@ -1,5 +1,6 @@
 package cz.muni.fi.hrm.rest;
 
+import cz.muni.fi.hrm.dto.NumberArrayDTO;
 import cz.muni.fi.hrm.entity.NumberArray;
 import cz.muni.fi.hrm.repository.NumberArrayRepository;
 import cz.muni.fi.hrm.service.NumberArrayService;
@@ -25,8 +26,8 @@ public class NumberArrayResource {
     private NumberArrayService numberArrayService;
 
     @RequestMapping(value = "/" + GET_ALL_NAMES, method = RequestMethod.GET)
-    public List<String> getAll() {
-        List<String> names = numberArrayService.getAllNames();
+    public List<NumberArrayDTO> getAll() {
+        List<NumberArrayDTO> names = numberArrayService.getAllNames();
         return names;
     }
 

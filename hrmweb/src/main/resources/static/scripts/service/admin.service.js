@@ -13,6 +13,11 @@ angular.module('hrm')
                     return response.data;
                 })
             },
+            update:  function (object) {
+                return $http.put('/admin/update',object).then(function (response) {
+                    return response.data;
+                })
+            },
             delete:  function (object) {
             return $http.put('/admin/delete',object).then(function (response) {
                 return response.data;

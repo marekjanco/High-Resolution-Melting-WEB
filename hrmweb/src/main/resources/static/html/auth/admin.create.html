@@ -1,6 +1,6 @@
 <div>
     <div class="ui negative message" ng-show="createController.error"
-         style="margin-bottom:30px; width:60%;">
+         style="margin-bottom:30px;">
         <div class="header">
             {{createController.errorMessage}}
         </div>
@@ -10,29 +10,21 @@
         <form class="ui form">
             <div class="field">
                 <label>Name of dataset</label>
-                <input type="text" style="width:30%" ng-model="createController.name" name="name">
+                <input type="text" style="width:25%" ng-model="createController.name" name="name">
+            </div>
+            <div class="field">
+                <label>Acronym</label>
+                <input type="text" style="width:15%" ng-model="createController.acronym" name="acronym">
+            </div>
+            <div class="field">
+                <label>Note</label>
+                <input type="text" style="width:45%" ng-model="createController.note" name="note">
             </div>
             <div class="field">
                 <label>Copy data here: </label>
-                <input type="text" style="width:45%" ng-model="createController.values" name="values">
+                <input type="text" style="width:70%" ng-model="createController.values" name="values">
             </div>
             <button class="ui teal button" type="submit">Add</button>
         </form>
     </div>
-
-
-    <!--<div class="ui segment">-->
-        <!--<b>Name of dataset</b>-->
-        <!--<div class="ui input" style="display: block;">-->
-            <!--<input type="text" ng-model="createController.name">-->
-        <!--</div>-->
-        <!--<br/>-->
-        <!--<b>Copy data here: </b>-->
-        <!--<div class="ui input" style="display: block;">-->
-            <!--<input type="text" ng-model="createController.values">-->
-        <!--</div>-->
-    <!--</div>-->
-    <!--<button class="ui teal button" style="margin-top:5px" ng-click="createController.addToDb()">-->
-        <!--Add-->
-    <!--</button>-->
 </div>

@@ -5,11 +5,18 @@ angular.module('hrm')
         var vm = this;
         vm.datasets = [];
         vm.success = false;
+        vm.xAxis = undefined;
         vm.successMessage = "New dataset was successfully added to DB";
 
         vm.getAll = function () {
             AdminService.getAll().then(function (data) {
-                vm.datasets = data;
+                for (var i = 0; i < data.length; ++i) {
+                    if(data[i].name === "X-axis"){
+                        vm.xAxis = data[i];
+                    }else{
+                        vm.datasets.push(data[i]);
+                    }
+                }
             });
         };
 
@@ -38,8 +45,17 @@ angular.module('hrm')
             }
         };
 
+        vm.update = function (dataset) {
+            $location.path('/admin/datasets/update').search({name: dataset.name});
+        };
+
         vm.init = function () {
             if ($location.$$search.success) {
+                vm.successMessage = "New dataset was successfully added to DB";
+                vm.success = true;
+            }
+            if ($location.$$search.updated) {
+                vm.successMessage = "Dataset was successfully updated";
                 vm.success = true;
             }
             vm.getAll();

@@ -43,6 +43,7 @@
 <script type="text/javascript" src="scripts/controller/login.controller.js"></script>
 <script type="text/javascript" src="scripts/controller/admin.controller.js"></script>
 <script type="text/javascript" src="scripts/controller/admin.create.controller.js"></script>
+<script type="text/javascript" src="scripts/controller/admin.update.controller.js"></script>
 
 <!--loader-->
 <div class="ui active dimmer" ng-show="loading">
@@ -55,7 +56,7 @@
 
 <!--MENU-->
 <div class="ui large secondary pointing menu">
-    <a class="active item" href="/" style="margin-left: 5%">Home</a>
+    <a class="item" href="/" style="margin-left: 5%"><b>Home</b></a>
     <a class="item" ng-show="indexCtrl.authenticated" href="/admin/datasets">Admin interface</a>
     <div class="right menu" style="margin-right:5%;">
         <a style="color:black" ng-show="!indexCtrl.authenticated" href="/login">

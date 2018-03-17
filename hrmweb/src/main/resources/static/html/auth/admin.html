@@ -1,6 +1,6 @@
 <div>
     <div>
-        <div class="ui success message" ng-show="adminController.success" style="margin-bottom:30px; width:60%;">
+        <div class="ui success message" ng-show="adminController.success" style="margin-bottom:30px;">
             <div class="header">
                 {{adminController.successMessage}}
             </div>
@@ -11,7 +11,9 @@
             <thead>
             <tr>
                 <th>Name</th>
+                <th>Note</th>
                 <th>Values</th>
+                <th>Edit</th>
                 <th>Delete</th>
             </tr>
             </thead>
@@ -21,8 +23,14 @@
                     {{dataset.name}}
                 </td>
                 <td>
+                    {{dataset.note}}
+                </td>
+                <td>
                     <a href="javascript:void(0);" ng-click="adminController.copyToClipboard(dataset)">copy values(on
                         click)</a>
+                </td>
+                <td>
+                    <i class="pencil icon" ng-click="adminController.update(dataset)"></i>
                 </td>
                 <td>
                     <i class="red large trash icon" ng-click="adminController.delete(dataset.name)"></i>
@@ -30,5 +38,37 @@
             </tr>
             </tbody>
         </table>
+        <h4 class="ui horizontal divider header">
+            Temperature - X axis
+        </h4>
+        <br/>
+        <table class="ui celled table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Note</th>
+                <th>Values</th>
+                <th>Edit</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    {{adminController.xAxis.name}}
+                </td>
+                <td>
+                    {{adminController.xAxis.note}}
+                </td>
+                <td>
+                    <a href="javascript:void(0);" ng-click="adminController.copyToClipboard(adminController.xAxis)">copy values(on
+                        click)</a>
+                </td>
+                <td>
+                    <i class="pencil icon" ng-click="adminController.update(adminController.xAxis)"></i>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <br/>
     </div>
 </div>
