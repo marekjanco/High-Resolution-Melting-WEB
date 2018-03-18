@@ -45,6 +45,33 @@ angular.module('hrm')
             }
         };
 
+        vm.showMedianInGraph = function () {
+            vm.clearGraph();
+            var values = vm.getValuesFromInputs();
+            var length = values[0].length;
+            var ret = [];
+            for(var i = 0; i < length; ++i) {
+                var temp = [];
+                for (var j = 0; j < values.length; ++j) {
+                    if(values[j][i] != null){
+                        temp.push(values[j][i]);
+                    }
+                }
+                ret.push(vm.median(temp));
+            }
+            vm.addDataToGraph(ret, "median of values");
+        };
+
+        vm.median = function (values) {
+            if(values.length ===0) return 0;
+            values.sort( function(a,b) {return a - b;} );
+            var half = Math.floor(values.length/2);
+            if(values.length % 2)
+                return values[half];
+            else
+                return (values[half-1] + values[half]) / 2.0;
+        };
+
         vm.getLabels = function () {
             ValuesService.findByName('X-axis').then(function (data) {
                 $scope.labels = data;
@@ -115,7 +142,6 @@ angular.module('hrm')
 
         vm.getNames = function () {
             ValuesService.getAllNames().then(function (data) {
-                console.log('names', data);
                 $scope.names = data;
                 vm.names = data;
             });
