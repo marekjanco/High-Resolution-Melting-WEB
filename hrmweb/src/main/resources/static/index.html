@@ -36,6 +36,7 @@
 <script type="text/javascript" src="scripts/service/values.service.js"></script>
 <script type="text/javascript" src="scripts/service/login.service.js"></script>
 <script type="text/javascript" src="scripts/service/admin.service.js"></script>
+<script type="text/javascript" src="scripts/service/file.service.js"></script>
 
 <!-- Controllers -->
 <script type="text/javascript" src="scripts/controller/home.controller.js"></script>
@@ -57,7 +58,7 @@
 <!--MENU-->
 <div class="ui large secondary pointing menu">
     <a class="item" href="/" style="margin-left: 5%"><b>Home</b></a>
-    <a class="item" ng-show="indexCtrl.authenticated" href="/admin/datasets">Admin interface</a>
+    <a class="item" ng-show="indexCtrl.authenticated" href="/admin/refCurves">Admin interface</a>
     <div class="right menu" style="margin-right:5%;">
         <a style="color:black" ng-show="!indexCtrl.authenticated" href="/login">
             <button class="ui secondary basic button">

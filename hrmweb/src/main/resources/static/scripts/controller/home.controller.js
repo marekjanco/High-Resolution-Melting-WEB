@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('hrm')
-    .controller('HomeController', function ($scope, ValuesService) {
+    .controller('HomeController', function ($scope, ValuesService, FileService, $rootScope) {
         var vm = this;
 
         vm.names = [];
@@ -9,6 +9,7 @@ angular.module('hrm')
         vm.numberOfDatasets = 0;
 
         // 'JQuery'
+        /*
         // add inputs dynamically
         $(document).ready(function() {
             var max_fields      = 6;
@@ -28,6 +29,13 @@ angular.module('hrm')
                 e.preventDefault(); $(this).parent('div').remove(); x--;
             })
         });
+        */
+        $(document).ready(function () {
+            $('form input').change(function () {
+                $('form p').text(this.files.length + " file(s) selected");
+            });
+        });
+
 
         // dropdown action
         $('.dropdown')
@@ -40,8 +48,8 @@ angular.module('hrm')
         vm.viewInGraph = function () {
             vm.clearGraph();
             var values = vm.getValuesFromInputs();
-            for(var i = 0; i < values.length; ++i){
-                vm.addDataToGraph(values[i], "input_"+i);
+            for (var i = 0; i < values.length; ++i) {
+                vm.addDataToGraph(values[i], "input_" + i);
             }
         };
 
@@ -50,10 +58,10 @@ angular.module('hrm')
             var values = vm.getValuesFromInputs();
             var length = values[0].length;
             var ret = [];
-            for(var i = 0; i < length; ++i) {
+            for (var i = 0; i < length; ++i) {
                 var temp = [];
                 for (var j = 0; j < values.length; ++j) {
-                    if(values[j][i] != null){
+                    if (values[j][i] != null) {
                         temp.push(values[j][i]);
                     }
                 }
@@ -63,13 +71,15 @@ angular.module('hrm')
         };
 
         vm.median = function (values) {
-            if(values.length ===0) return 0;
-            values.sort( function(a,b) {return a - b;} );
-            var half = Math.floor(values.length/2);
-            if(values.length % 2)
+            if (values.length === 0) return 0;
+            values.sort(function (a, b) {
+                return a - b;
+            });
+            var half = Math.floor(values.length / 2);
+            if (values.length % 2)
                 return values[half];
             else
-                return (values[half-1] + values[half]) / 2.0;
+                return (Number(values[half - 1]) + Number(values[half])) / 2.0;
         };
 
         vm.getLabels = function () {
@@ -78,19 +88,18 @@ angular.module('hrm')
             });
         };
 
-        vm.addDataToGraph = function (data, name) {
-            $scope.data[vm.numberOfDatasets] = data;
-            $scope.series[vm.numberOfDatasets] = name;
-            vm.numberOfDatasets++;
-            //vm.computeDifference();
-        };
-
         vm.getDataSet = function (name) {
             ValuesService.findByName(name).then(function (data) {
                 $scope.data[vm.numberOfDatasets] = data;
                 $scope.series[vm.numberOfDatasets] = name;
                 vm.numberOfDatasets++;
             });
+        };
+
+        vm.addDataToGraph = function (data, name) {
+            $scope.data[vm.numberOfDatasets] = data;
+            $scope.series[vm.numberOfDatasets] = name;
+            vm.numberOfDatasets++;
         };
 
         vm.drawGraph = function () {
@@ -109,26 +118,32 @@ angular.module('hrm')
             }
         };
 
-        vm.computeDifference = function () {
-        /*    ValuesService.compute(vm.data[$scope.addedDataSet]).then(function (data) {
-                $scope.matchDataSet = data[1].name;
-                $scope.distance = data[0];
-                vm.getDataSet($scope.matchDataSet);
+        vm.uploadFile = function () {
+            var file = document.getElementById('excel_file').files[0];
+            $rootScope.loading = true;
+            FileService.uploadFile(file).then(function (data) {
+                $rootScope.loading = false;
             });
-        */
+ /*
+            var uploadUrl = "/file/uploadFile";
+            FileService.uploadFileToUrl(file, uploadUrl).then(function(result){
+                console.log(result);
+            }, function(error) {
+                alert('error');
+            })
+*/
         };
 
         vm.getValuesFromInputs = function () {
             var values = [];
-            $("input[name='inputs[]']").each(function() {
+            $("input[name='inputs[]']").each(function () {
                 values.push($(this).val());
             });
-            for(var i = 0; i < values.length; ++i){
+            for (var i = 0; i < values.length; ++i) {
                 values[i] = ValuesService.parseInput(values[i]);
             }
             return values;
         };
-
 
         vm.clearGraph = function () {
             vm.selectedNames = [];

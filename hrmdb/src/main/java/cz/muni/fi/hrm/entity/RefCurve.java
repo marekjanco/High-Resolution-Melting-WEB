@@ -1,23 +1,28 @@
 package cz.muni.fi.hrm.entity;
 
+import com.sun.istack.internal.NotNull;
+import cz.muni.fi.hrm.dbconfig.ArrayConverter;
+
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.util.List;
 
 @Entity
-@Table(name = "NUMBER_ARRAY")
-public class NumberArray {
+@Table(name = "REFERENCE_CURVE")
+public class RefCurve {
     @Id
     @SequenceGenerator(name = "SEQ_GLOBAL_HIBERNATE", sequenceName = "SEQ_GLOBAL_HIBERNATE")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_GLOBAL_HIBERNATE")
     @Column(name = "ID", insertable = false, updatable = false, nullable = false, unique = true)
     private Long id;
 
-    @Column(name = "NAME")
+    @Column(name = "NAME", nullable = false, unique = true)
     private String name;
 
     @Column(name = "ACRONYM")
@@ -26,8 +31,9 @@ public class NumberArray {
     @Column(name = "NOTE")
     private String note;
 
-    @Column(name = "NUMBERS")
-    private String numbers;
+    @Column(name = "VALUES", nullable = false)
+    @Convert(converter = ArrayConverter.class)
+    private List<Double> values;
 
     public Long getId() {
         return id;
@@ -57,10 +63,10 @@ public class NumberArray {
         this.note = note;
     }
 
-    public String getNumbers() {
-        return numbers;
+    public List<Double> getValues() {
+        return values;
     }
-    public void setNumbers(String numbers) {
-        this.numbers = numbers;
+    public void setValues(List<Double> values) {
+        this.values = values;
     }
 }

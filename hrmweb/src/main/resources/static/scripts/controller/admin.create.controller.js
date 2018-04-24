@@ -28,7 +28,7 @@ angular.module('hrm')
                 return;
             }
             var data = ValuesService.parseInput(vm.values);
-            var formatOK = ValuesService.checkFormatOfNumberArray(data);
+            var formatOK = ValuesService.checkFormatOfdataset(data);
             if (!formatOK) {
                 vm.error = true;
                 vm.errorMessage = "Format of data is not OK - format of data should be - e.g., '-1.01 0 1.01 2.01...'";
@@ -50,7 +50,6 @@ angular.module('hrm')
                 for (var name in data) {
                     vm.names.push(name);
                 }
-                console.log(vm.names);
             });
         };
 

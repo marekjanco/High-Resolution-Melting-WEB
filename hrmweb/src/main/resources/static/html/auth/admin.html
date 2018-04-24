@@ -5,7 +5,7 @@
                 {{adminController.successMessage}}
             </div>
         </div>
-        <a href="/admin/datasets/create"><i class="large green plus icon"></i> Add new DATASET to DB</a>
+        <a href="/admin/refCurves/create"><i class="large green plus icon"></i> Add new DATASET to DB</a>
         <br/>
         <table class="ui celled table">
             <thead>
@@ -18,7 +18,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="dataset in adminController.datasets">
+            <tr ng-repeat="dataset in adminController.refCurves">
                 <td>
                     {{dataset.name}}
                 </td>

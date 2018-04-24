@@ -4,12 +4,12 @@ angular.module('hrm')
     .factory('ValuesService', function ($http) {
         return {
             getAllNames: function () {
-                return $http.get('/numberArray/getAllNames').then(function (response) {
+                return $http.get('/dataset/getAllNames').then(function (response) {
                     return response.data;
                 })
             },
             compute: function (data) {
-                return $http.get('/numberArray/compute', {
+                return $http.get('/dataset/compute', {
                     params: {
                         data: data
                     }
@@ -18,7 +18,7 @@ angular.module('hrm')
                 })
             },
             findByName: function (name) {
-                return $http.get('/numberArray/findByName', {
+                return $http.get('/dataset/findByName', {
                     params: {
                         name: name
                     }
@@ -33,7 +33,7 @@ angular.module('hrm')
                 }
                 return array;
             },
-            checkFormatOfNumberArray: function (data) {
+            checkFormatOfdataset: function (data) {
                 for (var i = 0; i < data.length; ++i) {
                     var n = parseFloat(data[i]);
                     if(n.toString() !== data[i]){

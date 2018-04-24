@@ -5,7 +5,7 @@ angular.module('hrm', ['chart.js', 'ngResource', 'ngRoute'])
     });
 
 //interceptors
-+angular.module('hrm').config(['$httpProvider',
+angular.module('hrm').config(['$httpProvider',
     function ($httpProvider) {
         $httpProvider.interceptors.push('AuthInterceptor');
     }
@@ -19,4 +19,20 @@ angular.module('hrm').config(['ChartJsProvider', '$httpProvider', function (Char
         responsive: true
     });
 }]);
+/*
+angular.module('hrm').directive('fileModel', ['$parse', function ($parse) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            var model = $parse(attrs.fileModel);
+            var modelSetter = model.assign;
 
+            element.bind('change', function(){
+                scope.$apply(function(){
+                    modelSetter(scope, element[0].files[0]);
+                });
+            });
+        }
+    };
+}]);
+*/
