@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.util.List;
@@ -34,6 +35,9 @@ public class RefCurve {
     @Column(name = "VALUES", nullable = false)
     @Convert(converter = ArrayConverter.class)
     private List<Double> values;
+
+    @OneToOne
+    private ErrorMargin errorMargin;
 
     public Long getId() {
         return id;
@@ -68,5 +72,12 @@ public class RefCurve {
     }
     public void setValues(List<Double> values) {
         this.values = values;
+    }
+
+    public ErrorMargin getErrorMargin() {
+        return errorMargin;
+    }
+    public void setErrorMargin(ErrorMargin errorMargin) {
+        this.errorMargin = errorMargin;
     }
 }

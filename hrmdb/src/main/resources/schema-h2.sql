@@ -8,4 +8,14 @@ CREATE TABLE REFERENCE_CURVE (
   constraint  REFERENCE_CURVE_UK unique (NAME)
   );
 
+CREATE TABLE ERROR_MARGIN (
+  ID            NUMBER          NOT NULL,
+  REF_CURVE_ID  NUMBER          NOT NULL,
+  VALUES        ARRAY           NOT NULL,
+
+  constraint ERROR_MARGIN_PK primary key (ID),
+  constraint ERROR_MARGIN_REF_CURVE_FK foreign key (REF_CURVE_ID)
+  references REFERENCE_CURVE (ID)
+  );
+
 create sequence SEQ_GLOBAL_HIBERNATE start with 120 increment by 1;
