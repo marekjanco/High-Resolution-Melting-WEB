@@ -1,5 +1,6 @@
 package cz.muni.fi.hrm.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RefCurveDTO {
@@ -13,5 +14,9 @@ public class RefCurveDTO {
         this.acronym = acronym;
         this.note = note;
         this.values = values;
+    }
+
+    public RefCurveDTO(){
+        this(null, null, null, new ArrayList<>());
     }
 }
