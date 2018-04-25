@@ -1,9 +1,11 @@
 package cz.muni.fi.hrm.service;
 
+import cz.muni.fi.hrm.dto.RefCurveDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface FileService {
-    void readUploadedFile(MultipartFile file) throws IOException;
+    List<RefCurveDTO> readUploadedFile(MultipartFile file) throws IOException;
 }

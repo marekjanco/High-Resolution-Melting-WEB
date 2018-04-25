@@ -124,14 +124,6 @@ angular.module('hrm')
             FileService.uploadFile(file).then(function (data) {
                 $rootScope.loading = false;
             });
- /*
-            var uploadUrl = "/file/uploadFile";
-            FileService.uploadFileToUrl(file, uploadUrl).then(function(result){
-                console.log(result);
-            }, function(error) {
-                alert('error');
-            })
-*/
         };
 
         vm.getValuesFromInputs = function () {

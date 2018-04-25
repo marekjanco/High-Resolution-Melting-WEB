@@ -1,6 +1,7 @@
 package cz.muni.fi.hrm.service;
 
 import cz.muni.fi.hrm.dto.RefCurveDTO;
+import cz.muni.fi.hrm.entity.RefCurve;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -27,32 +28,48 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileServiceImpl implements FileService {
 
     @Override
-    public void readUploadedFile(MultipartFile file) throws IOException {
+    public List<RefCurveDTO> readUploadedFile(MultipartFile file) throws IOException {
         String filename = file.getOriginalFilename();
         List<RefCurveDTO> curves = null;
-        if(filename.endsWith(".csv")){
+        if (filename.endsWith(".csv")) {
             curves = this.parseDataFromCsv(file);
-        }else if(filename.endsWith(".xlsx")){
+        } else if (filename.endsWith(".xlsx")) {
             curves = this.parseDataFromXlsx(file);
-        }else if(filename.endsWith(".xls")){
+        } else if (filename.endsWith(".xls")) {
             curves = this.parseDataFromXls(file);
-        }else{
+        } else {
             //FIXME vynimka, nejaky error
         }
+        return curves;
+
     }
 
     private List<RefCurveDTO> parseDataFromCsv(final MultipartFile file) throws IOException {
+        boolean firstRow = true;
+        List<RefCurveDTO> curves = null;
         final Reader reader = new InputStreamReader(file.getInputStream());
         CSVParser parser = new CSVParser(reader, CSVFormat.DEFAULT);
         try {
             for (CSVRecord record : parser) {
-                System.out.println(record.get(0));
-                //System.out.println(record.get(1));
+                if (firstRow) {
+                    curves = this.checkCsvHeader(record);
+                    firstRow = false;
+                    continue;
+                }
+                for (int i = 0; i < record.size(); ++i) {
+                    Double parsed = null;
+                    try{
+                        parsed = Double.parseDouble(record.get(i));
+                        curves.get(i).values.add(parsed);
+                    }catch(Exception e){
+                        //FIXME vynimka
+                    }
+                }
             }
         } finally {
             parser.close();
         }
-        return null;
+        return curves;
     }
 
     private List<RefCurveDTO> parseDataFromXlsx(final MultipartFile file) throws IOException {
@@ -66,7 +83,7 @@ public class FileServiceImpl implements FileService {
         return ret;
     }
 
-    private List<RefCurveDTO> parseDataFromXls(MultipartFile file) throws IOException{
+    private List<RefCurveDTO> parseDataFromXls(MultipartFile file) throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook(file.getInputStream());
         HSSFSheet sheet = wb.getSheetAt(0);
         Iterator<Row> iterator = sheet.iterator();
@@ -77,14 +94,14 @@ public class FileServiceImpl implements FileService {
         return ret;
     }
 
-    private List<RefCurveDTO> iterateExcelSheet(Iterator<Row> iterator){
+    private List<RefCurveDTO> iterateExcelSheet(Iterator<Row> iterator) {
         boolean firstRow = true;
         List<RefCurveDTO> curves = null;
 
         while (iterator.hasNext()) {
             Row nextRow = iterator.next();
             Iterator<Cell> cellIterator = nextRow.cellIterator();
-            if(firstRow){
+            if (firstRow) {
                 curves = this.checkExcelHeader(cellIterator);
                 firstRow = false;
             }
@@ -106,7 +123,23 @@ public class FileServiceImpl implements FileService {
         return curves;
     }
 
-    private List<RefCurveDTO> checkExcelHeader(Iterator<Cell> cellIterator){
+    private List<RefCurveDTO> checkCsvHeader(CSVRecord record) {
+        List<RefCurveDTO> curves = new ArrayList<>();
+        for(int i = 0; i < record.size(); ++i){
+            RefCurveDTO curve = new RefCurveDTO();
+            Double parsed = null;
+            try{
+                parsed = Double.parseDouble(record.get(i));
+                curve.values.add(parsed);
+            }catch(Exception e){
+                curve.name = record.get(i);
+            }
+            curves.add(curve);
+        }
+        return curves;
+    }
+
+    private List<RefCurveDTO> checkExcelHeader(Iterator<Cell> cellIterator) {
         int i = 0;
         List<RefCurveDTO> ret = new ArrayList<>();
         while (cellIterator.hasNext()) {
@@ -117,7 +150,7 @@ public class FileServiceImpl implements FileService {
                     curve.name = cell.getStringCellValue();
                     break;
                 case NUMERIC:
-                    curve.name = "user_curve_"+i;
+                    curve.name = "user_curve_" + i;
                     curve.values.add(cell.getNumericCellValue());
                     break;
                 case BOOLEAN:
