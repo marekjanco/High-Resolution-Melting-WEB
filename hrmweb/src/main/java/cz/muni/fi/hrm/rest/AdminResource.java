@@ -11,7 +11,7 @@ import javax.inject.Inject;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/admin/refCurve")
 public class AdminResource {
 
     static final String GET_ALL = "getAll";

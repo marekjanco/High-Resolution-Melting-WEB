@@ -4,24 +4,19 @@ angular.module('hrm')
     .factory('AdminService', function ($http) {
         return {
             getAll: function () {
-                return $http.get('/admin/getAll').then(function (response) {
+                return $http.get('/admin/refCurve/getAll').then(function (response) {
                     return response.data;
                 })
             },
-            create:  function (object) {
-                return $http.put('/admin/create',object).then(function (response) {
+            create: function (object) {
+                return $http.put('/admin/refCurve/create', object).then(function (response) {
                     return response.data;
                 })
             },
-            update:  function (object) {
-                return $http.put('/admin/update',object).then(function (response) {
+            delete: function (object) {
+                return $http.put('/admin/refCurve/delete', object).then(function (response) {
                     return response.data;
                 })
-            },
-            delete:  function (object) {
-            return $http.put('/admin/delete',object).then(function (response) {
-                return response.data;
-            })
-        }
+            }
         }
     });

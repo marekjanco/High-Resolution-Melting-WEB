@@ -8,8 +8,8 @@ angular.module('hrm').factory('AuthInterceptor',
             response: function (response) {
                 return response;
             },
-            responseError: function(response) {
-                if (response.status === 401 || response.status === 403){
+            responseError: function (response) {
+                if (response.status === 401 || response.status === 403) {
                     $rootScope.loading = false;
                     $location.path('/login').search('error');
                 }

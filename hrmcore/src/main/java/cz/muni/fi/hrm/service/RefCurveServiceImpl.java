@@ -1,16 +1,13 @@
 package cz.muni.fi.hrm.service;
 
-
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import cz.muni.fi.hrm.dto.RefCurveDTO;
 import cz.muni.fi.hrm.entity.RefCurve;
 import cz.muni.fi.hrm.repository.RefCurveRepository;
-import org.modelmapper.ModelMapper;
+import org.dozer.DozerBeanMapper;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,15 +18,14 @@ public class RefCurveServiceImpl implements RefCurveService {
     private RefCurveRepository refCurveRepository;
 
     @Inject
-    private ModelMapper modelMapper;
+    private DozerBeanMapper mapper;
 
     @Override
     public List<RefCurveDTO> getNamesAndAcronyms() {
         List<RefCurveDTO> refCurves = new ArrayList<>();
-        List<String> names = refCurveRepository.findAllNames();
-        List<String> acronyms = refCurveRepository.findAllAcronyms();
-        for(int i = 0; i < names.size() || i < acronyms.size(); ++i){
-            refCurves.add(new RefCurveDTO(names.get(i), acronyms.get(i), null, null));
+        List<RefCurve> names = refCurveRepository.findAll();
+        for(RefCurve curve: names){
+            refCurves.add(this.convertToDtoWithoutValues(curve));
         }
         return refCurves;
     }
@@ -106,6 +102,14 @@ public class RefCurveServiceImpl implements RefCurveService {
     }
 
     private RefCurveDTO  convertToDto(RefCurve refCurve) {
-         return modelMapper.map(refCurve, RefCurveDTO.class);
+        RefCurveDTO dto = mapper.map(refCurve, RefCurveDTO.class);
+        return dto;
+    }
+
+    private RefCurveDTO convertToDtoWithoutValues(RefCurve refCurve) {
+        refCurve.setValues(new ArrayList<>());
+        refCurve.setErrorMargin(null);
+        RefCurveDTO dto = mapper.map(refCurve, RefCurveDTO.class);
+        return dto;
     }
 }

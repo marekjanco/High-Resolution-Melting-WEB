@@ -1,13 +1,13 @@
 package cz.muni.fi.hrm.config;
 
-import org.modelmapper.ModelMapper;
+import org.dozer.DozerBeanMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class MapperConfig {
     @Bean
-    public ModelMapper modelMapper(){
-        return new ModelMapper();
+    public DozerBeanMapper dozerMapper(){
+        return new DozerBeanMapper();
     }
 }

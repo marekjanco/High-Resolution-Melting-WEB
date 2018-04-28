@@ -28,7 +28,7 @@
             type: 'line',
             data: {
                 labels: ["January", "February", "March", "April", "May", "June", "July"],
-                datasets: [{
+                refCurves: [{
                     fill: false,
                     borderColor: window.chartColors.red,
                     backgroundColor: window.chartColors.red,
@@ -82,7 +82,7 @@
         };
 
         document.getElementById('randomizeData').addEventListener('click', function() {
-            config.data.datasets.forEach(function(dataset) {
+            config.data.refCurves.forEach(function(dataset) {
                 dataset.data = dataset.data.map(function() {
                     return randomScalingFactor();
                 });

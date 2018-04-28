@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('hrm').controller('LoginController', function ($scope, $rootScope, $window, AuthService,
-                                                                 $timeout, $http, $location) {
+                                                              $timeout, $http, $location) {
     var vm = this;
 
     vm.username = undefined;
@@ -19,15 +19,17 @@ angular.module('hrm').controller('LoginController', function ($scope, $rootScope
                     $location.path('/');
                     $scope.$emit('reinitialize', {});
                     $rootScope.loading = false;
-                    }, 1500);
-            });
+                }, 1500);
+            }).finally(function () {
+            $rootScope.loading = false;
+        });
     };
 
     vm.init = function () {
-        if($location.$$search.logout){
+        if ($location.$$search.logout) {
             vm.logout = true;
         }
-        if($location.$$search.error){
+        if ($location.$$search.error) {
             vm.error = true;
         }
     };

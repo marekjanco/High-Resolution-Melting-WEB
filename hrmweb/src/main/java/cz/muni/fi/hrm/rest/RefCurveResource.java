@@ -16,19 +16,23 @@ public class RefCurveResource {
 
     static final String GET_ALL_NAMES = "getAllNames";
     static final String FIND_BY_NAME = "findByName";
+    static final String TEMPERATURE = "getTemperature";
 
     @Inject
     private RefCurveService refCurveService;
 
     @RequestMapping(value = "/" + GET_ALL_NAMES, method = RequestMethod.GET)
-    public List<RefCurveDTO> getAll() {
-        List<RefCurveDTO> names = refCurveService.getNamesAndAcronyms();
-        return names;
+    public List<RefCurveDTO> getAllNames() {
+        return refCurveService.getNamesAndAcronyms();
     }
 
     @RequestMapping(value = "/" + FIND_BY_NAME, method = RequestMethod.GET)
     public List<Double> findByName(@RequestParam(value = "name") String name) {
-        List<Double> tokens = refCurveService.findValuesByName(name);
-        return tokens;
+        return refCurveService.findValuesByName(name);
+    }
+
+    @RequestMapping(value = "/" + TEMPERATURE, method = RequestMethod.GET)
+    public RefCurveDTO getTemperature() {
+        return refCurveService.getTemperature();
     }
 }

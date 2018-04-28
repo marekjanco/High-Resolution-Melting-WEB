@@ -1,56 +1,42 @@
 <div>
+    <div class="ui segment" ng-show="!homeController.userDataLoaded">
+        <b>Load user data: </b>
+        <form class="uploadForm">
+            <input type="file" id="excel_file" accept=".xls,.xlsx,.csv">
+            <p>Drag your files here or click in this area.</p>
+        </form>
+        <div id="uploadButton" class="ui teal button" ng-click="homeController.uploadFile()">
+            Load data
+        </div>
+    </div>
     <div class="ui horizontal segments">
-        <div class="ui segment">
-            <!--<b>Copy user data here: </b>
+        <div class="ui segment user-data-menu">
+            <b>User data(curves): </b> <a ng-show="!homeController.userDataLoaded" class="ui left pointing red basic label">User data are not loaded !!!</a>
             <br><br>
-            <div class="input_fields_wrap">
-                <div class="ui input" style="display: block;">
-                    <input class="userDataInput" type="text" name="inputs[]">
-                    <i class="small inverted circular green plus link icon add_field_button"
-                       style="margin-top:10px"></i>
-                </div>
-            </div>
-            <div>
-                <label for="file" class="ui icon button">
-                    <i class="file icon"></i>
-                    Open File</label>
-                <input type="file" id="file" style="display:none">
-            </div>-->
-            <form id="uploadForm">
-                <input type="file" id="excel_file" accept=".xls,.xlsx,.csv">
-                <p>Drag your files here or click in this area.</p>
-            </form>
-            <div id="uploadButton" class="ui teal button" ng-click="homeController.uploadFile()">
-                Upload
-            </div>
-            <!--<br>
-            <button class="ui teal button" style="margin-top:5px" ng-click="homeController.viewInGraph()">
+            <button class="ui teal button" style="margin-top:5px" ng-click="homeController.viewUserDataInGraph()">
                 View in graph
             </button>
-            <button class="ui teal button" style="margin-top:5px" ng-click="homeController.showMedianInGraph()">
-                Median in graph
+            <button class="ui blue button" style="margin-top:5px" ng-click="homeController.compute()">
+                Compute
             </button>
-            <button class="ui blue button" style="margin-top:5px" ng-click="homeController.computeDifference()">
-                Compute difference
-            </button>-->
         </div>
-        <div class="ui segment">
-            <b>Choose from database </b>
+        <div class="ui segment ref-curves-menu">
+            <b>Reference data(curves): </b>
             <br><br>
             <div id="names" class="ui multiple selection dropdown" style="display: block; width: 90%">
                 <i class="dropdown icon"></i>
                 <div class="default text">Select...</div>
                 <div class="menu">
-                    <div class="item" ng-repeat="name in homeController.names" data-value="{{name.name}}">
+                    <div class="item" ng-repeat="name in names" data-value="{{name.name}}">
                         {{name.acronym}}
                     </div>
                 </div>
             </div>
             <div class="ui teal button" style="margin-top:5px" ng-click="homeController.drawGraph()">
-                Draw
+                Add to graph
             </div>
         </div>
-        <div class="ui segment">
+        <div class="ui segment results-menu">
             <b>Results:</b>
             <br><br>
             <div class="ui teal button" ng-click="homeController.clearGraph()">

@@ -12,11 +12,8 @@ import java.util.List;
 public interface RefCurveRepository extends JpaRepository<RefCurve, Long> {
     RefCurve findByName(String name);
 
-    @Query("SELECT c.name FROM RefCurve c WHERE c.name <> 'temperature'")
-    List<String> findAllNames();
-
-    @Query("SELECT c.acronym FROM RefCurve c WHERE c.name <> 'temperature'")
-    List<String> findAllAcronyms();
+    @Query("SELECT c FROM RefCurve c WHERE c.name <> 'temperature'")
+    List<RefCurve> findAll();
 
     @Query("SELECT c FROM RefCurve c WHERE c.name = 'temperature'")
     RefCurve findTemperature();

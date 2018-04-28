@@ -5,6 +5,15 @@
     margin-top: 3em;
     width: 90% !important;
 }
+.user-data-menu{
+    width:45%;
+}
+.ref-curves-menu{
+    width: 30%
+}
+.results-menu{
+    width:25%;
+}
 .userDataInput {
     width: 50%;
 }
@@ -15,32 +24,26 @@
     width: 65%;
     margin: 0 auto;
 }
-.inputfile {
-    width: 0.1px;
-    height: 0.1px;
-    opacity: 0;
-    overflow: hidden;
-    position: absolute;
-    z-index: -1;
-}
-
-#uploadForm{
+.uploadForm{
     position: inherit;
-    margin: 10px;
-    border: 4px dashed #000000;
-    min-height: 6.5em;
-    min-width: 10em;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 10%;
+    margin-right: 10%;
+    border: 2px dashed #000000;
+    min-height: 9em !important;
+    min-width: 12em !important;
 }
-#uploadForm p{
+.uploadForm p{
     position: relative;
     width: 100%;
     height: 100%;
-    margin-top: 1.5em;
+    margin-top: 2.5em;
     text-align: center;
     color: #000000;
     font-size: large;
 }
-#uploadForm input{
+.uploadForm input{
     position: absolute;
     margin: 0;
     padding: 0;
@@ -49,6 +52,10 @@
     outline: none;
     opacity: 0;
 }
-#uploadForm button:active{
+.uploadForm button:active{
     border:0;
+}
+#uploadButton{
+    margin-left: 10%;
+    margin-right: 10%;
 }

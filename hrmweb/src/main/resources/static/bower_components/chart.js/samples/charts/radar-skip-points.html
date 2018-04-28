@@ -29,7 +29,7 @@
         type: 'radar',
         data: {
             labels: ["Eating", "Drinking", "Sleeping", "Designing", "Coding", "Cycling", "Running"],
-            datasets: [{
+            refCurves: [{
                 label: "Skip first dataset",
                 borderColor: window.chartColors.red,
                 backgroundColor: color(window.chartColors.red).alpha(0.2).rgbString(),
@@ -94,7 +94,7 @@
     };
 
     document.getElementById('randomizeData').addEventListener('click', function() {
-        config.data.datasets.forEach(function(dataset) {
+        config.data.refCurves.forEach(function(dataset) {
             dataset.data = dataset.data.map(function() {
                 return randomScalingFactor();
             });

@@ -62,7 +62,7 @@
 			type: 'bar',
 			data: {
 				labels: labels,
-				datasets: [{
+				refCurves: [{
 					label: "CHRT - Chart.js Corporation",
 					data: data,
 					type: 'line',
@@ -94,7 +94,7 @@
 
 		document.getElementById('update').addEventListener('click', function() {
 			var type = document.getElementById('type').value;
- 			chart.config.data.datasets[0].type = type;
+ 			chart.config.data.refCurves[0].type = type;
 			chart.update();
 		});
 

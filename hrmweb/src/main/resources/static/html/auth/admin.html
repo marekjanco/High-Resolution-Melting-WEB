@@ -5,70 +5,33 @@
                 {{adminController.successMessage}}
             </div>
         </div>
-        <a href="/admin/refCurves/create"><i class="large green plus icon"></i> Add new DATASET to DB</a>
+        <a href="/admin/refCurves/create"><i class="large green plus icon"></i> Add new refCurve to DB</a>
         <br/>
         <table class="ui celled table">
             <thead>
             <tr>
                 <th>Name</th>
+                <th>Acronym</th>
                 <th>Note</th>
-                <th>Values</th>
-                <th>Edit</th>
                 <th>Delete</th>
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="dataset in adminController.refCurves">
+            <tr ng-repeat="refCurve in adminController.refCurves">
                 <td>
-                    {{dataset.name}}
+                    {{refCurve.name}}
                 </td>
                 <td>
-                    {{dataset.note}}
+                    {{refCurve.acronym}}
                 </td>
                 <td>
-                    <a href="javascript:void(0);" ng-click="adminController.copyToClipboard(dataset)">copy values(on
-                        click)</a>
+                    {{refCurve.note}}
                 </td>
                 <td>
-                    <i class="pencil icon" ng-click="adminController.update(dataset)"></i>
-                </td>
-                <td>
-                    <i class="red large trash icon" ng-click="adminController.delete(dataset.name)"></i>
+                    <i class="red large trash icon" ng-click="adminController.delete(refCurve.name)"></i>
                 </td>
             </tr>
             </tbody>
         </table>
-        <h4 class="ui horizontal divider header">
-            Temperature - X axis
-        </h4>
-        <br/>
-        <table class="ui celled table">
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Note</th>
-                <th>Values</th>
-                <th>Edit</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>
-                    {{adminController.xAxis.name}}
-                </td>
-                <td>
-                    {{adminController.xAxis.note}}
-                </td>
-                <td>
-                    <a href="javascript:void(0);" ng-click="adminController.copyToClipboard(adminController.xAxis)">copy values(on
-                        click)</a>
-                </td>
-                <td>
-                    <i class="pencil icon" ng-click="adminController.update(adminController.xAxis)"></i>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <br/>
     </div>
 </div>

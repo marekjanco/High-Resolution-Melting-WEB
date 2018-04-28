@@ -23,7 +23,7 @@
             type: 'line',
             data: {
                 labels: ["January", "February", "March", "April", "May", "June", "July"],
-                datasets: [{
+                refCurves: [{
                     label: "My First dataset",
                     borderColor: window.chartColors.red,
                     backgroundColor: window.chartColors.red,
@@ -67,7 +67,7 @@
                             var sum = 0;
 
                             tooltipItems.forEach(function(tooltipItem) {
-                                sum += data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                                sum += data.refCurves[tooltipItem.datasetIndex].data[tooltipItem.index];
                             });
                             return 'Sum: ' + sum;
                         },

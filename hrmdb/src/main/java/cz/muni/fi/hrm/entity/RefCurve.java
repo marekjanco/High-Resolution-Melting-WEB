@@ -3,15 +3,18 @@ package cz.muni.fi.hrm.entity;
 import com.sun.istack.internal.NotNull;
 import cz.muni.fi.hrm.dbconfig.ArrayConverter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,7 +39,7 @@ public class RefCurve {
     @Convert(converter = ArrayConverter.class)
     private List<Double> values;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private ErrorMargin errorMargin;
 
     public Long getId() {
@@ -80,4 +83,5 @@ public class RefCurve {
     public void setErrorMargin(ErrorMargin errorMargin) {
         this.errorMargin = errorMargin;
     }
+
 }
