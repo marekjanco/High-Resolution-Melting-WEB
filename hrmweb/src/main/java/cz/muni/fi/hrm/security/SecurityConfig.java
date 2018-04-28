@@ -60,8 +60,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/admin", "/admin/*", "/html/auth/**").hasRole("ADMIN")
-                .antMatchers("/", "/login", "/login*","/computation/*", "/refCurve/*","/file/*", "/html/**", "/user", "/currentUser").permitAll()
+                .antMatchers("/admin", "/admin/*", "/html/auth/**", "/file/generateFileDbData").hasRole("ADMIN")
+                .antMatchers("/", "/login", "/login*","/computation/*",
+                        "/refCurve/*","/file/*", "/html/**", "/user", "/currentUser").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(new Http403ForbiddenEntryPoint());

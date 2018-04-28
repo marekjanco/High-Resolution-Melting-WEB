@@ -11,12 +11,6 @@ angular.module('hrm').config(function ($httpProvider, $routeProvider, $locationP
     }).when('/login', {
         templateUrl: 'html/login.html',
         controller: 'LoginController as loginController'
-    }).when('/admin/refCurves/create', {
-        templateUrl: 'html/auth/admin.create.html',
-        controller: 'CreateController as createController'
-    }).when('/admin/refCurves/update', {
-        templateUrl: 'html/auth/admin.update.html',
-        controller: 'UpdateController as updateController'
     }).otherwise({
         redirectTo: '/'
     });

@@ -26,4 +26,16 @@ public class ErrorMargin {
     @Column(name = "VALUES", nullable = false)
     @Convert(converter = ArrayConverter.class)
     private List<Double> values;
+
+    public Long getId() {
+        return id;
+    }
+
+    public List<Double> getValues() {
+        return values;
+    }
+
+    public void setValues(List<Double> values) {
+        this.values = values;
+    }
 }

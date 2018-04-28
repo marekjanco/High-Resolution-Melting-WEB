@@ -12,7 +12,6 @@ public interface RefCurveService {
     public List<Double> findValuesByName(String name);
 
     public void create(RefCurveDTO dto);
-    public void update(RefCurveDTO dto);
     public void delete(RefCurveDTO dto);
 
 }

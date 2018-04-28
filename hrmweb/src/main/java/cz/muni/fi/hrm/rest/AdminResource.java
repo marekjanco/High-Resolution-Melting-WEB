@@ -16,7 +16,6 @@ public class AdminResource {
 
     static final String GET_ALL = "getAll";
     static final String CREATE = "create";
-    static final String UPDATE = "update";
     static final String DELETE = "delete";
 
     @Inject
@@ -30,11 +29,6 @@ public class AdminResource {
     @RequestMapping(value = "/" + CREATE, method = RequestMethod.PUT)
     public void create(@RequestBody RefCurveDTO dto) {
         refCurveService.create(dto);
-    }
-
-    @RequestMapping(value = "/" + UPDATE, method = RequestMethod.PUT)
-    public void update(@RequestBody RefCurveDTO dto) {
-        refCurveService.update(dto);
     }
 
     @RequestMapping(value = "/" + DELETE, method = RequestMethod.PUT)

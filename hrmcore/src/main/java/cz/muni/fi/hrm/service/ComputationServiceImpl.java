@@ -22,7 +22,32 @@ public class ComputationServiceImpl implements ComputationService {
         }
         RefCurveDTO averageCurve = this.createAverageCurve(data);
         List<RefCurve> refData = refCurveRepository.findAll();
-        return new ResultDTO(97, 97, 100);
+
+        ResultDTO result = new ResultDTO(0, 0, 100, null);
+        int counter = 0;
+        for(RefCurve refCurve : refData){
+            ResultDTO tempResult = compareCurves(refCurve, averageCurve);
+            if(tempResult.matchInPerc > result.getMatchInPerc()){
+                result = tempResult;
+            }
+        }
+
+        if(result.refCurveName == null){
+            //FIXME vynimka
+        }
+        return result;
+    }
+
+    private ResultDTO compareCurves(RefCurve refCurve, RefCurveDTO averageCurve) {
+        int match = 0;
+        for(int i = 0; i < refCurve.getValues().size(); ++i){
+            Double value = averageCurve.getValues().get(i);
+            Double margin = refCurve.getErrorMargin().getValues().get(i);
+            if(refCurve.getValues().get(i) - margin <= value && value <= refCurve.getValues().get(i) + margin ){
+                ++match;
+            }
+        }
+        return new ResultDTO(match/refCurve.getValues().size()*100, match, refCurve.getValues().size(), refCurve.getName());
     }
 
     private RefCurveDTO createAverageCurve(List<RefCurveDTO> data){

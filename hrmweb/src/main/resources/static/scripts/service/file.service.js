@@ -13,6 +13,11 @@ angular.module('hrm')
                 }).then(function (response) {
                     return response.data;
                 })
+            },
+            generateFileOfRefCurves: function () {
+                return $http.get('/file/generateFileDbData').then(function (response) {
+                    return response.data;
+                })
             }
         }}
     );

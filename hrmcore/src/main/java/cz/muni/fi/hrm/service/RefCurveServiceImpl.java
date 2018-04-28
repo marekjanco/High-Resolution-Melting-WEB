@@ -77,25 +77,9 @@ public class RefCurveServiceImpl implements RefCurveService {
     }
 
     @Override
-    public void update(RefCurveDTO dto) {
-        /*
-        if(dto.data == null || dto.name == null){
-            throw new IllegalArgumentException("cannot update reference curve with name: "+dto.name+" and data: "+dto.data);
-        }
-        List<RefCurve> list = refCurveRepository.findByName(dto.name);
-        RefCurve na = list.get(0);
-        //String formattedData = this.parseDataToDbFormat(dto.data);
-        //na.setNumbers(formattedData);
-
-        refCurveRepository.save(na);
-        refCurveRepository.flush();
-        */
-    }
-
-    @Override
     public void delete(RefCurveDTO dto) {
         if(dto == null || dto.name == null){
-            throw new IllegalArgumentException("cannot delete reference curve with name: "+dto.name);
+            throw new IllegalArgumentException("cannot delete reference curve with name: "+dto.name +", because it doesnt exist");
         }
         RefCurve curve = refCurveRepository.findByName(dto.name);
         refCurveRepository.delete(curve);

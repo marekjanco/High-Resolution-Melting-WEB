@@ -38,7 +38,13 @@
         </div>
         <div class="ui segment results-menu">
             <b>Results:</b>
-            <br><br>
+            <br>
+            <div class="ui compact message" id="computation-results" ng-show="homeController.result != undefined">
+                <b>User data matched with: </b>{{homeController.result.refCurveName}}<br>
+                <b>Match was: </b>{{homeController.result.matchInPerc}}%<br>
+                {{homeController.result.pointsFitInMargin}}/{{homeController.result.numberOfPoints}}<br>
+            </div>
+            <br>
             <div class="ui teal button" ng-click="homeController.clearGraph()">
                 Clear graph
             </div>

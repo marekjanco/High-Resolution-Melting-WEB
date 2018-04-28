@@ -7,8 +7,7 @@ angular.module('hrm')
                 console.log("comp data, ",data);
                 var config = {
                     headers : {
-                        'Content-Type': 'application/json',
-                        'Accept': 'text/plain'
+                        'Content-Type': 'application/json'
                     }
                 };
                 return $http.post('/computation/compareData',data, config).then(function (response) {

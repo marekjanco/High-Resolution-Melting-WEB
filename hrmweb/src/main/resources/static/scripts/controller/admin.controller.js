@@ -1,13 +1,21 @@
 'use strict';
 
 angular.module('hrm')
-    .controller('AdminController', function (AdminService, ValuesService, $location, $window) {
+    .controller('AdminController', function (AdminService, ValuesService, FileService, $location, $window) {
         var vm = this;
         vm.refCurves = [];
         vm.temperature = undefined;
         vm.success = false;
         vm.xAxis = undefined;
         vm.successMessage = "New dataset was successfully added to DB";
+
+
+        vm.downloadData = function () {
+            FileService.generateFileOfRefCurves().then(function (data) {
+                var file = new Blob([data], { type: 'application/vnd.ms-excel' });
+                saveAs(file, 'data.xlsx');
+            });
+        };
 
         vm.getAll = function () {
             AdminService.getAll().then(function (data) {

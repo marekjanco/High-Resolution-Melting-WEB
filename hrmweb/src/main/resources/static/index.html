@@ -44,8 +44,6 @@
 <script type="text/javascript" src="scripts/controller/index.controller.js"></script>
 <script type="text/javascript" src="scripts/controller/login.controller.js"></script>
 <script type="text/javascript" src="scripts/controller/admin.controller.js"></script>
-<script type="text/javascript" src="scripts/controller/admin.create.controller.js"></script>
-<script type="text/javascript" src="scripts/controller/admin.update.controller.js"></script>
 
 <!--loader-->
 <div class="ui active dimmer" style="position: fixed;width: 100%;height: 100%;" ng-show="loading">
@@ -64,7 +62,7 @@
             </button>
         </a>
         <a class="item" ng-show="indexCtrl.authenticated"><i class="blue user icon"></i> Logged: {{indexCtrl.username}}</a>
-        <a class="item" ng-show="indexCtrl.authenticated" ng-click="indexCtrl.logout()"><i class="power big red icon"></i></a>
+        <a class="item" ng-show="indexCtrl.authenticated" ng-click="indexCtrl.logout()"><i class="sign out red alternate icon"></i></a>
     </div>
 </div>
 <!--END OF MENU-->

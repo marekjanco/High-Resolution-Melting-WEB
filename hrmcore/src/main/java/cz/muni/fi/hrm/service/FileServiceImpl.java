@@ -2,12 +2,16 @@ package cz.muni.fi.hrm.service;
 
 import cz.muni.fi.hrm.dto.RefCurveDTO;
 import cz.muni.fi.hrm.entity.RefCurve;
+import cz.muni.fi.hrm.repository.RefCurveRepository;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Book;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -24,8 +28,13 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.inject.Inject;
+
 @Service
 public class FileServiceImpl implements FileService {
+
+    @Inject
+    private RefCurveRepository refCurveRepository;
 
     @Override
     public List<RefCurveDTO> readUploadedFile(MultipartFile file) throws IOException {
@@ -42,6 +51,25 @@ public class FileServiceImpl implements FileService {
         }
         return curves;
 
+    }
+
+    @Override
+    public Workbook generateFileOfDbData() throws IOException {
+        RefCurve temperature = refCurveRepository.findTemperature();
+        List<RefCurve> refCurves = refCurveRepository.findAll();
+
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("Reference curves");
+
+        for(int i = 0; i < temperature.getValues().size(); ++i){
+            Row row = sheet.createRow(i);
+            Cell cell = row.createCell(1);
+            cell.setCellValue(temperature.getValues().get(i));
+        }
+        try (FileOutputStream outputStream = new FileOutputStream("data.xlsx")) {
+            workbook.write(outputStream);
+        }
+        return workbook;
     }
 
     private List<RefCurveDTO> parseDataFromCsv(final MultipartFile file) throws IOException {

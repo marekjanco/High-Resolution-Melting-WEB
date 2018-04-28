@@ -39,6 +39,7 @@ angular.module('hrm')
         vm.compute = function () {
             $rootScope.loading = true;
             ComputationService.compute(vm.parsedData).then(function (data) {
+                console.log(data);
                 vm.result = data;
             }).finally(function () {
                 $rootScope.loading = false;
