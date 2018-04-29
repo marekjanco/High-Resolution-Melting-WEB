@@ -1,6 +1,5 @@
 package cz.muni.fi.hrm.entity;
 
-import com.sun.istack.internal.NotNull;
 import cz.muni.fi.hrm.dbconfig.ArrayConverter;
 
 import javax.persistence.CascadeType;

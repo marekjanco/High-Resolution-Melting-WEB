@@ -112,7 +112,7 @@ angular.module('hrm')
             vm.getLabels(); //get temperature - x axis
             vm.getNames(); // names and acronyms of reference curves to dropdown
             vm.clearGraph();
-            vm.userDataLoaded = false;
+            vm.userDataLoaded = false
         };
 
         vm.init();

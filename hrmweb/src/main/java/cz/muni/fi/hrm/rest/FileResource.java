@@ -3,6 +3,7 @@ package cz.muni.fi.hrm.rest;
 import cz.muni.fi.hrm.dto.RefCurveDTO;
 import cz.muni.fi.hrm.service.FileService;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.IOUtils;
 import org.springframework.core.io.FileSystemResource;
@@ -38,12 +39,12 @@ public class FileResource {
         return fileService.readUploadedFile(file);
     }
 
-    @RequestMapping(value = "/" + GENERATE_DB_DATA)
-    public void uploadFile(HttpServletResponse response) throws IOException {
-        Workbook wb = fileService.generateFileOfDbData();
+    @RequestMapping(value = "/" + GENERATE_DB_DATA, method = RequestMethod.GET, produces = { "application/json;charset=UTF-8" })
+    public void generateDbData(HttpServletResponse response) throws IOException {
+        HSSFWorkbook wb = fileService.generateFileOfDbData();
 
-        String filename = "data.xlsx";
-        response.setContentType("application/vnd.ms-excel");
+        String filename = "data.xls";
+        response.setContentType("application/xls");
         response.setHeader("Content-disposition", "attachment; filename=" + filename);
         try {
             ServletOutputStream outputStream = response.getOutputStream();

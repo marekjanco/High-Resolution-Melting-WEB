@@ -1,19 +1,22 @@
 'use strict';
 
 angular.module('hrm')
-    .controller('AdminController', function (AdminService, ValuesService, FileService, $location, $window) {
+    .controller('AdminController', function (AdminService, ValuesService, FileService, $location, $window, FileSaver, Blob) {
         var vm = this;
         vm.refCurves = [];
         vm.temperature = undefined;
         vm.success = false;
-        vm.xAxis = undefined;
         vm.successMessage = "New dataset was successfully added to DB";
 
 
         vm.downloadData = function () {
-            FileService.generateFileOfRefCurves().then(function (data) {
-                var file = new Blob([data], { type: 'application/vnd.ms-excel' });
-                saveAs(file, 'data.xlsx');
+            FileService.generateFileOfRefCurves().then(function (response) {
+                var header = response.headers('Content-Disposition');
+                var fileName = header.split("=")[1].replace(/\"/gi, '');
+                console.log('download', fileName);
+                var blob = new Blob([response.data],
+                    {type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation'});
+                FileSaver.saveAs(blob, fileName);
             });
         };
 
@@ -42,10 +45,6 @@ angular.module('hrm')
         vm.init = function () {
             if ($location.$$search.success) {
                 vm.successMessage = "New dataset was successfully added to DB";
-                vm.success = true;
-            }
-            if ($location.$$search.updated) {
-                vm.successMessage = "Dataset was successfully updated";
                 vm.success = true;
             }
             vm.getAll();

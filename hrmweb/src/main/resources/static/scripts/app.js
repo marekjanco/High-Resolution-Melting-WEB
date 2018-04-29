@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('hrm', ['chart.js', 'ngResource', 'ngRoute'])
+angular.module('hrm', ['chart.js', 'ngResource', 'ngRoute', 'ngFileSaver'])
     .run(function ($window, $location, $http, $q, $timeout, $rootScope) {
     });
 

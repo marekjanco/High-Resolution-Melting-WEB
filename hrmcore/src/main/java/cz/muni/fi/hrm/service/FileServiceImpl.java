@@ -33,6 +33,9 @@ import javax.inject.Inject;
 @Service
 public class FileServiceImpl implements FileService {
 
+    public static final Double TEMPERATURE_MAX = 90.0;
+    public static final Double TEMPERATURE_MIN = 70.0;
+
     @Inject
     private RefCurveRepository refCurveRepository;
 
@@ -49,27 +52,153 @@ public class FileServiceImpl implements FileService {
         } else {
             //FIXME vynimka, nejaky error
         }
+        if(this.checkIfCurveIsTemperature(curves.get(0))){
+            curves.get(0).setName("temperature");
+            curves = this.checkIntervalOfData(curves);
+        }
         return curves;
 
     }
 
+    private List<RefCurveDTO> checkIntervalOfData(List<RefCurveDTO> curves) {
+        RefCurveDTO temperature = curves.get(0);
+        int index = this.indexOfSubinterval(temperature);
+        if(index != -1){
+            for (RefCurveDTO curve : curves) {
+                List<Double> newValues = new ArrayList<>();
+                for (int j = 0; j < index; ++j) {
+                    newValues.add(null);
+                }
+                newValues.addAll(curve.getValues());
+                for (int j = temperature.getValues().size(); j < curves.get(0).getValues().size(); ++j) {
+                    newValues.add(null);
+                }
+                curve.setValues(newValues);
+            }
+        }else{
+            //interpolacia
+        }
+        return curves;
+    }
+
+    private int indexOfSubinterval(RefCurveDTO temperature) {
+        RefCurve dbTemperature = refCurveRepository.findTemperature();
+        int index = 0;
+        int ret = -1;
+        boolean sequence = false;
+        for(int i = 0; i < dbTemperature.getValues().size(); ++i){
+            if(index == temperature.getValues().size()){
+                break;
+            }
+            Double dbValue = dbTemperature.getValues().get(i);
+            if(Math.abs(temperature.getValues().get(index) - dbValue) <= 0.00000001){
+                if(!sequence){
+                    sequence = true;
+                    ret = i;
+                    index++;
+                }else {
+                    index++;
+                }
+            }else{
+                if(sequence){
+                    break;
+                }
+            }
+        }
+        if(index == temperature.getValues().size()){
+            return ret;
+        };
+        return -1;
+    }
+
+    private boolean checkIfCurveIsTemperature(RefCurveDTO refCurveDTO) {
+        List<Double> values = refCurveDTO.getValues();
+        Double previous = 0.0;
+        for(int i = 0; i < values.size(); ++i){
+            if(values.get(i) < TEMPERATURE_MIN  || values.get(i) > TEMPERATURE_MAX ||
+                    values.get(i) < previous){
+                return false;
+            }
+            previous = values.get(i);
+        }
+        return true;
+    }
+
     @Override
-    public Workbook generateFileOfDbData() throws IOException {
+    public HSSFWorkbook generateFileOfDbData() throws IOException {
         RefCurve temperature = refCurveRepository.findTemperature();
         List<RefCurve> refCurves = refCurveRepository.findAll();
 
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("Reference curves");
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("Reference curves");
 
-        for(int i = 0; i < temperature.getValues().size(); ++i){
-            Row row = sheet.createRow(i);
-            Cell cell = row.createCell(1);
-            cell.setCellValue(temperature.getValues().get(i));
-        }
-        try (FileOutputStream outputStream = new FileOutputStream("data.xlsx")) {
+        this.putHeaderInSheet(sheet, temperature, refCurves);
+        this.putValuesInSheet(sheet, temperature, refCurves);
+
+        HSSFSheet sheet2 = workbook.createSheet("Error margins");
+        this.putMarginErrorsInSheet(sheet2, refCurves, temperature.getValues().size());
+
+
+        try (FileOutputStream outputStream = new FileOutputStream("data.xls")) {
             workbook.write(outputStream);
         }
         return workbook;
+    }
+
+    private void putMarginErrorsInSheet(HSSFSheet sheet2, List<RefCurve> refCurves, int size) {
+        //header
+        Row row = sheet2.createRow(0);
+        for(int i = 0; i < refCurves.size(); ++i){
+            Cell c = row.createCell(i);
+            c.setCellValue(refCurves.get(i).getName());
+        }
+        //values
+        for(int i = 0; i < size; ++i){
+            row = sheet2.createRow(i + 1); //+1 because of a header
+            for(int j = 0; j < refCurves.size(); ++j){
+                Cell cell = row.createCell(j);
+                cell.setCellValue(refCurves.get(j).getErrorMargin().getValues().get(j));
+            }
+        }
+    }
+
+    private void putValuesInSheet(HSSFSheet sheet, RefCurve temperature, List<RefCurve> refCurves) {
+        for(int i = 0; i < temperature.getValues().size(); ++i){
+            Row row = sheet.createRow(i + 3); //+3 because of a header
+            Cell cellTemperature = row.createCell(0);
+            cellTemperature.setCellValue(temperature.getValues().get(i));
+            for(int j = 0; j < refCurves.size(); ++j){
+                Cell cell = row.createCell(j + 1);
+                cell.setCellValue(refCurves.get(j).getValues().get(i));
+            }
+        }
+    }
+
+    private void putHeaderInSheet(HSSFSheet sheet, RefCurve temperature, List<RefCurve> refCurves) {
+        //names
+        Row row = sheet.createRow(0);
+        Cell cell = row.createCell(0);
+        cell.setCellValue(temperature.getName());
+        for(int i = 0; i < refCurves.size(); ++i){
+            Cell c = row.createCell(i + 1);
+            c.setCellValue(refCurves.get(i).getName());
+        }
+        //acronyms
+        row = sheet.createRow(1);
+        cell = row.createCell(0);
+        cell.setCellValue(temperature.getAcronym());
+        for(int i = 0; i < refCurves.size(); ++i){
+            Cell c = row.createCell(i + 1);
+            c.setCellValue(refCurves.get(i).getAcronym());
+        }
+        //notes
+        row = sheet.createRow(2);
+        cell = row.createCell(0);
+        cell.setCellValue(temperature.getNote());
+        for(int i = 0; i < refCurves.size(); ++i){
+            Cell c = row.createCell(i + 1);
+            c.setCellValue(refCurves.get(i).getNote());
+        }
     }
 
     private List<RefCurveDTO> parseDataFromCsv(final MultipartFile file) throws IOException {
