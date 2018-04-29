@@ -157,7 +157,7 @@ public class FileServiceImpl implements FileService {
             row = sheet2.createRow(i + 1); //+1 because of a header
             for(int j = 0; j < refCurves.size(); ++j){
                 Cell cell = row.createCell(j);
-                cell.setCellValue(refCurves.get(j).getErrorMargin().getValues().get(j));
+                cell.setCellValue(refCurves.get(j).getErrorMargin().getValues().get(i));
             }
         }
     }
