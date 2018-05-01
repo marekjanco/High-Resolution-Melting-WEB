@@ -5,7 +5,17 @@
                 {{adminController.successMessage}}
             </div>
         </div>
-        <a href="#"><i class="large green plus icon"></i> Add new refCurve to DB</a>
+        <a href="#" ng-click="adminController.addData()"><i class="large green plus icon"></i> Add new reference curves to DB</a>
+        <div class="ui segment" ng-show="adminController.newDataField">
+            <b>Load user data: </b>
+            <form class="uploadForm">
+                <input type="file" id="admin_excel_file" accept=".xls,.xlsx,.csv">
+                <p>Drag your files here or click in this area.</p>
+            </form>
+            <div id="uploadButton" class="ui teal button" ng-click="adminController.uploadFile()">
+                Load data
+            </div>
+        </div>
         <br/>
         <a href="#" ng-click="adminController.downloadData()"><i class="large download icon"></i> Download data currently in DB</a>
         <br/>

@@ -5,6 +5,7 @@ import cz.muni.fi.hrm.entity.RefCurve;
 import cz.muni.fi.hrm.repository.RefCurveRepository;
 import org.dozer.DozerBeanMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class RefCurveServiceImpl implements RefCurveService {
 
     @Inject
@@ -49,31 +51,24 @@ public class RefCurveServiceImpl implements RefCurveService {
         if (curve == null) {
             return new ArrayList<Double>(){};
         }
-        return curve.getValues();
+        return null;
     }
 
     @Override
-    public void create(RefCurveDTO dto) {
-        /*
-        if(dto.data == null || dto.name == null){
-            throw new IllegalArgumentException("cannot create reference curve with name: "+dto.name+" and data: "+dto.data);
+    public void createOrUpdate(List<RefCurveDTO> dtos) {
+        List<RefCurve> toCreate = new ArrayList<>();
+        for(RefCurveDTO dto: dtos){
+            RefCurve curve = this.convertFromDto(dto);
+            toCreate.add(curve);
         }
-        List<RefCurveDTO> names = this.getAllNames();
-        for(RefCurveDTO nameDTO: names){
-            if(nameDTO.name.equals(dto.name)){
-                throw new IllegalArgumentException("dataset with name "+dto.name+" already exists");
-            }
-        }
-        RefCurve na = new RefCurve();
-        na.setName(dto.name);
-        na.setAcronym(dto.acronym);
-        na.setNote(dto.note);
-        //String formattedData = this.parseDataToDbFormat(dto.data);
-        //na.setNumbers(formattedData);
-
-        refCurveRepository.save(na);
+        refCurveRepository.deleteAll();
+        refCurveRepository.save(toCreate);
         refCurveRepository.flush();
-        */
+    }
+
+    @Override
+    public void create(RefCurve curve) {
+        this.refCurveRepository.saveAndFlush(curve);
     }
 
     @Override
@@ -96,4 +91,10 @@ public class RefCurveServiceImpl implements RefCurveService {
         RefCurveDTO dto = mapper.map(refCurve, RefCurveDTO.class);
         return dto;
     }
+
+    private RefCurve convertFromDto(RefCurveDTO refCurve) {
+        RefCurve ret = mapper.map(refCurve, RefCurve.class);
+        return ret;
+    }
+
 }

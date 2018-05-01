@@ -16,7 +16,7 @@ angular.module('hrm')
             },
             generateFileOfRefCurves: function () {
                 return $http.get('/file/generateFileDbData',{headers: {'Content-type': 'application/json'},
-                responseType: "arraybuffer"}).then(function (response) {
+                    responseType: "arraybuffer"}).then(function (response) {
                     return response;
                 })
             }

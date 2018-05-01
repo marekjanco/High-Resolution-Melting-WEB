@@ -3,10 +3,8 @@ package cz.muni.fi.hrm.rest;
 import cz.muni.fi.hrm.dto.RefCurveDTO;
 import cz.muni.fi.hrm.service.FileService;
 
+import cz.muni.fi.hrm.service.RefCurveService;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.util.IOUtils;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,10 +17,7 @@ import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 
 @RestController
@@ -36,7 +31,7 @@ public class FileResource {
 
     @RequestMapping(value = "/" + UPLOAD_EXCEL, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<RefCurveDTO> uploadFile(@RequestParam(value="file", required=true) MultipartFile file, HttpServletRequest request) throws IOException {
-        return fileService.readUploadedFile(file);
+        return fileService.readUploadedFile(file, false);
     }
 
     @RequestMapping(value = "/" + GENERATE_DB_DATA, method = RequestMethod.GET, produces = { "application/json;charset=UTF-8" })

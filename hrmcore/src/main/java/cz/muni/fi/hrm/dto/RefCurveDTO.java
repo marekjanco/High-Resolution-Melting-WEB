@@ -8,12 +8,14 @@ public class RefCurveDTO {
     public String acronym;
     public String note;
     public List<Double> values;
+    public ErrorMarginDTO errorMargin;
 
     public RefCurveDTO(String name, String acronym, String note, List<Double> values){
         this.name = name;
         this.acronym = acronym;
         this.note = note;
         this.values = values;
+        this.errorMargin = null;
     }
 
     public RefCurveDTO(){
@@ -50,5 +52,13 @@ public class RefCurveDTO {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public ErrorMarginDTO getErrorMargin() {
+        return errorMargin;
+    }
+
+    public void setErrorMargin(ErrorMarginDTO errorMargin) {
+        this.errorMargin = errorMargin;
     }
 }

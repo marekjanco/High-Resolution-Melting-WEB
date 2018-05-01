@@ -8,13 +8,17 @@ angular.module('hrm')
                     return response.data;
                 })
             },
-            create: function (object) {
-                return $http.put('/admin/refCurve/create', object).then(function (response) {
-                    return response.data;
-                })
-            },
             delete: function (object) {
                 return $http.put('/admin/refCurve/delete', object).then(function (response) {
+                    return response.data;
+                })
+            },uploadFileAndSave: function (file) {
+                var fd = new FormData();
+                fd.append('file', file);
+                return $http.post('/admin/uploadExcelAndSave', fd, {
+                    transformRequest: angular.identity,
+                    headers: {'Content-Type': undefined}
+                }).then(function (response) {
                     return response.data;
                 })
             }

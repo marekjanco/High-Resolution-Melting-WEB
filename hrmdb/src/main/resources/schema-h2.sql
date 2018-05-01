@@ -1,4 +1,4 @@
-CREATE TABLE ERROR_MARGIN (
+/*CREATE TABLE ERROR_MARGIN (
   ID                NUMBER            NOT NULL,
   VALUES            ARRAY             NOT NULL,
   constraint ERROR_MARGIN_PK primary key (ID)
@@ -17,5 +17,5 @@ CREATE TABLE REFERENCE_CURVE (
   constraint ERROR_MARGIN_FK foreign key (ERROR_MARGIN_ID)
   references ERROR_MARGIN (ID)
   );
-
+*/
 create sequence SEQ_GLOBAL_HIBERNATE start with 120 increment by 1;

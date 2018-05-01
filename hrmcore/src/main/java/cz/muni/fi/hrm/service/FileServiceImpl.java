@@ -1,5 +1,6 @@
 package cz.muni.fi.hrm.service;
 
+import cz.muni.fi.hrm.dto.ErrorMarginDTO;
 import cz.muni.fi.hrm.dto.RefCurveDTO;
 import cz.muni.fi.hrm.entity.RefCurve;
 import cz.muni.fi.hrm.repository.RefCurveRepository;
@@ -26,102 +27,43 @@ import org.apache.commons.csv.CSVRecord;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.inject.Inject;
 
 @Service
+@Transactional
 public class FileServiceImpl implements FileService {
-
-    public static final Double TEMPERATURE_MAX = 90.0;
-    public static final Double TEMPERATURE_MIN = 70.0;
 
     @Inject
     private RefCurveRepository refCurveRepository;
 
     @Override
-    public List<RefCurveDTO> readUploadedFile(MultipartFile file) throws IOException {
+    public List<RefCurveDTO> readUploadedFile(MultipartFile file, boolean marginErrorSheet) throws IOException {
         String filename = file.getOriginalFilename();
         List<RefCurveDTO> curves = null;
         if (filename.endsWith(".csv")) {
+            if (marginErrorSheet) {
+                //FIXME error pre csv
+            }
             curves = this.parseDataFromCsv(file);
         } else if (filename.endsWith(".xlsx")) {
-            curves = this.parseDataFromXlsx(file);
+            curves = this.parseDataFromXlsx(file, marginErrorSheet);
         } else if (filename.endsWith(".xls")) {
-            curves = this.parseDataFromXls(file);
+            curves = this.parseDataFromXls(file, marginErrorSheet);
         } else {
             //FIXME vynimka, nejaky error
         }
-        if(this.checkIfCurveIsTemperature(curves.get(0))){
+        if (curves == null) {
+            //FIXME vynimka
+        }
+        if (this.checkIfCurveIsTemperature(curves.get(0))) {
             curves.get(0).setName("temperature");
             curves = this.checkIntervalOfData(curves);
         }
         return curves;
 
-    }
-
-    private List<RefCurveDTO> checkIntervalOfData(List<RefCurveDTO> curves) {
-        RefCurveDTO temperature = curves.get(0);
-        int index = this.indexOfSubinterval(temperature);
-        if(index != -1){
-            for (RefCurveDTO curve : curves) {
-                List<Double> newValues = new ArrayList<>();
-                for (int j = 0; j < index; ++j) {
-                    newValues.add(null);
-                }
-                newValues.addAll(curve.getValues());
-                for (int j = temperature.getValues().size(); j < curves.get(0).getValues().size(); ++j) {
-                    newValues.add(null);
-                }
-                curve.setValues(newValues);
-            }
-        }else{
-            //interpolacia
-        }
-        return curves;
-    }
-
-    private int indexOfSubinterval(RefCurveDTO temperature) {
-        RefCurve dbTemperature = refCurveRepository.findTemperature();
-        int index = 0;
-        int ret = -1;
-        boolean sequence = false;
-        for(int i = 0; i < dbTemperature.getValues().size(); ++i){
-            if(index == temperature.getValues().size()){
-                break;
-            }
-            Double dbValue = dbTemperature.getValues().get(i);
-            if(Math.abs(temperature.getValues().get(index) - dbValue) <= 0.00000001){
-                if(!sequence){
-                    sequence = true;
-                    ret = i;
-                    index++;
-                }else {
-                    index++;
-                }
-            }else{
-                if(sequence){
-                    break;
-                }
-            }
-        }
-        if(index == temperature.getValues().size()){
-            return ret;
-        };
-        return -1;
-    }
-
-    private boolean checkIfCurveIsTemperature(RefCurveDTO refCurveDTO) {
-        List<Double> values = refCurveDTO.getValues();
-        Double previous = 0.0;
-        for(int i = 0; i < values.size(); ++i){
-            if(values.get(i) < TEMPERATURE_MIN  || values.get(i) > TEMPERATURE_MAX ||
-                    values.get(i) < previous){
-                return false;
-            }
-            previous = values.get(i);
-        }
-        return true;
     }
 
     @Override
@@ -145,17 +87,82 @@ public class FileServiceImpl implements FileService {
         return workbook;
     }
 
+    private List<RefCurveDTO> checkIntervalOfData(List<RefCurveDTO> curves) {
+        RefCurveDTO temperature = curves.get(0);
+        int index = this.indexOfSubinterval(temperature);
+        if (index != -1) {
+            for (RefCurveDTO curve : curves) {
+                List<Double> newValues = new ArrayList<>();
+                for (int j = 0; j < index; ++j) {
+                    newValues.add(null);
+                }
+                newValues.addAll(curve.getValues());
+                for (int j = temperature.getValues().size(); j < curves.get(0).getValues().size(); ++j) {
+                    newValues.add(null);
+                }
+                curve.setValues(newValues);
+            }
+        } else {
+            //interpolacia
+
+        }
+        return curves;
+    }
+
+    private int indexOfSubinterval(RefCurveDTO temperature) {
+        RefCurve dbTemperature = refCurveRepository.findTemperature();
+        int index = 0;
+        int ret = -1;
+        boolean sequence = false;
+        for (int i = 0; i < dbTemperature.getValues().size(); ++i) {
+            if (index == temperature.getValues().size()) {
+                break;
+            }
+            Double dbValue = dbTemperature.getValues().get(i);
+            if (Math.abs(temperature.getValues().get(index) - dbValue) <= 0.00000001) {
+                if (!sequence) {
+                    sequence = true;
+                    ret = i;
+                    index++;
+                } else {
+                    index++;
+                }
+            } else {
+                if (sequence) {
+                    break;
+                }
+            }
+        }
+        if (index == temperature.getValues().size()) {
+            return ret;
+        }
+        return -1;
+    }
+
+    private boolean checkIfCurveIsTemperature(RefCurveDTO refCurveDTO) {
+        List<Double> values = refCurveDTO.getValues();
+        Double previous = 0.0;
+        for (int i = 0; i < values.size(); ++i) {
+            if (values.get(i) < TEMPERATURE_MIN || values.get(i) > TEMPERATURE_MAX ||
+                    values.get(i) < previous) {
+                return false;
+            }
+            previous = values.get(i);
+        }
+        return true;
+    }
+
     private void putMarginErrorsInSheet(HSSFSheet sheet2, List<RefCurve> refCurves, int size) {
         //header
         Row row = sheet2.createRow(0);
-        for(int i = 0; i < refCurves.size(); ++i){
+        for (int i = 0; i < refCurves.size(); ++i) {
             Cell c = row.createCell(i);
             c.setCellValue(refCurves.get(i).getName());
         }
         //values
-        for(int i = 0; i < size; ++i){
+        for (int i = 0; i < size; ++i) {
             row = sheet2.createRow(i + 1); //+1 because of a header
-            for(int j = 0; j < refCurves.size(); ++j){
+            for (int j = 0; j < refCurves.size(); ++j) {
                 Cell cell = row.createCell(j);
                 cell.setCellValue(refCurves.get(j).getErrorMargin().getValues().get(i));
             }
@@ -163,11 +170,11 @@ public class FileServiceImpl implements FileService {
     }
 
     private void putValuesInSheet(HSSFSheet sheet, RefCurve temperature, List<RefCurve> refCurves) {
-        for(int i = 0; i < temperature.getValues().size(); ++i){
+        for (int i = 0; i < temperature.getValues().size(); ++i) {
             Row row = sheet.createRow(i + 3); //+3 because of a header
             Cell cellTemperature = row.createCell(0);
             cellTemperature.setCellValue(temperature.getValues().get(i));
-            for(int j = 0; j < refCurves.size(); ++j){
+            for (int j = 0; j < refCurves.size(); ++j) {
                 Cell cell = row.createCell(j + 1);
                 cell.setCellValue(refCurves.get(j).getValues().get(i));
             }
@@ -179,7 +186,7 @@ public class FileServiceImpl implements FileService {
         Row row = sheet.createRow(0);
         Cell cell = row.createCell(0);
         cell.setCellValue(temperature.getName());
-        for(int i = 0; i < refCurves.size(); ++i){
+        for (int i = 0; i < refCurves.size(); ++i) {
             Cell c = row.createCell(i + 1);
             c.setCellValue(refCurves.get(i).getName());
         }
@@ -187,7 +194,7 @@ public class FileServiceImpl implements FileService {
         row = sheet.createRow(1);
         cell = row.createCell(0);
         cell.setCellValue(temperature.getAcronym());
-        for(int i = 0; i < refCurves.size(); ++i){
+        for (int i = 0; i < refCurves.size(); ++i) {
             Cell c = row.createCell(i + 1);
             c.setCellValue(refCurves.get(i).getAcronym());
         }
@@ -195,7 +202,7 @@ public class FileServiceImpl implements FileService {
         row = sheet.createRow(2);
         cell = row.createCell(0);
         cell.setCellValue(temperature.getNote());
-        for(int i = 0; i < refCurves.size(); ++i){
+        for (int i = 0; i < refCurves.size(); ++i) {
             Cell c = row.createCell(i + 1);
             c.setCellValue(refCurves.get(i).getNote());
         }
@@ -215,10 +222,10 @@ public class FileServiceImpl implements FileService {
                 }
                 for (int i = 0; i < record.size(); ++i) {
                     Double parsed = null;
-                    try{
+                    try {
                         parsed = Double.parseDouble(record.get(i));
                         curves.get(i).values.add(parsed);
-                    }catch(Exception e){
+                    } catch (Exception e) {
                         //FIXME vynimka
                     }
                 }
@@ -229,39 +236,104 @@ public class FileServiceImpl implements FileService {
         return curves;
     }
 
-    private List<RefCurveDTO> parseDataFromXlsx(final MultipartFile file) throws IOException {
-        Workbook wb = new XSSFWorkbook(file.getInputStream());
-        Sheet sheet = wb.getSheetAt(0);
-        Iterator<Row> iterator = sheet.iterator();
+    private List<RefCurveDTO> parseDataFromXlsx(final MultipartFile file, boolean marginErrorSheet) throws IOException {
+        List<RefCurveDTO> ret = null;
+        try (Workbook wb = new XSSFWorkbook(file.getInputStream())) {
+            Sheet sheet = wb.getSheetAt(0);
+            Iterator<Row> iterator = sheet.iterator();
 
-        List<RefCurveDTO> ret = this.iterateExcelSheet(iterator);
-
-        wb.close(); //FIXME finally block
+            ret = this.iterateExcelSheet(iterator, marginErrorSheet);
+            List<ErrorMarginDTO> errorMargins = null;
+            if (marginErrorSheet) {
+                errorMargins = this.parseErrorMargins(file);
+                ret = this.connectMarginsToCurves(ret, errorMargins);
+            }
+        } catch (IOException e) {
+            //FIXME vynimka
+        }
         return ret;
     }
 
-    private List<RefCurveDTO> parseDataFromXls(MultipartFile file) throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook(file.getInputStream());
-        HSSFSheet sheet = wb.getSheetAt(0);
-        Iterator<Row> iterator = sheet.iterator();
+    private List<RefCurveDTO> parseDataFromXls(MultipartFile file, boolean marginErrorSheet) {
+        List<RefCurveDTO> ret = null;
+        try (HSSFWorkbook wb = new HSSFWorkbook(file.getInputStream())) {
 
-        List<RefCurveDTO> ret = this.iterateExcelSheet(iterator);
+            HSSFSheet sheet = wb.getSheetAt(0);
+            Iterator<Row> iterator = sheet.iterator();
 
-        wb.close(); //FIXME finally block
+            ret = this.iterateExcelSheet(iterator, marginErrorSheet);
+            List<ErrorMarginDTO> errorMargins = null;
+            if (marginErrorSheet) {
+                errorMargins = this.parseErrorMargins(file);
+                ret = this.connectMarginsToCurves(ret, errorMargins);
+            }
+        } catch (IOException e) {
+            //FIXME vynimka
+        }
         return ret;
     }
 
-    private List<RefCurveDTO> iterateExcelSheet(Iterator<Row> iterator) {
-        boolean firstRow = true;
+    private List<ErrorMarginDTO> parseErrorMargins(MultipartFile file) {
+        List<ErrorMarginDTO> ret = null;
+        try (HSSFWorkbook wb = new HSSFWorkbook(file.getInputStream())) {
+
+            HSSFSheet sheet = wb.getSheetAt(1);
+            Iterator<Row> iterator = sheet.iterator();
+
+            int i = 0;
+            while (iterator.hasNext()) {
+                Row nextRow = iterator.next();
+                Iterator<Cell> cellIterator = nextRow.cellIterator();
+                if (i == 0) {
+                    ret = checkExcelHeaderErrorMargin(cellIterator);
+                    ++i;
+                    continue;
+                }
+                int cellCounter = 0;
+                while (cellIterator.hasNext()) {
+                    Cell cell = cellIterator.next();
+                    switch (cell.getCellTypeEnum()) {
+                        case NUMERIC:
+                            ret.get(cellCounter).values.add(cell.getNumericCellValue());
+                            break;
+                        case STRING:
+                        case BOOLEAN:
+                            //FIXME vynimka
+                            break;
+                    }
+                    cellCounter++;
+                }
+                ++i;
+            }
+        } catch (IOException e) {
+            //FIXME vynimka
+        }
+        return ret;
+
+    }
+
+    private List<RefCurveDTO> iterateExcelSheet(Iterator<Row> iterator, boolean marginErrorSheet) {
         List<RefCurveDTO> curves = null;
-
+        int i = 0;
         while (iterator.hasNext()) {
+            if (i == 0) {
+                if (marginErrorSheet) {
+                    curves = this.checkExcelHeaderWithAllValues(iterator);
+                    ++i;
+                    continue;
+                }
+                Row nextRow = iterator.next();
+                Iterator<Cell> cellIterator = nextRow.cellIterator();
+                curves = this.checkExcelHeader(cellIterator);
+                ++i;
+                continue;
+            }
+            if (i < 3 && marginErrorSheet) {
+                ++i;
+                continue;
+            }
             Row nextRow = iterator.next();
             Iterator<Cell> cellIterator = nextRow.cellIterator();
-            if (firstRow) {
-                curves = this.checkExcelHeader(cellIterator);
-                firstRow = false;
-            }
             int cellCounter = 0;
             while (cellIterator.hasNext()) {
                 Cell cell = cellIterator.next();
@@ -276,19 +348,20 @@ public class FileServiceImpl implements FileService {
                 }
                 cellCounter++;
             }
+            ++i;
         }
         return curves;
     }
 
     private List<RefCurveDTO> checkCsvHeader(CSVRecord record) {
         List<RefCurveDTO> curves = new ArrayList<>();
-        for(int i = 0; i < record.size(); ++i){
+        for (int i = 0; i < record.size(); ++i) {
             RefCurveDTO curve = new RefCurveDTO();
             Double parsed = null;
-            try{
+            try {
                 parsed = Double.parseDouble(record.get(i));
                 curve.values.add(parsed);
-            }catch(Exception e){
+            } catch (Exception e) {
                 curve.name = record.get(i);
             }
             curves.add(curve);
@@ -320,4 +393,81 @@ public class FileServiceImpl implements FileService {
         return ret;
     }
 
+
+    private List<ErrorMarginDTO> checkExcelHeaderErrorMargin(Iterator<Cell> cellIterator) {
+        List<ErrorMarginDTO> ret = new ArrayList<>();
+        while (cellIterator.hasNext()) {
+            Cell cell = cellIterator.next();
+            ErrorMarginDTO errorMargin = new ErrorMarginDTO();
+            switch (cell.getCellTypeEnum()) {
+                case STRING:
+                    errorMargin.name = cell.getStringCellValue();
+                    break;
+                case NUMERIC:
+                case BOOLEAN:
+                    return null;
+            }
+            ret.add(errorMargin);
+        }
+        return ret;
+    }
+
+    private List<RefCurveDTO> checkExcelHeaderWithAllValues(Iterator<Row> iterator) {
+        int index = 0;
+        List<RefCurveDTO> ret = new ArrayList<>();
+        while (iterator.hasNext() && index < 3) {
+            Row nextRow = iterator.next();
+            Iterator<Cell> cellIterator = nextRow.cellIterator();
+            int i = 0;
+            while (cellIterator.hasNext()) {
+                Cell cell = cellIterator.next();
+                RefCurveDTO curve = null;
+                if (index == 0) {
+                    curve = new RefCurveDTO();
+                } else {
+                    curve = ret.get(i);
+                }
+                switch (cell.getCellTypeEnum()) {
+                    case STRING:
+                        String str = cell.getStringCellValue();
+                        switch (index) {
+                            case 0:
+                                curve.name = str;
+                                break;
+                            case 1:
+                                curve.acronym = str;
+                                break;
+                            case 2:
+                                curve.note = str;
+                        }
+                        break;
+                    case NUMERIC:
+                    case BOOLEAN:
+                        //FIXME vynimka
+                        break;
+                }
+                if(index == 0){
+                    ret.add(curve);
+                }
+                ++i;
+            }
+            index++;
+        }
+
+        return ret;
+
+    }
+
+    private List<RefCurveDTO> connectMarginsToCurves(List<RefCurveDTO> curves, List<ErrorMarginDTO> errorMargins) {
+        for(RefCurveDTO curve: curves){
+            String name = curve.getName();
+            for(ErrorMarginDTO margin: errorMargins){
+                if(name.equals(margin.name)){
+                    curve.setErrorMargin(margin);
+                    break;
+                }
+            }
+        }
+        return curves;
+    }
 }

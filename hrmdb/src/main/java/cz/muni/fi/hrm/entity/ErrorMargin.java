@@ -1,15 +1,19 @@
 package cz.muni.fi.hrm.entity;
 
-import cz.muni.fi.hrm.dbconfig.ArrayConverter;
+
+import com.sun.istack.internal.NotNull;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.Column;
-import javax.persistence.Convert;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.util.List;
 
@@ -18,13 +22,12 @@ import java.util.List;
 public class ErrorMargin {
 
     @Id
-    @SequenceGenerator(name = "SEQ_GLOBAL_HIBERNATE", sequenceName = "SEQ_GLOBAL_HIBERNATE")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_GLOBAL_HIBERNATE")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", insertable = false, updatable = false, nullable = false, unique = true)
     private Long id;
 
-    @Column(name = "VALUES", nullable = false)
-    @Convert(converter = ArrayConverter.class)
+    @LazyCollection(value = LazyCollectionOption.FALSE)
+    @ElementCollection
     private List<Double> values;
 
     public Long getId() {
