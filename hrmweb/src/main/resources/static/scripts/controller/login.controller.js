@@ -6,10 +6,6 @@ angular.module('hrm').controller('LoginController', function ($scope, $rootScope
 
     vm.username = undefined;
     vm.password = undefined;
-    vm.error = false;
-    vm.logout = false;
-    vm.errorMessage = 'Authentication failed. Please try again.';
-    vm.logoutMessage = 'You have been successfully logged out.';
 
     vm.login = function () {
         $rootScope.loading = true;
@@ -26,12 +22,6 @@ angular.module('hrm').controller('LoginController', function ($scope, $rootScope
     };
 
     vm.init = function () {
-        if ($location.$$search.logout) {
-            vm.logout = true;
-        }
-        if ($location.$$search.error) {
-            vm.error = true;
-        }
     };
 
     vm.init();

@@ -19,6 +19,7 @@ angular.module('hrm')
         });
 
         vm.downloadData = function () {
+            $rootScope.loading = true;
             FileService.generateFileOfRefCurves().then(function (response) {
                 var header = response.headers('Content-Disposition');
                 var fileName = header.split("=")[1].replace(/\"/gi, '');
@@ -26,6 +27,8 @@ angular.module('hrm')
                 var blob = new Blob([response.data],
                     {type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation'});
                 FileSaver.saveAs(blob, fileName);
+            }).finally(function () {
+                $rootScope.loading = false;
             });
         };
 

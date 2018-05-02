@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('hrm')
-    .factory('AuthService', function ($window, $http) {
+    .factory('AuthService', function ($window, $http, $rootScope) {
         var credentials = {username: undefined, password: undefined};
         return {
             authenticate: function (credentials, callback) {
@@ -30,7 +30,11 @@ angular.module('hrm')
                 $http.post('authenticate', '', config).then(
                     response = this.authenticate(credentials, function (response) {
                         return response;
-                    })
+                    },
+                        function(response) {
+                            $rootScope.showError = true;
+                            $rootScope.errorMessage = 'Authentication failed. Please try again.';
+                        })
                 ).
                 catch(function (err) {
                     this.logout();
@@ -40,6 +44,9 @@ angular.module('hrm')
             logout: function () {
                 return $http.post('logout', {}).then(
                     function (response) {
+                        $
+                        $rootScope.showSuccess = true;
+                        $rootScope.successMessage = 'You have been successfully logged out.';
                         return response;
                     })
             },

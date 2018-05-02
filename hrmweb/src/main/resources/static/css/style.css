@@ -2,16 +2,16 @@
     margin-top: 2em;
 }
 .content {
-    margin-top: 3em;
+    margin-top: 2em;
     width: 90% !important;
 }
-.user-data-menu{
+.ui.horizontal.segments>.segment .user-data-menu{
     width:45%;
 }
-.ref-curves-menu{
+.ui.horizontal.segments>.segment .ref-curves-menu{
     width: 30%
 }
-.results-menu{
+.ui.horizontal.segments>.segment .results-menu{
     width:25%;
 }
 .userDataInput {
@@ -66,4 +66,9 @@
     margin-left: 5px;
     margin-right: 5px;
     width:90%;
+}
+#message-div{
+    width: 70%;
+    margin:0 auto;
+    margin-top: 1em;
 }

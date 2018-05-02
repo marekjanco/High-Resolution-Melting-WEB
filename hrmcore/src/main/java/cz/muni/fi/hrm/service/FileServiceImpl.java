@@ -9,6 +9,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.awt.print.Book;
@@ -45,21 +46,19 @@ public class FileServiceImpl implements FileService {
         List<RefCurveDTO> curves = null;
         if (filename.endsWith(".csv")) {
             if (marginErrorSheet) {
-                //FIXME error pre csv
+                throw new IllegalArgumentException(".csv files are not supported, add excel file - .xlsx or xls ");
             }
             curves = this.parseDataFromCsv(file);
         } else if (filename.endsWith(".xlsx")) {
             curves = this.parseDataFromXlsx(file, marginErrorSheet);
         } else if (filename.endsWith(".xls")) {
             curves = this.parseDataFromXls(file, marginErrorSheet);
+            throw new IllegalArgumentException(".csv files are not supported, add excel file - .xlsx or xls ");
         } else {
-            //FIXME vynimka, nejaky error
-        }
-        if (curves == null) {
-            //FIXME vynimka
+            throw new IllegalArgumentException("Unknown file type");
         }
         if(curves == null || curves.get(0) == null){
-            //FIXME vynimka
+            throw new IllegalArgumentException("Reading of file was not successful or file is empty");
         }
         if (this.checkIfCurveIsTemperature(curves.get(0))) {
             curves.get(0).setName("temperature");
@@ -67,7 +66,6 @@ public class FileServiceImpl implements FileService {
             curves.get(0).setErrorMargin(new ErrorMarginDTO());
         }
         return curves;
-
     }
 
     @Override
@@ -107,8 +105,7 @@ public class FileServiceImpl implements FileService {
                 curve.setValues(newValues);
             }
         } else {
-            //interpolacia
-
+            //todo interpolacia
         }
         return curves;
     }

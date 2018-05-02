@@ -46,6 +46,11 @@ angular.module('hrm')
             });
         };
 
+        vm.loadNewData = function () {
+            vm.parsedData = undefined;
+            vm.userDataLoaded = false;
+        };
+
         vm.getCurve = function (name) {
             ValuesService.findByName(name).then(function (data) {
                 $scope.data[vm.curvesNumber] = data;

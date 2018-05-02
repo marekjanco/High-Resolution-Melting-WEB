@@ -9,9 +9,12 @@
             Load data
         </div>
     </div>
+    <a href="#" ng-click="homeController.loadNewData()" ng-show="homeController.userDataLoaded"><i
+            class="large green plus icon"></i> Add new user data</a>
     <div class="ui horizontal segments">
         <div class="ui segment user-data-menu">
-            <b>User data(curves): </b> <a ng-show="!homeController.userDataLoaded" class="ui left pointing red basic label">User data are not loaded !!!</a>
+            <b>User data(curves): </b> <a ng-show="!homeController.userDataLoaded"
+                                          class="ui left pointing red basic label">User data are not loaded !!!</a>
             <br><br>
             <button class="ui teal button" style="margin-top:5px" ng-click="homeController.viewUserDataInGraph()">
                 View in graph

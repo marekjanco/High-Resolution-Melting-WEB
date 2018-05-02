@@ -18,11 +18,11 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin/refCurve")
+@RequestMapping("/admin")
 public class AdminResource {
 
-    static final String GET_ALL = "getAll";
-    static final String DELETE = "delete";
+    static final String GET_ALL = "/refCurve/getAll";
+    static final String DELETE = "/refCurve/delete";
     final static String UPLOAD_AND_SAVE = "uploadExcelAndSave";
 
     @Inject

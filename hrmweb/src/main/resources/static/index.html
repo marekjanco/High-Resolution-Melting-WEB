@@ -67,8 +67,27 @@
     </div>
 </div>
 <!--END OF MENU-->
-<div class="ui container content" ng-view>
+<div id="message-div" ng-show="showError|| showSuccess">
+    <div class="ui negative message" ng-show="showError">
+        <i class="close icon" ng-click="indexCtrl.closeMessage()"></i>
+        <div class="header">
+            Error message
+        </div>
+        <p>
+            {{errorMessage}}
+        </p>
+    </div>
+    <div class="ui positive message" ng-show="showSuccess">
+        <i class="close icon" ng-click="indexCtrl.closeMessage()"></i>
+        <div class="header">
+            Success message
+        </div>
+        <p>
+            {{successMessage}}
+        </p>
+    </div>
 </div>
+<div class="ui container content" ng-view>
 </div>
 </body>
 </html>

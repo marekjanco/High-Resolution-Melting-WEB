@@ -25,8 +25,15 @@ angular.module('hrm')
                     vm.authenticated = false;
                     vm.username = undefined;
                 }
-                $location.path('/login').search('logout');
+                $location.path("/login");
             });
+        };
+
+        vm.closeMessage = function () {
+            $rootScope.showError = undefined;
+            $rootScope.showSuccess = undefined;
+            $rootScope.errorMessage = undefined;
+            $rootScope.successMessage = undefined;
         };
 
         vm.init = function () {
