@@ -51,7 +51,7 @@ public class RefCurveServiceImpl implements RefCurveService {
         if (curve == null) {
             return new ArrayList<Double>(){};
         }
-        return null;
+       return curve.getValues();
     }
 
     @Override

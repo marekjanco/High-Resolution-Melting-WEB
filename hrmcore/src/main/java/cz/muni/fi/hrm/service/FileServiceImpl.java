@@ -58,9 +58,13 @@ public class FileServiceImpl implements FileService {
         if (curves == null) {
             //FIXME vynimka
         }
+        if(curves == null || curves.get(0) == null){
+            //FIXME vynimka
+        }
         if (this.checkIfCurveIsTemperature(curves.get(0))) {
             curves.get(0).setName("temperature");
             curves = this.checkIntervalOfData(curves);
+            curves.get(0).setErrorMargin(new ErrorMarginDTO());
         }
         return curves;
 

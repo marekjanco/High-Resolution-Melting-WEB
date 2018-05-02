@@ -64,13 +64,11 @@ public class SampleDataServiceImpl implements SampleDataService {
         curve.setAcronym(acronym);
         curve.setNote(note);
         curve.setValues(Arrays.asList(values));
-        ErrorMargin margin = new ErrorMargin();
         if (marginValues != null) {
+            ErrorMargin margin = new ErrorMargin();
             margin.setValues(Arrays.asList(marginValues));
-        } else {
-            margin = null;
+            curve.setErrorMargin(margin);
         }
-        curve.setErrorMargin(margin);
         refCurveService.create(curve);
     }
 

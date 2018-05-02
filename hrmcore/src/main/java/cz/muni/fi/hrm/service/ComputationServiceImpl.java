@@ -52,20 +52,20 @@ public class ComputationServiceImpl implements ComputationService {
 
     private ResultDTO compareCurvesOnInterval(RefCurve refCurve, RefCurveDTO averageCurve,
                                               RefCurve dbTemperature, RefCurveDTO temperature) {
-
-        int index = Collections.indexOfSubList(dbTemperature.getValues(), temperature.getValues());
-        if(index == -1){
-            // treba interpolovat
-        }
         int match = 0;
+        int all = 0;
         for(int i = 0; i < temperature.getValues().size(); ++i){
+            if(averageCurve.getValues().get(i) == null){
+                continue;
+            }
             Double value = averageCurve.getValues().get(i);
-            Double margin = refCurve.getErrorMargin().getValues().get(index + i);
-            if(refCurve.getValues().get(index + i) - margin <= value && value <= refCurve.getValues().get(index + i) + margin ){
+            Double margin = refCurve.getErrorMargin().getValues().get(i);
+            if(refCurve.getValues().get(i) - margin <= value && value <= refCurve.getValues().get(i) + margin ){
                 ++match;
             }
+            all++;
         }
-        return new ResultDTO(match*100.0/refCurve.getValues().size(), match, refCurve.getValues().size(),
+        return new ResultDTO(match*100.0/all, match, all,
                 refCurve.getName(), averageCurve);
     }
 
@@ -97,10 +97,18 @@ public class ComputationServiceImpl implements ComputationService {
         ret.acronym = "avg_c";
         for(int i = 0; i < data.get(0).values.size(); ++i){
             Double sum = 0.0;
+            boolean wasNull = false;
             for(int j = 0; j < data.size(); ++j){
-                sum += data.get(j).values.get(i);
+                if(data.get(j).values.get(i) == null){
+                    wasNull = true;
+                }
+                sum += (data.get(j).values.get(i) != null) ? data.get(j).values.get(i) : 0 ;
             }
-            ret.values.add(sum/data.size());
+            if(wasNull){
+                ret.values.add(null);
+            }else{
+                ret.values.add(sum/data.size());
+            }
         }
         return ret;
     }
