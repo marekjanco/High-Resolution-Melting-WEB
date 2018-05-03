@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ComputationService {
     public ResultDTO compareDataWithRefCurves(List<RefCurveDTO> data);
+    RefCurveDTO createAverageCurve(List<RefCurveDTO> data);
 }

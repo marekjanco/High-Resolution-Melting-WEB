@@ -66,7 +66,10 @@
                                           class="ui left pointing red basic label">User data are not loaded !!!</a>
             <br><br>
             <button class="ui teal button" style="margin-top:5px" ng-click="homeController.viewUserDataInGraph()">
-                View in graph
+                Show in graph
+            </button>
+            <button class="ui teal button" style="margin-top:5px" ng-click="homeController.showAverageCurve()">
+                Show average curve
             </button>
             <button class="ui blue button" style="margin-top:5px" ng-click="homeController.compute()">
                 Compute
@@ -92,6 +95,7 @@
             <b>Results:</b>
             <br>
             <div class="ui compact message" id="computation-results" ng-show="homeController.result != undefined">
+                <i class="close icon" ng-click="homeController.closeResult()"></i>
                 <b>User data matched with: </b>{{homeController.result.refCurveName}}<br>
                 <b>Match was: </b>{{homeController.result.matchInPerc}}%<br>
                 {{homeController.result.pointsFitInMargin}}/{{homeController.result.numberOfPoints}}<br>

@@ -61,9 +61,11 @@ public class FileServiceImpl implements FileService {
         }
         if (this.checkIfCurveIsTemperature(curves.get(0))) {
             curves.get(0).setName("temperature");
-            curves = this.checkIntervalOfData(curves);
+            curves = this.checkIntervalOfData(curves,
+                    refCurveRepository.findTemperature().getValues().size());
             curves.get(0).setErrorMargin(new ErrorMarginDTO());
         }
+        curves.remove(0);
         return curves;
     }
 
@@ -88,7 +90,7 @@ public class FileServiceImpl implements FileService {
         return workbook;
     }
 
-    private List<RefCurveDTO> checkIntervalOfData(List<RefCurveDTO> curves) {
+    private List<RefCurveDTO> checkIntervalOfData(List<RefCurveDTO> curves, int max) {
         RefCurveDTO temperature = curves.get(0);
         int index = this.indexOfSubinterval(temperature);
         if (index != -1) {
@@ -98,25 +100,63 @@ public class FileServiceImpl implements FileService {
                     newValues.add(null);
                 }
                 newValues.addAll(curve.getValues());
-                for (int j = temperature.getValues().size(); j < curves.get(0).getValues().size(); ++j) {
+                while(newValues.size() < max) {
                     newValues.add(null);
                 }
                 curve.setValues(newValues);
             }
         } else {
-            this.interpolateData(curves);
+            curves = this.interpolateData(curves);
         }
         return curves;
     }
 
-    private void interpolateData(List<RefCurveDTO> curves) {
-       /* RefCurve dbTemperature = refCurveRepository.findTemperature();
+    private List<RefCurveDTO> interpolateData(List<RefCurveDTO> curves) {
+        RefCurve dbTemperature = refCurveRepository.findTemperature();
+        RefCurveDTO userTemperature = curves.get(0);
         List<RefCurveDTO> newCurves = new ArrayList<>();
-        RefCurveDTO newCurve = new RefCurveDTO();
-        int temperatureIndex = 0;
-        for(int i = 0; i < dbTemperature.getValues().size(); ++i){
-            if(dbTemperature.getValues().get(i) <)
-        }*/
+
+        for(int j = 1; j < curves.size();++j) {
+            RefCurveDTO newCurve = new RefCurveDTO();
+            int temperatureIndex = 0;
+            boolean noMoreTemperatureValues = false;
+            for (int i = 0; i < dbTemperature.getValues().size(); ++i) {
+                if (noMoreTemperatureValues) {
+                    newCurve.getValues().add(null);
+                    continue;
+                }
+                if (temperatureIndex == userTemperature.getValues().size() - 1) {
+                    noMoreTemperatureValues = true;
+                    newCurve.getValues().add(null);
+                    continue;
+                }
+                Double userTemperatureValue = userTemperature.getValues().get(temperatureIndex);
+                if (Math.abs(dbTemperature.getValues().get(i) - userTemperatureValue) <= 0.00000001) {
+                    newCurve.getValues().add(curves.get(j).getValues().get(temperatureIndex));
+                } else if (dbTemperature.getValues().get(i) < userTemperatureValue) {
+                    newCurve.getValues().add(null);
+                } else if(userTemperatureValue < dbTemperature.getValues().get(i) &&
+                        dbTemperature.getValues().get(i) < userTemperature.getValues().get(temperatureIndex + 1)){
+                    Double x0 = userTemperatureValue;
+                    Double y0 = curves.get(j).getValues().get(temperatureIndex);
+                    Double x1 = userTemperature.getValues().get(temperatureIndex + 1);
+                    Double y1 = curves.get(j).getValues().get(temperatureIndex + 1);
+                    Double x = dbTemperature.getValues().get(i);
+                    Double value = this.interpolate(x0, x1, y0, y1, x);
+                    newCurve.getValues().add(value);
+                }else{
+                    ++temperatureIndex;
+                    --i;
+                }
+            }
+            newCurves.add(newCurve);
+        }
+        return newCurves;
+    }
+
+    private Double interpolate(Double x0, Double x1, Double y0, Double y1, Double x) {
+        if(x1-x0 == 0.0) return 0.0;
+        return ((y0*(x1-x)) + (y1)*(x-x0))/(x1-x0);
     }
 
     private int indexOfSubinterval(RefCurveDTO temperature) {
@@ -348,7 +388,7 @@ public class FileServiceImpl implements FileService {
             while (cellIterator.hasNext()) {
                 Cell cell = cellIterator.next();
                 if(cellCounter >= curves.size()){
-                    throw new IllegalArgumentException("Format violation - there is more cells in row "+i);
+                    throw new IllegalArgumentException("Format violation - there is more cells in values row "+i);
                 }
                 switch (cell.getCellTypeEnum()) {
                     case NUMERIC:
@@ -400,7 +440,9 @@ public class FileServiceImpl implements FileService {
                     //FIXME vynimka
                     break;
             }
-            ret.add(curve);
+            if(curve.name != null || !curve.getValues().isEmpty()){
+                ret.add(curve);
+            }
             ++i;
         }
         return ret;

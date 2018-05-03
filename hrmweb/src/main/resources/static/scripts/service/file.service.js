@@ -24,9 +24,9 @@ angular.module('hrm')
                     responseType: "arraybuffer"}).then(function (response) {
                     return response;
                 },
-                    function(response) {
+                    function(data) {
                         $rootScope.showError = true;
-                        $rootScope.errorMessage = response.data.message;
+                        $rootScope.errorMessage = data.data.message;
                     });
             }
         }}

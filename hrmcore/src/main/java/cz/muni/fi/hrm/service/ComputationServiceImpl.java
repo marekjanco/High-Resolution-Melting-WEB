@@ -19,14 +19,15 @@ public class ComputationServiceImpl implements ComputationService {
     @Override
     public ResultDTO compareDataWithRefCurves(List<RefCurveDTO> data) {
         if(data == null){
-            //FIXME vynimka
+            throw new IllegalArgumentException("cannot compute when no data are loaded");
         }
-        RefCurve dbTemperature = null;
-        RefCurveDTO temperature = this.findTemperatureIfPresent(data);
+        RefCurve dbTemperature = refCurveRepository.findTemperature();
+        /*RefCurveDTO temperature = this.findTemperatureIfPresent(data);
         if(temperature != null){
             data.remove(temperature);
             dbTemperature = refCurveRepository.findTemperature();
         }
+        */
         RefCurveDTO averageCurve = this.createAverageCurve(data);
         List<RefCurve> refData = refCurveRepository.findAll();
 
@@ -34,18 +35,14 @@ public class ComputationServiceImpl implements ComputationService {
         int counter = 0;
         for(RefCurve refCurve : refData){
             ResultDTO tempResult = null;
-            if(temperature == null) {
-                tempResult = compareCurves(refCurve, averageCurve);
-            }else{
-                tempResult = compareCurvesOnInterval(refCurve, averageCurve, dbTemperature, temperature);
-            }
+            tempResult = compareCurves(refCurve, averageCurve);
             if(tempResult.matchInPerc > result.getMatchInPerc()){
                 result = tempResult;
             }
         }
 
         if(result.refCurveName == null){
-            //FIXME vynimka
+            throw new IllegalArgumentException("some error occured while computing ...");
         }
         return result;
     }
@@ -80,18 +77,25 @@ public class ComputationServiceImpl implements ComputationService {
 
     private ResultDTO compareCurves(RefCurve refCurve, RefCurveDTO averageCurve) {
         int match = 0;
+        int all = 0;
         for(int i = 0; i < refCurve.getValues().size(); ++i){
+            if(i >= averageCurve.getValues().size() || averageCurve.getValues().get(i) == null){
+                continue;
+            }
             Double value = averageCurve.getValues().get(i);
             Double margin = refCurve.getErrorMargin().getValues().get(i);
             if(refCurve.getValues().get(i) - margin <= value && value <= refCurve.getValues().get(i) + margin ){
                 ++match;
             }
+            all++;
         }
-        return new ResultDTO(match*100.0/refCurve.getValues().size(), match, refCurve.getValues().size(),
+        return new ResultDTO(match*100.0/all, match, all,
                 refCurve.getName(), averageCurve);
     }
 
-    private RefCurveDTO createAverageCurve(List<RefCurveDTO> data){
+
+    @Override
+    public RefCurveDTO createAverageCurve(List<RefCurveDTO> data){
         RefCurveDTO ret = new RefCurveDTO();
         ret.name = "average_curve";
         ret.acronym = "avg_c";

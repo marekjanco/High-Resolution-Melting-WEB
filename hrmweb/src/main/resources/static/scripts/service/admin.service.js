@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('hrm')
-    .factory('AdminService', function ($http) {
+    .factory('AdminService', function ($http, $rootScope) {
         return {
             getAll: function () {
                 return $http.get('/admin/refCurve/getAll').then(function (response) {
@@ -10,6 +10,8 @@ angular.module('hrm')
             },
             delete: function (object) {
                 return $http.put('/admin/refCurve/delete', object).then(function (response) {
+                    $rootScope.showSuccess = true;
+                    $rootScope.successMessage = 'Reference dataset was successfully deleted';
                     return response.data;
                 })
             },uploadFileAndSave: function (file) {
@@ -19,6 +21,8 @@ angular.module('hrm')
                     transformRequest: angular.identity,
                     headers: {'Content-Type': undefined}
                 }).then(function (response) {
+                    $rootScope.showSuccess = true;
+                    $rootScope.successMessage = 'New reference data were successfully added';
                     return response.data;
                 })
             }

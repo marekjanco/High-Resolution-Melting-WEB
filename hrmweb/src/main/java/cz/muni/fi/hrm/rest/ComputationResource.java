@@ -19,6 +19,7 @@ import java.util.List;
 @RequestMapping("/computation")
 public class ComputationResource {
     static final String COMPARE = "compareData";
+    static final String AVERAGE_CURVE = "getAverageCurve";
 
     @Inject
     private ComputationService computationService;
@@ -27,6 +28,12 @@ public class ComputationResource {
     public @ResponseBody
     ResultDTO compute(@RequestBody List<RefCurveDTO> data) {
         return computationService.compareDataWithRefCurves(data);
+    }
+
+    @RequestMapping(value = "/" + AVERAGE_CURVE, method = RequestMethod.POST)
+    public @ResponseBody
+    RefCurveDTO getAverageCurve(@RequestBody List<RefCurveDTO> data) {
+        return computationService.createAverageCurve(data);
     }
 
 }

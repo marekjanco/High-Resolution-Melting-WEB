@@ -61,8 +61,21 @@ angular.module('hrm')
         };
 
         vm.loadNewData = function () {
+            vm.clearGraph();
             vm.parsedData = undefined;
             vm.userDataLoaded = false;
+        };
+
+        vm.showAverageCurve = function(){
+            if(vm.parsedData === undefined){
+                vm.showError();
+            }
+            $rootScope.loading = true;
+            ComputationService.getAverageCurve(vm.parsedData).then(function (data) {
+                vm.addDataToGraph(data.values, data.name);
+            }).finally(function () {
+                $rootScope.loading = false;
+            });
         };
 
         vm.getCurve = function (name) {
@@ -117,6 +130,10 @@ angular.module('hrm')
             $scope.data = [""];
             $scope.series = [];
             $('#names').dropdown('restore defaults');
+        };
+
+        vm.closeResult = function () {
+            vm.result = undefined;
         };
 
         vm.showError = function () {
