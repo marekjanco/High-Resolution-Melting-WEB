@@ -10,6 +10,7 @@ angular.module('hrm')
         vm.parsedData = undefined;
         vm.userDataLoaded = false;
         vm.result = undefined;
+        vm.userDataField = false;
 
         // 'JQuery'
         //checks if document is loaded
@@ -20,6 +21,13 @@ angular.module('hrm')
             });
         });
 
+        //show popup
+        $('.large.question.circle.outline.icon')
+            .popup({
+                inline     : true,
+                hoverable  : true,
+            });
+
         // dropdown action
         $('.dropdown')
             .dropdown({
@@ -29,6 +37,9 @@ angular.module('hrm')
         // end of 'JQuery'
 
         vm.viewUserDataInGraph = function () {
+            if(vm.parsedData === undefined){
+                vm.showError();
+            }
             vm.clearGraph();
             var parsedData = vm.parsedData;
             for (var i = 0; i < parsedData.length; ++i) {
@@ -37,6 +48,9 @@ angular.module('hrm')
         };
 
         vm.compute = function () {
+            if(vm.parsedData === undefined){
+                vm.showError();
+            }
             $rootScope.loading = true;
             ComputationService.compute(vm.parsedData).then(function (data) {
                 console.log(data);
@@ -60,6 +74,9 @@ angular.module('hrm')
         };
 
         vm.addDataToGraph = function (data, name) {
+            if(name === 'temperature'){
+                return;
+            }
             $scope.data[vm.curvesNumber] = data;
             $scope.series[vm.curvesNumber] = name;
             vm.curvesNumber++;
@@ -83,6 +100,9 @@ angular.module('hrm')
             var file = document.getElementById('excel_file').files[0];
             $rootScope.loading = true;
             FileService.uploadFile(file).then(function (data) {
+                if(data === undefined){
+                    return;
+                }
                 vm.parsedData = data;
                 vm.userDataLoaded = true;
                 console.log("parsedData: ",vm.parsedData);
@@ -97,6 +117,15 @@ angular.module('hrm')
             $scope.data = [""];
             $scope.series = [];
             $('#names').dropdown('restore defaults');
+        };
+
+        vm.showError = function () {
+            $rootScope.showError = true;
+            $rootScope.errorMessage = "User data are not loaded yet.";
+        };
+
+        vm.addUserDataField = function () {
+          vm.userDataField = ! vm.userDataField;
         };
 
         vm.getLabels = function () {

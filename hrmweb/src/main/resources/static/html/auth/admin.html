@@ -1,12 +1,21 @@
 <div>
     <div>
-        <div class="ui success message" ng-show="adminController.success" style="margin-bottom:30px;">
-            <div class="header">
-                {{adminController.successMessage}}
-            </div>
-        </div>
         <a href="#" ng-click="adminController.addData()"><i class="large green plus icon"></i> Add new reference curves to DB</a>
         <div class="ui segment" ng-show="adminController.newDataField">
+            <i class="large question circle outline icon link"></i>
+            <!--popup-->
+            <div class="ui fluid popup bottom left transition hidden"
+                 style="top: 553px; left: 1px; bottom: auto; right: auto; width: 60%;">
+                <ul>
+                    <li>Input .xls, .xlsx file with data in correct format</li>
+                    <li>Firstly, you should download file with data that are in DB, and use exact same format</li>
+                    <li>First sheet is for reference data, second is for margin error to them</li>
+                    <li>Header of reference data is [name, acronym, note]</li>
+                    <li>Be careful to assign margin error to every data set</li>
+                    <li style="color:#FF0022">All data in DB will be deleted and replaced with your given data</li>
+                </ul>
+            </div>
+            <!--end of popup-->
             <b>Load user data: </b>
             <form class="uploadForm">
                 <input type="file" id="admin_excel_file" accept=".xls,.xlsx,.csv">

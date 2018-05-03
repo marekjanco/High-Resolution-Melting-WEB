@@ -1,5 +1,54 @@
 <div>
-    <div class="ui segment" ng-show="!homeController.userDataLoaded">
+    <a href="#" ng-click="homeController.addUserDataField()"ng-show="!homeController.userDataLoaded">
+        <i ng-show="!homeController.userDataField" class="large green plus icon"></i><i ng-show="homeController.userDataField" class="large red minus icon"></i> Add new user data</a>
+    <div class="ui segment" ng-show="!homeController.userDataLoaded && homeController.userDataField">
+        <i class="large question circle outline icon link"></i>
+        <!--popup-->
+        <div class="ui fluid popup bottom left transition hidden"
+             style="top: 553px; left: 1px; bottom: auto; right: auto; width: 60%;">
+            <ul>
+                <li>Input .xls, .xlsx or .csv file with data in correct format</li>
+                <li>Only first collumn can be temperature</li>
+                <li>Be careful to assign value to every temperature value</li>
+                <li>Data should be in following format:</li>
+            </ul>
+            <table class="ui celled table">
+                <tr>
+                    <td>
+                        temperature/data_set_name0
+                    </td>
+                    <td>
+                        data_set_name1
+                    </td>
+                    <td>
+                        data_set_name2
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        value0
+                    </td>
+                    <td>
+                        value1
+                    </td>
+                    <td>
+                        value2
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        ...
+                    </td>
+                    <td>
+                        ...
+                    </td>
+                    <td>
+                        ...
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <!--end of popup-->
         <b>Load user data: </b>
         <form class="uploadForm">
             <input type="file" id="excel_file" accept=".xls,.xlsx,.csv">
@@ -12,7 +61,7 @@
     <a href="#" ng-click="homeController.loadNewData()" ng-show="homeController.userDataLoaded"><i
             class="large green plus icon"></i> Add new user data</a>
     <div class="ui horizontal segments">
-        <div class="ui segment user-data-menu">
+        <div class="ui segment" style="width:40%">
             <b>User data(curves): </b> <a ng-show="!homeController.userDataLoaded"
                                           class="ui left pointing red basic label">User data are not loaded !!!</a>
             <br><br>
@@ -23,7 +72,7 @@
                 Compute
             </button>
         </div>
-        <div class="ui segment ref-curves-menu">
+        <div class="ui segment" style="width:35%">
             <b>Reference data(curves): </b>
             <br><br>
             <div id="names" class="ui multiple selection dropdown" style="display: block; width: 90%">
@@ -39,7 +88,7 @@
                 Add to graph
             </div>
         </div>
-        <div class="ui segment results-menu">
+        <div class="ui segment" style="width:25%">
             <b>Results:</b>
             <br>
             <div class="ui compact message" id="computation-results" ng-show="homeController.result != undefined">

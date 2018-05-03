@@ -53,7 +53,6 @@ public class FileServiceImpl implements FileService {
             curves = this.parseDataFromXlsx(file, marginErrorSheet);
         } else if (filename.endsWith(".xls")) {
             curves = this.parseDataFromXls(file, marginErrorSheet);
-            throw new IllegalArgumentException(".csv files are not supported, add excel file - .xlsx or xls ");
         } else {
             throw new IllegalArgumentException("Unknown file type");
         }
@@ -105,9 +104,19 @@ public class FileServiceImpl implements FileService {
                 curve.setValues(newValues);
             }
         } else {
-            //todo interpolacia
+            this.interpolateData(curves);
         }
         return curves;
+    }
+
+    private void interpolateData(List<RefCurveDTO> curves) {
+       /* RefCurve dbTemperature = refCurveRepository.findTemperature();
+        List<RefCurveDTO> newCurves = new ArrayList<>();
+        RefCurveDTO newCurve = new RefCurveDTO();
+        int temperatureIndex = 0;
+        for(int i = 0; i < dbTemperature.getValues().size(); ++i){
+            if(dbTemperature.getValues().get(i) <)
+        }*/
     }
 
     private int indexOfSubinterval(RefCurveDTO temperature) {
@@ -338,6 +347,9 @@ public class FileServiceImpl implements FileService {
             int cellCounter = 0;
             while (cellIterator.hasNext()) {
                 Cell cell = cellIterator.next();
+                if(cellCounter >= curves.size()){
+                    throw new IllegalArgumentException("Format violation - there is more cells in row "+i);
+                }
                 switch (cell.getCellTypeEnum()) {
                     case NUMERIC:
                         curves.get(cellCounter).values.add(cell.getNumericCellValue());

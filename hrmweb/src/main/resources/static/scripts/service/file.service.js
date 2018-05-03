@@ -14,9 +14,9 @@ angular.module('hrm')
                     function (response) {
                         return response.data;
                 },
-                    function(response) {
+                    function(data) {
                         $rootScope.showError = true;
-                        $rootScope.errorMessage = response.data.message;
+                        $rootScope.errorMessage = data.data.message;
                     });
             },
             generateFileOfRefCurves: function () {

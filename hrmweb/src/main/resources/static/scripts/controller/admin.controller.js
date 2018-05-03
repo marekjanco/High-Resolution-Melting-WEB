@@ -18,6 +18,12 @@ angular.module('hrm')
             });
         });
 
+        $('.large.question.circle.outline.icon')
+            .popup({
+                inline     : true,
+                hoverable  : true,
+            });
+
         vm.downloadData = function () {
             $rootScope.loading = true;
             FileService.generateFileOfRefCurves().then(function (response) {

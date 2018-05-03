@@ -5,15 +5,6 @@
     margin-top: 2em;
     width: 90% !important;
 }
-.ui.horizontal.segments>.segment .user-data-menu{
-    width:45%;
-}
-.ui.horizontal.segments>.segment .ref-curves-menu{
-    width: 30%
-}
-.ui.horizontal.segments>.segment .results-menu{
-    width:25%;
-}
 .userDataInput {
     width: 50%;
 }
@@ -57,7 +48,7 @@
 }
 #uploadButton{
     margin-left: 10%;
-    margin-right: 10%;
+    margin-right: 10px;
 }
 #computation-results{
     position:relative;
