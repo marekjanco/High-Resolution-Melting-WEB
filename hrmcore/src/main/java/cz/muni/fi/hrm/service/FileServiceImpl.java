@@ -276,7 +276,7 @@ public class FileServiceImpl implements FileService {
                         parsed = Double.parseDouble(record.get(i));
                         curves.get(i).values.add(parsed);
                     } catch (Exception e) {
-                        //FIXME vynimka
+                        throw new IllegalArgumentException("found data that are not in number format, collumn "+i);
                     }
                 }
             }
@@ -299,7 +299,7 @@ public class FileServiceImpl implements FileService {
                 ret = this.connectMarginsToCurves(ret, errorMargins);
             }
         } catch (IOException e) {
-            //FIXME vynimka
+            throw new IllegalArgumentException(file.getName()+ " cannot read this file.");
         }
         return ret;
     }
@@ -318,7 +318,7 @@ public class FileServiceImpl implements FileService {
                 ret = this.connectMarginsToCurves(ret, errorMargins);
             }
         } catch (IOException e) {
-            //FIXME vynimka
+            throw new IllegalArgumentException(file.getName()+ " cannot read this file.");
         }
         return ret;
     }
@@ -356,7 +356,7 @@ public class FileServiceImpl implements FileService {
                 ++i;
             }
         } catch (IOException e) {
-            //FIXME vynimka
+            throw new IllegalArgumentException(file.getName()+ " cannot read this file.");
         }
         return ret;
 

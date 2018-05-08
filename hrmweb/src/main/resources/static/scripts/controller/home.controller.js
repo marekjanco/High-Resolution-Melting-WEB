@@ -176,6 +176,7 @@ angular.module('hrm')
         vm.closeResult = function () {
             vm.result = undefined;
             vm.setDefaultColors();
+            vm.clearGraph();
         };
 
         vm.showError = function () {
