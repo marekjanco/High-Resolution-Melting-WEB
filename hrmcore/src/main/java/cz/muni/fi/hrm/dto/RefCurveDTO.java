@@ -10,7 +10,7 @@ public class RefCurveDTO {
     public List<Double> values;
     public ErrorMarginDTO errorMargin;
 
-    public RefCurveDTO(String name, String acronym, String note, List<Double> values){
+    public RefCurveDTO(String name, String acronym, String note, List<Double> values) {
         this.name = name;
         this.acronym = acronym;
         this.note = note;
@@ -18,7 +18,7 @@ public class RefCurveDTO {
         this.errorMargin = null;
     }
 
-    public RefCurveDTO(){
+    public RefCurveDTO() {
         this(null, null, null, new ArrayList<>());
     }
 

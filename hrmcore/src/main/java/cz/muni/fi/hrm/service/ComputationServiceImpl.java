@@ -21,18 +21,10 @@ public class ComputationServiceImpl implements ComputationService {
         if(data == null){
             throw new IllegalArgumentException("cannot compute when no data are loaded");
         }
-        RefCurve dbTemperature = refCurveRepository.findTemperature();
-        /*RefCurveDTO temperature = this.findTemperatureIfPresent(data);
-        if(temperature != null){
-            data.remove(temperature);
-            dbTemperature = refCurveRepository.findTemperature();
-        }
-        */
         RefCurveDTO averageCurve = this.createAverageCurve(data);
         List<RefCurve> refData = refCurveRepository.findAll();
 
         ResultDTO result = new ResultDTO(0.0, 0, 100, null, null,null,null);
-        int counter = 0;
         for(RefCurve refCurve : refData){
             ResultDTO tempResult = null;
             tempResult = compareCurves(refCurve, averageCurve);
@@ -77,9 +69,15 @@ public class ComputationServiceImpl implements ComputationService {
 
     @Override
     public RefCurveDTO createAverageCurve(List<RefCurveDTO> data){
+        if(data == null){
+            throw new IllegalArgumentException("Trying to create average curve on null");
+        }
         RefCurveDTO ret = new RefCurveDTO();
         ret.name = "average_curve";
         ret.acronym = "avg_c";
+        if(data.size() == 0){
+            return ret;
+        }
         for(int i = 0; i < data.get(0).values.size(); ++i){
             Double sum = 0.0;
             boolean wasNull = false;

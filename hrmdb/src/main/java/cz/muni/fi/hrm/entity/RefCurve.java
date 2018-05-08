@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +28,7 @@ public class RefCurve {
     @Column(name = "NAME", nullable = false, unique = true)
     private String name;
 
-    @Column(name = "ACRONYM")
+    @Column(name = "ACRONYM", nullable = false)
     private String acronym;
 
     @Column(name = "NOTE")

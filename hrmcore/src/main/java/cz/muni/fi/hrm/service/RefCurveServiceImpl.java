@@ -47,12 +47,21 @@ public class RefCurveServiceImpl implements RefCurveService {
 
     @Override
     public RefCurveDTO findByName(String name) {
+        if(name == null){
+            throw new IllegalArgumentException("reference curve with name null doesn't exist");
+        }
         RefCurve curve = refCurveRepository.findByName(name);
         return this.convertToDto(curve);
     }
 
     @Override
     public void createOrUpdate(List<RefCurveDTO> dtos) {
+        if(dtos == null){
+            throw new IllegalArgumentException("cannot create reference curves, they were null");
+        }
+        if(dtos.size() == 0){
+            return;
+        }
         List<RefCurve> toCreate = new ArrayList<>();
         for(RefCurveDTO dto: dtos){
             RefCurve curve = this.convertFromDto(dto);
@@ -65,13 +74,16 @@ public class RefCurveServiceImpl implements RefCurveService {
 
     @Override
     public void create(RefCurve curve) {
+        if(curve == null || curve.getName() == null || curve.getValues() == null){
+            throw new IllegalArgumentException("cannot delete reference curve because name or values are null");
+        }
         this.refCurveRepository.saveAndFlush(curve);
     }
 
     @Override
     public void delete(RefCurveDTO dto) {
-        if(dto == null || dto.name == null){
-            throw new IllegalArgumentException("cannot delete reference curve with name: "+dto.name +", because it doesnt exist");
+        if(dto == null || dto.getName() == null){
+            throw new IllegalArgumentException("cannot delete reference curve because it is null or its name was null");
         }
         RefCurve curve = refCurveRepository.findByName(dto.name);
         refCurveRepository.delete(curve);
@@ -90,8 +102,7 @@ public class RefCurveServiceImpl implements RefCurveService {
     }
 
     private RefCurve convertFromDto(RefCurveDTO refCurve) {
-        RefCurve ret = mapper.map(refCurve, RefCurve.class);
-        return ret;
+        return mapper.map(refCurve, RefCurve.class);
     }
 
 }
