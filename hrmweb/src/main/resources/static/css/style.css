@@ -59,7 +59,11 @@
     width:90%;
 }
 #message-div{
-    width: 70%;
+    min-width: 70%;
     margin:0 auto;
     margin-top: 1em;
+}
+#names{
+    position:relative;
+    margin-right:10px;
 }

@@ -61,7 +61,7 @@
     <a href="#" ng-click="homeController.loadNewData()" ng-show="homeController.userDataLoaded"><i
             class="large green plus icon"></i> Add new user data</a>
     <div class="ui horizontal segments">
-        <div class="ui segment" style="width:40%">
+        <div class="ui segment" style="width:38%">
             <b>User data(curves): </b> <a ng-show="!homeController.userDataLoaded"
                                           class="ui left pointing red basic label">User data are not loaded !!!</a>
             <br><br>
@@ -75,10 +75,10 @@
                 Compute
             </button>
         </div>
-        <div class="ui segment" style="width:35%">
+        <div class="ui segment" style="width:33%">
             <b>Reference data(curves): </b>
             <br><br>
-            <div id="names" class="ui multiple selection dropdown" style="display: block; width: 90%">
+            <div id="names" class="ui multiple selection dropdown">
                 <i class="dropdown icon"></i>
                 <div class="default text">Select...</div>
                 <div class="menu">
@@ -91,7 +91,7 @@
                 Add to graph
             </div>
         </div>
-        <div class="ui segment" style="width:25%">
+        <div class="ui segment" style="width:29%">
             <b>Results:</b>
             <br>
             <div class="ui compact message" id="computation-results" ng-show="homeController.result != undefined">
@@ -101,14 +101,17 @@
                 {{homeController.result.pointsFitInMargin}}/{{homeController.result.numberOfPoints}}<br>
             </div>
             <br>
-            <div class="ui teal button" ng-click="homeController.clearGraph()">
+            <div class="ui teal button" style="margin-top:5px" ng-click="homeController.showResultInGraph()">
+                Show result in graph
+            </div>
+            <div class="ui teal button" ng-click="homeController.clearGraph()" style="margin-top:5px">
                 Clear graph
             </div>
         </div>
     </div>
     <div class="ui segment">
         <canvas class="chart chart-line" chart-data="data" chart-labels="labels"
-                chart-series="series" chart-click="onClick"></canvas>
+                chart-series="series" chart-click="onClick" chart-colors="colors"></canvas>
     </div>
     <br>
 </div>

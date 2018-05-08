@@ -46,12 +46,9 @@ public class RefCurveServiceImpl implements RefCurveService {
     }
 
     @Override
-    public List<Double> findValuesByName(String name) {
+    public RefCurveDTO findByName(String name) {
         RefCurve curve = refCurveRepository.findByName(name);
-        if (curve == null) {
-            return new ArrayList<Double>(){};
-        }
-       return curve.getValues();
+        return this.convertToDto(curve);
     }
 
     @Override

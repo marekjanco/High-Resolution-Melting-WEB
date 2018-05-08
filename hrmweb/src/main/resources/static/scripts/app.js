@@ -12,7 +12,7 @@ angular.module('hrm').config(['$httpProvider',
 ]);
 
 
-angular.module('hrm').config(['ChartJsProvider', '$httpProvider', function (ChartJsProvider, $httpProvider) {
+angular.module('hrm').config(['ChartJsProvider', '$httpProvider', function (ChartJsProvider) {
     // Configure all charts
     ChartJsProvider.setOptions({
         chartColors: ['#FF5252', '#3339FF', '#FF33FC', '#33FF33', '#33FFDA', '#FF8A80', '#FCFF33'],

@@ -27,12 +27,13 @@ public class RefCurveResource {
     }
 
     @RequestMapping(value = "/" + FIND_BY_NAME, method = RequestMethod.GET)
-    public List<Double> findByName(@RequestParam(value = "name") String name) {
-        return refCurveService.findValuesByName(name);
+    public RefCurveDTO findByName(@RequestParam(value = "name") String name) {
+        return refCurveService.findByName(name);
     }
 
     @RequestMapping(value = "/" + TEMPERATURE, method = RequestMethod.GET)
     public RefCurveDTO getTemperature() {
         return refCurveService.getTemperature();
     }
+
 }

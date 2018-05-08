@@ -6,18 +6,22 @@ public class ResultDTO {
     public Integer numberOfPoints;
     public String refCurveName;
     public RefCurveDTO averageCurve;
+    public RefCurveDTO matched;
+    public RefCurveDTO notMatched;
 
     public ResultDTO() {
-        this(null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
-    public ResultDTO(Double matchInPerc, Integer pointsFitInMargin, Integer numberOfPoints,
-                     String refCurveName, RefCurveDTO averageCurve) {
+    public ResultDTO(Double matchInPerc, Integer pointsFitInMargin, Integer numberOfPoints, String refCurveName,
+                     RefCurveDTO averageCurve, RefCurveDTO matched, RefCurveDTO notMatched) {
         this.matchInPerc = matchInPerc;
         this.pointsFitInMargin = pointsFitInMargin;
         this.numberOfPoints = numberOfPoints;
         this.refCurveName = refCurveName;
         this.averageCurve = averageCurve;
+        this.matched = matched;
+        this.notMatched = notMatched;
     }
 
     public Double getMatchInPerc() {
@@ -60,5 +64,20 @@ public class ResultDTO {
         this.averageCurve = averageCurve;
     }
 
+    public RefCurveDTO getMatched() {
+        return matched;
+    }
+
+    public void setMatched(RefCurveDTO matched) {
+        this.matched = matched;
+    }
+
+    public RefCurveDTO getNotMatched() {
+        return notMatched;
+    }
+
+    public void setNotMatched(RefCurveDTO notMatched) {
+        this.notMatched = notMatched;
+    }
 
 }

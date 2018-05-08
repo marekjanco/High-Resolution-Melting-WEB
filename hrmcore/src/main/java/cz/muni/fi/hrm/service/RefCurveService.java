@@ -10,7 +10,7 @@ public interface RefCurveService {
     public List<RefCurveDTO> getNamesAndAcronyms();
     public List<RefCurveDTO> getAll();
     public RefCurveDTO getTemperature();
-    public List<Double> findValuesByName(String name);
+    public  RefCurveDTO findByName(String name);
 
     public void createOrUpdate(List<RefCurveDTO> dtos);
     public void create(RefCurve curve);

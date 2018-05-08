@@ -1,7 +1,8 @@
 'use strict';
 
 angular.module('hrm')
-    .controller('HomeController', function ($scope, ValuesService, ComputationService, FileService, $rootScope) {
+    .controller('HomeController', function ($scope, ValuesService,
+                                            ComputationService, FileService, $rootScope) {
         var vm = this;
 
         vm.names = [];
@@ -53,8 +54,8 @@ angular.module('hrm')
             }
             $rootScope.loading = true;
             ComputationService.compute(vm.parsedData).then(function (data) {
-                console.log(data);
                 vm.result = data;
+                vm.showResultInGraph();
             }).finally(function () {
                 $rootScope.loading = false;
             });
@@ -62,6 +63,7 @@ angular.module('hrm')
 
         vm.loadNewData = function () {
             vm.clearGraph();
+            vm.closeResult();
             vm.parsedData = undefined;
             vm.userDataLoaded = false;
         };
@@ -80,10 +82,48 @@ angular.module('hrm')
 
         vm.getCurve = function (name) {
             ValuesService.findByName(name).then(function (data) {
-                $scope.data[vm.curvesNumber] = data;
-                $scope.series[vm.curvesNumber] = name;
-                vm.curvesNumber++;
+                vm.addDataToGraph(data.values, name);
             });
+        };
+
+
+        vm.getCurveWithInterval = function (name) {
+            ValuesService.findByName(name).then(function (data) {
+                vm.addDataToGraph(data.values, name);
+                vm.addIntervalToGraph(data.values, data.errorMargin.values, name);
+            });
+        };
+
+        vm.addIntervalToGraph = function(data, margin, name){
+            var above = [];
+            var below = [];
+            for(var i = 0; i < data.length; ++i){
+                above.push(data[i] + margin[i]);
+                below.push(data[i] - margin[i]);
+            }
+            vm.addDataToGraph(above, name+"+");
+            vm.addDataToGraph(below, name+"-");
+        };
+
+        vm.showResultInGraph = function () {
+            if(vm.result === undefined){
+                $rootScope.showError = true;
+                $rootScope.errorMessage = "No result to show";
+                return;
+            }
+            vm.clearGraph();
+            vm.addDataToGraph(vm.result.matched.values, "matched");
+            vm.addDataToGraph(vm.result.notMatched.values, "not_matched");
+            vm.getCurveWithInterval(vm.result.refCurveName);
+            vm.setResultColors();
+        };
+
+        vm.setResultColors = function(){
+            $scope.colors =  ['#00FF00','#FF0000', '#0000ff','#05fce3','#05fce3', '#FF5252', '#3339FF', '#FF33FC', '#33FF33', '#33FFDA', '#FF8A80', '#FCFF33'];
+        };
+
+        vm.setDefaultColors = function () {
+            $scope.colors =  ['#FF5252', '#3339FF', '#FF33FC', '#33FF33', '#33FFDA', '#FF8A80', '#FCFF33'];
         };
 
         vm.addDataToGraph = function (data, name) {
@@ -104,6 +144,7 @@ angular.module('hrm')
                     array.splice(i, 1);
                 }
             }
+            console.log(array);
             for (var i = 0; i < array.length; ++i) {
                 vm.getCurve(array[i]);
             }
@@ -134,6 +175,7 @@ angular.module('hrm')
 
         vm.closeResult = function () {
             vm.result = undefined;
+            vm.setDefaultColors();
         };
 
         vm.showError = function () {
@@ -163,7 +205,7 @@ angular.module('hrm')
             vm.getLabels(); //get temperature - x axis
             vm.getNames(); // names and acronyms of reference curves to dropdown
             vm.clearGraph();
-            vm.userDataLoaded = false
+            vm.userDataLoaded = false;
         };
 
         vm.init();

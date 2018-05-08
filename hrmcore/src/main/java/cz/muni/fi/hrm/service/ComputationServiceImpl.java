@@ -31,7 +31,7 @@ public class ComputationServiceImpl implements ComputationService {
         RefCurveDTO averageCurve = this.createAverageCurve(data);
         List<RefCurve> refData = refCurveRepository.findAll();
 
-        ResultDTO result = new ResultDTO(0.0, 0, 100, null, null);
+        ResultDTO result = new ResultDTO(0.0, 0, 100, null, null,null,null);
         int counter = 0;
         for(RefCurve refCurve : refData){
             ResultDTO tempResult = null;
@@ -47,50 +47,31 @@ public class ComputationServiceImpl implements ComputationService {
         return result;
     }
 
-    private ResultDTO compareCurvesOnInterval(RefCurve refCurve, RefCurveDTO averageCurve,
-                                              RefCurve dbTemperature, RefCurveDTO temperature) {
-        int match = 0;
-        int all = 0;
-        for(int i = 0; i < temperature.getValues().size(); ++i){
-            if(averageCurve.getValues().get(i) == null){
-                continue;
-            }
-            Double value = averageCurve.getValues().get(i);
-            Double margin = refCurve.getErrorMargin().getValues().get(i);
-            if(refCurve.getValues().get(i) - margin <= value && value <= refCurve.getValues().get(i) + margin ){
-                ++match;
-            }
-            all++;
-        }
-        return new ResultDTO(match*100.0/all, match, all,
-                refCurve.getName(), averageCurve);
-    }
-
-    private RefCurveDTO findTemperatureIfPresent(List<RefCurveDTO> data) {
-        for(int i = 0; i < data.size(); ++i){
-            if("temperature".equals(data.get(i).getName().toLowerCase())){
-                return data.get(i);
-            }
-        }
-        return null;
-    }
-
     private ResultDTO compareCurves(RefCurve refCurve, RefCurveDTO averageCurve) {
         int match = 0;
         int all = 0;
+        RefCurveDTO matched = new RefCurveDTO();
+        RefCurveDTO notMatched = new RefCurveDTO();
         for(int i = 0; i < refCurve.getValues().size(); ++i){
             if(i >= averageCurve.getValues().size() || averageCurve.getValues().get(i) == null){
+                matched.getValues().add(null);
+                notMatched.getValues().add(null);
                 continue;
             }
             Double value = averageCurve.getValues().get(i);
             Double margin = refCurve.getErrorMargin().getValues().get(i);
             if(refCurve.getValues().get(i) - margin <= value && value <= refCurve.getValues().get(i) + margin ){
                 ++match;
+                matched.getValues().add(averageCurve.getValues().get(i));
+                notMatched.getValues().add(null);
+            }else{
+                notMatched.getValues().add(averageCurve.getValues().get(i));
+                matched.getValues().add(null);
             }
             all++;
         }
         return new ResultDTO(match*100.0/all, match, all,
-                refCurve.getName(), averageCurve);
+                refCurve.getName(), averageCurve, matched, notMatched);
     }
 
 

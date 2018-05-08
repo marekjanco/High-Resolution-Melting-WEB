@@ -1,7 +1,6 @@
 package cz.muni.fi.hrm.entity;
 
-
-import com.sun.istack.internal.NotNull;
+import javax.validation.constraints.NotNull;
 import cz.muni.fi.hrm.entity.partials.CurveValue;
 
 import javax.persistence.CascadeType;
@@ -14,7 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
