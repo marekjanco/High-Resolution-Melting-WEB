@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('hrm')
-    .factory('ComputationService', function ($http) {
+    .factory('ComputationService', function ($http, $rootScope) {
         return {
             compute: function (data) {
                 var config = {

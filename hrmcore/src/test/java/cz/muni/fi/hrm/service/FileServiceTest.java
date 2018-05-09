@@ -117,7 +117,6 @@ public class FileServiceTest {
         MultipartFile file = returnMultipartFile("interpolate.xlsx");
         List<RefCurveDTO> curves = fileService.readUploadedFile(file, false);
 
-        //75.0, 75.5, 76.0, 76.5, 77.0
         Assert.assertEquals(curves.size(), 2);
         Assert.assertEquals(curves.get(0).getValues(), Arrays.asList(null, 1.0, 2.0, 3.0, null));
         Assert.assertEquals(curves.get(1).getValues(), Arrays.asList(null, 12.5, 13.5, 14.5, null));
