@@ -84,6 +84,9 @@ angular.module('hrm')
         };
 
         vm.getCurve = function (name) {
+            if(name === undefined || name === ""){
+                return;
+            }
             ValuesService.findByName(name).then(function (data) {
                 vm.addDataToGraph(data.values, name);
             });

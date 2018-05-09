@@ -54,7 +54,7 @@ public class RefCurveServiceImpl implements RefCurveService {
 
     @Override
     public RefCurveDTO findByName(String name) {
-        if(name == null){
+        if(name == null || name.equals("")){
             throw new IllegalArgumentException("reference curve with name null doesn't exist");
         }
         logger.debug("getting "+name+" from db");
