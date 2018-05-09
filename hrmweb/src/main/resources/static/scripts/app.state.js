@@ -1,24 +1,20 @@
 'use strict';
 
-angular.module('hrm').config(function ($stateProvider, $urlRouterProvider) {
+angular.module('hrm').config(function ($httpProvider, $routeProvider, $locationProvider) {
 
-    $stateProvider.state('home', {
-        url: '/home',
-        views: {
-            'main': {
-                templateUrl: 'html/home.html',
-                controller: 'HomeController as homeController'
-            }
-        }
+    $routeProvider.when('/', {
+        templateUrl: 'html/home.html',
+        controller: 'HomeController as homeController'
+    }).when('/admin/refCurves', {
+        templateUrl: 'html/auth/admin.html',
+        controller: 'AdminController as adminController'
+    }).when('/login', {
+        templateUrl: 'html/login.html',
+        controller: 'LoginController as loginController'
+    }).otherwise({
+        redirectTo: '/'
     });
 
-    $urlRouterProvider.otherwise('home');
+    $locationProvider.html5Mode(true);
 });
 
-angular.module('hrm').config(['ChartJsProvider', function (ChartJsProvider) {
-    // Configure all charts
-    ChartJsProvider.setOptions({
-        chartColors: ['#FF5252', '#3339FF', '#FF33FC', '#33FF33', '#33FFDA', '#FF8A80', '#FCFF33'],
-        responsive: true
-    });
-}]);

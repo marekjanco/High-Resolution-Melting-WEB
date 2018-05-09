@@ -1,58 +1,117 @@
 <div>
-    <!--
-    <h2>Create inserts to database</h2>
-    <div class="ui action input">
-        <input type="text" ng-model="homeController.inserts" placeholder="insert">
-        <button class="ui button" ng-click="homeController.createInsert()">Create</button>
+    <a href="#" ng-click="homeController.addUserDataField()"ng-show="!homeController.userDataLoaded">
+        <i ng-show="!homeController.userDataField" class="large green plus icon"></i><i ng-show="homeController.userDataField" class="large red minus icon"></i> Add new user data</a>
+    <div class="ui segment" ng-show="!homeController.userDataLoaded && homeController.userDataField">
+        <i class="large question circle outline icon link"></i>
+        <!--popup-->
+        <div class="ui fluid popup bottom left transition hidden"
+             style="top: 553px; left: 1px; bottom: auto; right: auto; width: 60%;">
+            <ul>
+                <li>Input .xls, .xlsx or .csv file with data in correct format</li>
+                <li>Only first collumn can be temperature</li>
+                <li>Be careful to assign value to every temperature value</li>
+                <li>Data should be in following format:</li>
+            </ul>
+            <table class="ui celled table">
+                <tr>
+                    <td>
+                        temperature/data_set_name0
+                    </td>
+                    <td>
+                        data_set_name1
+                    </td>
+                    <td>
+                        data_set_name2
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        value0
+                    </td>
+                    <td>
+                        value1
+                    </td>
+                    <td>
+                        value2
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        ...
+                    </td>
+                    <td>
+                        ...
+                    </td>
+                    <td>
+                        ...
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <!--end of popup-->
+        <b>Load user data: </b>
+        <form class="uploadForm">
+            <input type="file" id="excel_file" accept=".xls,.xlsx,.csv">
+            <p>Drag your files here or click in this area.</p>
+        </form>
+        <div id="uploadButton" class="ui teal button" ng-click="homeController.uploadFile()">
+            Load data
+        </div>
     </div>
-    <input type="text" ng-model="homeController.name" placeholder="">
-    <br>
-    -->
+    <a href="#" ng-click="homeController.loadNewData()" ng-show="homeController.userDataLoaded"><i
+            class="large green plus icon"></i> Add new user data</a>
     <div class="ui horizontal segments">
-        <div class="ui segment">
-            <b>Copy user data here: </b>
+        <div class="ui segment" style="width:38%">
+            <b>User data(curves): </b> <a ng-show="!homeController.userDataLoaded"
+                                          class="ui left pointing red basic label">User data are not loaded !!!</a>
             <br><br>
-            <div class="input_fields_wrap">
-                <div class="ui input" style="display: block;">
-                    <input class="userDataInput" type="text" name="inputs[]">
-                    <i class="small inverted circular green plus link icon add_field_button"
-                       style="margin-top:10px"></i>
-                </div>
-            </div>
-            <button class="ui teal button" style="margin-top:5px" ng-click="homeController.viewInGraph()">
-                View in graph
+            <button class="ui teal button" style="margin-top:5px" ng-click="homeController.viewUserDataInGraph()">
+                Show in graph
             </button>
-            <button class="ui teal button" style="margin-top:5px" ng-click="homeController.addDataToGraph()">
-                Add and compute
+            <button class="ui teal button" style="margin-top:5px" ng-click="homeController.showAverageCurve()">
+                Show average curve
+            </button>
+            <button class="ui blue button" style="margin-top:5px" ng-click="homeController.compute()">
+                Compute
             </button>
         </div>
-        <div class="ui segment">
-            <b>Choose from database </b>
+        <div class="ui segment" style="width:33%">
+            <b>Reference data(curves): </b>
             <br><br>
-            <div id="names" class="ui multiple selection dropdown" style="display: block;">
+            <div id="names" class="ui multiple selection dropdown">
                 <i class="dropdown icon"></i>
                 <div class="default text">Select...</div>
                 <div class="menu">
-                    <div class="item" ng-repeat="name in homeController.names" data-value="{{name}}">
-                        {{name}}
+                    <div class="item" ng-repeat="name in names" data-value="{{name.name}}">
+                        {{name.acronym}}
                     </div>
                 </div>
             </div>
             <div class="ui teal button" style="margin-top:5px" ng-click="homeController.drawGraph()">
-                Draw
+                Add to graph
             </div>
         </div>
-        <div class="ui segment">
+        <div class="ui segment" style="width:29%">
             <b>Results:</b>
-            <br><br>
-            <div class="ui teal button" ng-click="homeController.clearGraph()">
+            <br>
+            <div class="ui compact message" id="computation-results" ng-show="homeController.result != undefined">
+                <i class="close icon" ng-click="homeController.closeResult()"></i>
+                <b>User data matched with: </b>{{homeController.result.refCurveName}}<br>
+                <b>Match was: </b>{{homeController.result.matchInPerc}}%<br>
+                {{homeController.result.pointsFitInMargin}}/{{homeController.result.numberOfPoints}}<br>
+            </div>
+            <br>
+            <div class="ui teal button" style="margin-top:5px" ng-click="homeController.showResultInGraph()">
+                Show result in graph
+            </div>
+            <div class="ui teal button" ng-click="homeController.clearGraph()" style="margin-top:5px">
                 Clear graph
             </div>
         </div>
     </div>
     <div class="ui segment">
         <canvas class="chart chart-line" chart-data="data" chart-labels="labels"
-                chart-series="series" chart-click="onClick"></canvas>
+                chart-series="series" chart-click="onClick" chart-colors="colors"></canvas>
     </div>
     <br>
 </div>

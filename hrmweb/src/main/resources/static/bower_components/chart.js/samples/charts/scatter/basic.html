@@ -22,7 +22,7 @@
     <script>
         var color = Chart.helpers.color;
         var scatterChartData = {
-            datasets: [{
+            refCurves: [{
                 label: "My First dataset",
                 borderColor: window.chartColors.red,
                 backgroundColor: color(window.chartColors.red).alpha(0.2).rgbString(),
@@ -91,7 +91,7 @@
         };
 
         document.getElementById('randomizeData').addEventListener('click', function() {
-            scatterChartData.datasets.forEach(function(dataset) {
+            scatterChartData.refCurves.forEach(function(dataset) {
                 dataset.data = dataset.data.map(function() {
                     return {
                         x: randomScalingFactor(),

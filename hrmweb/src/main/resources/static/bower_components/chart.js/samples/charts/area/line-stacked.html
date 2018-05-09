@@ -31,7 +31,7 @@
 			type: 'line',
 			data: {
 				labels: ["January", "February", "March", "April", "May", "June", "July"],
-				datasets: [{
+				refCurves: [{
 					label: "My First dataset",
 					borderColor: window.chartColors.red,
 					backgroundColor: window.chartColors.red,
@@ -121,7 +121,7 @@
 		};
 
 		document.getElementById('randomizeData').addEventListener('click', function() {
-			config.data.datasets.forEach(function(dataset) {
+			config.data.refCurves.forEach(function(dataset) {
 				dataset.data = dataset.data.map(function() {
 					return randomScalingFactor();
 				});
@@ -133,10 +133,10 @@
 
 		var colorNames = Object.keys(window.chartColors);
 		document.getElementById('addDataset').addEventListener('click', function() {
-			var colorName = colorNames[config.data.datasets.length % colorNames.length];
+			var colorName = colorNames[config.data.refCurves.length % colorNames.length];
 			var newColor = window.chartColors[colorName];
 			var newDataset = {
-				label: 'Dataset ' + config.data.datasets.length,
+				label: 'Dataset ' + config.data.refCurves.length,
 				borderColor: newColor,
 				backgroundColor: newColor,
 				data: [],
@@ -146,16 +146,16 @@
 				newDataset.data.push(randomScalingFactor());
 			}
 
-			config.data.datasets.push(newDataset);
+			config.data.refCurves.push(newDataset);
 			window.myLine.update();
 		});
 
 		document.getElementById('addData').addEventListener('click', function() {
-			if (config.data.datasets.length > 0) {
+			if (config.data.refCurves.length > 0) {
 				var month = MONTHS[config.data.labels.length % MONTHS.length];
 				config.data.labels.push(month);
 
-				config.data.datasets.forEach(function(dataset) {
+				config.data.refCurves.forEach(function(dataset) {
 					dataset.data.push(randomScalingFactor());
 				});
 
@@ -164,14 +164,14 @@
 		});
 
 		document.getElementById('removeDataset').addEventListener('click', function() {
-			config.data.datasets.splice(0, 1);
+			config.data.refCurves.splice(0, 1);
 			window.myLine.update();
 		});
 
 		document.getElementById('removeData').addEventListener('click', function() {
 			config.data.labels.splice(-1, 1); // remove the label first
 
-			config.data.datasets.forEach(function(dataset, datasetIndex) {
+			config.data.refCurves.forEach(function(dataset, datasetIndex) {
 				dataset.data.pop();
 			});
 

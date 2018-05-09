@@ -28,7 +28,7 @@
         var color = Chart.helpers.color;
         var horizontalBarChartData = {
             labels: ["January", "February", "March", "April", "May", "June", "July"],
-            datasets: [{
+            refCurves: [{
                 label: 'Dataset 1',
                 backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
                 borderColor: window.chartColors.red,
@@ -87,7 +87,7 @@
 
         document.getElementById('randomizeData').addEventListener('click', function() {
             var zero = Math.random() < 0.2 ? true : false;
-            horizontalBarChartData.datasets.forEach(function(dataset) {
+            horizontalBarChartData.refCurves.forEach(function(dataset) {
                 dataset.data = dataset.data.map(function() {
                     return zero ? 0.0 : randomScalingFactor();
                 });
@@ -99,10 +99,10 @@
         var colorNames = Object.keys(window.chartColors);
 
         document.getElementById('addDataset').addEventListener('click', function() {
-            var colorName = colorNames[horizontalBarChartData.datasets.length % colorNames.length];;
+            var colorName = colorNames[horizontalBarChartData.refCurves.length % colorNames.length];;
             var dsColor = window.chartColors[colorName];
             var newDataset = {
-                label: 'Dataset ' + horizontalBarChartData.datasets.length,
+                label: 'Dataset ' + horizontalBarChartData.refCurves.length,
                 backgroundColor: color(dsColor).alpha(0.5).rgbString(),
                 borderColor: dsColor,
                 data: []
@@ -112,17 +112,17 @@
                 newDataset.data.push(randomScalingFactor());
             }
 
-            horizontalBarChartData.datasets.push(newDataset);
+            horizontalBarChartData.refCurves.push(newDataset);
             window.myHorizontalBar.update();
         });
 
         document.getElementById('addData').addEventListener('click', function() {
-            if (horizontalBarChartData.datasets.length > 0) {
+            if (horizontalBarChartData.refCurves.length > 0) {
                 var month = MONTHS[horizontalBarChartData.labels.length % MONTHS.length];
                 horizontalBarChartData.labels.push(month);
 
-                for (var index = 0; index < horizontalBarChartData.datasets.length; ++index) {
-                    horizontalBarChartData.datasets[index].data.push(randomScalingFactor());
+                for (var index = 0; index < horizontalBarChartData.refCurves.length; ++index) {
+                    horizontalBarChartData.refCurves[index].data.push(randomScalingFactor());
                 }
 
                 window.myHorizontalBar.update();
@@ -130,14 +130,14 @@
         });
 
         document.getElementById('removeDataset').addEventListener('click', function() {
-            horizontalBarChartData.datasets.splice(0, 1);
+            horizontalBarChartData.refCurves.splice(0, 1);
             window.myHorizontalBar.update();
         });
 
         document.getElementById('removeData').addEventListener('click', function() {
             horizontalBarChartData.labels.splice(-1, 1); // remove the label first
 
-            horizontalBarChartData.datasets.forEach(function (dataset, datasetIndex) {
+            horizontalBarChartData.refCurves.forEach(function (dataset, datasetIndex) {
                 dataset.data.pop();
             });
 

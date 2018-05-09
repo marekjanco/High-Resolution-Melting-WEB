@@ -1,33 +1,33 @@
 'use strict';
 
 angular.module('hrm')
-    .controller('HomeController', function ($scope, ValuesService) {
+    .controller('HomeController', function ($scope, ValuesService,
+                                            ComputationService, FileService, $rootScope) {
         var vm = this;
 
         vm.names = [];
         vm.selectedNames = [];
-        vm.numberOfDatasets = 0;
+        vm.curvesNumber = 0;
+        vm.parsedData = undefined;
+        vm.userDataLoaded = false;
+        vm.result = undefined;
+        vm.userDataField = false;
 
         // 'JQuery'
-        // add inputs dynamically
-        $(document).ready(function() {
-            var max_fields      = 6;
-            var wrapper         = $(".input_fields_wrap");
-            var add_button      = $(".add_field_button");
-
-            var x = 1;
-            $(add_button).click(function(e){
-                e.preventDefault();
-                if(x < max_fields){
-                    x++;
-                    $(wrapper).append('<div class="ui input" style="display: block;"><input class="userDataInput" type="text" name="inputs[]">&nbsp;<a href="#" class="remove_field"><i class="small inverted circular red minus link icon" style="margin-top:10px"></i></a></div>'); //add input box
-                }
+        //checks if document is loaded
+        $(document).ready(function () {
+            $('form input').change(function () {
+                var filename = document.getElementById('excel_file').files[0].name;
+                $('form p').text(filename);
             });
-
-            $(wrapper).on("click",".remove_field", function(e){
-                e.preventDefault(); $(this).parent('div').remove(); x--;
-            })
         });
+
+        //show popup
+        $('.large.question.circle.outline.icon')
+            .popup({
+                inline     : true,
+                hoverable  : true,
+            });
 
         // dropdown action
         $('.dropdown')
@@ -37,121 +37,182 @@ angular.module('hrm')
         ;
         // end of 'JQuery'
 
-        /*
-        vm.inserts = [];
-        vm.name = undefined;
-
-        vm.createInsert = function () {
-            var array = vm.inserts.split(" ");
-            for(var i = 0; i < array.length; ++i){
-                array[i] = array[i].replace(',', '.');
+        vm.viewUserDataInGraph = function () {
+            if(vm.parsedData === undefined){
+                vm.showError();
+                return;
             }
-            console.log("Insert into NUMBER_ARRAY (ID, NAME, NUMBERS) values (1, '"+vm.name+"', '"+array.toString()+"');");
-
-        };
-        */
-
-        vm.viewInGraph = function () {
             vm.clearGraph();
-            var values = vm.getValuesFromInputs();
-            for(var i = 0; i < values.length; ++i){
-                vm.addDataToGraph(values[i], "input_"+i);
+            var parsedData = vm.parsedData;
+            for (var i = 0; i < parsedData.length; ++i) {
+                vm.addDataToGraph(parsedData[i].values, parsedData[i].name);
             }
         };
 
-        vm.getLabels = function () {
-            ValuesService.findByName('X-axis').then(function (data) {
-                $scope.labels = data;
+        vm.compute = function () {
+            if(vm.parsedData === undefined){
+                vm.showError();
+                return;
+            }
+            $rootScope.loading = true;
+            ComputationService.compute(vm.parsedData).then(function (data) {
+                vm.result = data;
+                vm.showResultInGraph();
+            }).finally(function () {
+                $rootScope.loading = false;
             });
+        };
+
+        vm.loadNewData = function () {
+            vm.clearGraph();
+            vm.closeResult();
+            vm.parsedData = undefined;
+            vm.userDataLoaded = false;
+        };
+
+        vm.showAverageCurve = function(){
+            if(vm.parsedData === undefined){
+                vm.showError();
+                return;
+            }
+            $rootScope.loading = true;
+            ComputationService.getAverageCurve(vm.parsedData).then(function (data) {
+                vm.addDataToGraph(data.values, data.name);
+            }).finally(function () {
+                $rootScope.loading = false;
+            });
+        };
+
+        vm.getCurve = function (name) {
+            if(name === undefined || name === ""){
+                return;
+            }
+            ValuesService.findByName(name).then(function (data) {
+                vm.addDataToGraph(data.values, name);
+            });
+        };
+
+
+        vm.getCurveWithInterval = function (name) {
+            ValuesService.findByName(name).then(function (data) {
+                vm.addDataToGraph(data.values, name);
+                vm.addIntervalToGraph(data.values, data.errorMargin.values, name);
+            });
+        };
+
+        vm.addIntervalToGraph = function(data, margin, name){
+            var above = [];
+            var below = [];
+            for(var i = 0; i < data.length; ++i){
+                above.push(data[i] + margin[i]);
+                below.push(data[i] - margin[i]);
+            }
+            vm.addDataToGraph(above, name+"+");
+            vm.addDataToGraph(below, name+"-");
+        };
+
+        vm.showResultInGraph = function () {
+            if(vm.result === undefined){
+                $rootScope.showError = true;
+                $rootScope.errorMessage = "No result to show";
+                return;
+            }
+            vm.clearGraph();
+            vm.addDataToGraph(vm.result.matched.values, "matched");
+            vm.addDataToGraph(vm.result.notMatched.values, "not_matched");
+            vm.getCurveWithInterval(vm.result.refCurveName);
+            vm.setResultColors();
+        };
+
+        vm.setResultColors = function(){
+            $scope.colors =  ['#00FF00','#FF0000', '#0000ff','#05fce3','#05fce3', '#FF5252', '#3339FF', '#FF33FC', '#33FF33', '#33FFDA', '#FF8A80', '#FCFF33'];
+        };
+
+        vm.setDefaultColors = function () {
+            $scope.colors =  ['#FF5252', '#3339FF', '#FF33FC', '#33FF33', '#33FFDA', '#FF8A80', '#FCFF33'];
         };
 
         vm.addDataToGraph = function (data, name) {
-            $scope.data[vm.numberOfDatasets] = data;
-            $scope.series[vm.numberOfDatasets] = name;
-            vm.numberOfDatasets++;
-            //vm.computeDifference();
-        };
-
-        vm.getDataSet = function (name) {
-            ValuesService.findByName(name).then(function (data) {
-                $scope.data[vm.numberOfDatasets] = data;
-                $scope.series[vm.numberOfDatasets] = name;
-                vm.numberOfDatasets++;
-            });
+            if(name === 'temperature'){
+                return;
+            }
+            $scope.data[vm.curvesNumber] = data;
+            $scope.series[vm.curvesNumber] = name;
+            vm.curvesNumber++;
         };
 
         vm.drawGraph = function () {
             var array = $('#names').dropdown('get value');
             array = array.split(",");
-
             //remove all that all already drawn
             for (var i = array.length - 1; i > -1; --i) {
                 if ($scope.series.indexOf(array[i]) > -1) {
                     array.splice(i, 1);
                 }
             }
-
+            console.log(array);
             for (var i = 0; i < array.length; ++i) {
-                vm.getDataSet(array[i]);
+                vm.getCurve(array[i]);
             }
         };
 
-        vm.computeDifference = function () {
-        /*    ValuesService.compute(vm.data[$scope.addedDataSet]).then(function (data) {
-                $scope.matchDataSet = data[1].name;
-                $scope.distance = data[0];
-                vm.getDataSet($scope.matchDataSet);
+        vm.uploadFile = function () {
+            var file = document.getElementById('excel_file').files[0];
+            $rootScope.loading = true;
+            FileService.uploadFile(file).then(function (data) {
+                if(data === undefined){
+                    return;
+                }
+                vm.parsedData = data;
+                vm.userDataLoaded = true;
+                console.log("parsedData: ",vm.parsedData);
+            }).finally(function () {
+                $rootScope.loading = false;
             });
-        */
-        };
-
-        vm.getValuesFromInputs = function () {
-            var values = [];
-            $("input[name='inputs[]']").each(function() {
-                values.push($(this).val());
-            });
-            for(var i = 0; i < values.length; ++i){
-                values[i] = vm.parseInput(values[i]);
-            }
-            return values;
-        };
-
-        vm.parseInput = function (data) {
-            var array = data.split(" ");
-            for (var i = 0; i < array.length; ++i) {
-                array[i] = array[i].replace(',', '.');
-            }
-            return array;
         };
 
         vm.clearGraph = function () {
             vm.selectedNames = [];
-            vm.numberOfDatasets = 0;
+            vm.curvesNumber = 0;
             $scope.data = [""];
             $scope.series = [];
-            $scope.matchDataSet = undefined;
-            $scope.distance = undefined;
             $('#names').dropdown('restore defaults');
+        };
+
+        vm.closeResult = function () {
+            vm.result = undefined;
+            vm.setDefaultColors();
+            vm.clearGraph();
+        };
+
+        vm.showError = function () {
+            $rootScope.showError = true;
+            $rootScope.errorMessage = "User data are not loaded yet.";
+        };
+
+        vm.addUserDataField = function () {
+          vm.userDataField = ! vm.userDataField;
+        };
+
+        vm.getLabels = function () {
+            ValuesService.getTemperature().then(function (data) {
+                $scope.labels = data.values;
+                console.log($scope.labels);
+            });
         };
 
         vm.getNames = function () {
             ValuesService.getAllNames().then(function (data) {
                 $scope.names = data;
-                vm.names = data;
+                console.log("names: ",$scope.names);
             });
         };
 
         vm.init = function () {
-            vm.getLabels();
-            vm.getNames();
-            $scope.data = [""];
-            vm.selectedNames = [];
-            vm.numberOfDatasets = 0;
-            $scope.data = [""];
-            $scope.series = [];
-            $scope.matchDataSet = undefined;
-            $scope.distance = undefined;
-            $('#names').dropdown('restore defaults');
+            vm.getLabels(); //get temperature - x axis
+            vm.getNames(); // names and acronyms of reference curves to dropdown
+            vm.clearGraph();
+            vm.userDataLoaded = false;
         };
 
         vm.init();

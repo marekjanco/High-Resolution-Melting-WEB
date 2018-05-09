@@ -74,7 +74,7 @@ Here are the options for all directives:
 - `chart-get-color`: function that returns a color in case there are not enough (will use random colors if not specified)
 - `chart-click`: onclick event handler
 - `chart-hover`: onmousemove event handler
-- `chart-dataset-override`: override individual datasets to allow per dataset configuration e.g. y-axis, mixed type chart
+- `chart-dataset-override`: override individual refCurves to allow per dataset configuration e.g. y-axis, mixed type chart
 
 There is another directive `chart-base` that takes an extra attribute `chart-type` to define the type
 dynamically. 

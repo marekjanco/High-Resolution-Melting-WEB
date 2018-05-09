@@ -2,7 +2,7 @@
     margin-top: 2em;
 }
 .content {
-    margin-top: 3em;
+    margin-top: 2em;
     width: 90% !important;
 }
 .userDataInput {
@@ -10,4 +10,60 @@
 }
 #names {
     width:75%;
+}
+.ui.message {
+    width: 65%;
+    margin: 0 auto;
+}
+.uploadForm{
+    position: inherit;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 10%;
+    margin-right: 10%;
+    border: 2px dashed #000000;
+    min-height: 9em !important;
+    min-width: 12em !important;
+}
+.uploadForm p{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin-top: 2.5em;
+    text-align: center;
+    color: #000000;
+    font-size: large;
+}
+.uploadForm input{
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    outline: none;
+    opacity: 0;
+}
+.uploadForm button:active{
+    border:0;
+}
+#uploadButton{
+    margin-left: 10%;
+    margin-right: 10px;
+}
+#computation-results{
+    position:relative;
+    margin-top: 12px;
+    margin-bottom: 12px;
+    margin-left: 5px;
+    margin-right: 5px;
+    width:90%;
+}
+#message-div{
+    min-width: 70%;
+    margin:0 auto;
+    margin-top: 1em;
+}
+#names{
+    position:relative;
+    margin-right:10px;
 }

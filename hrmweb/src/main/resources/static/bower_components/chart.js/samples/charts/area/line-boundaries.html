@@ -77,7 +77,7 @@
 				type: 'line',
 				data: {
 					labels: generateLabels(),
-					datasets: [{
+					refCurves: [{
 						backgroundColor: utils.transparentize(presets.red),
 						borderColor: presets.red,
 						data: generateData(),
@@ -108,7 +108,7 @@
 			Chart.helpers.each(Chart.instances, function(chart) {
 				utils.srand(seed);
 
-				chart.data.datasets.forEach(function(dataset) {
+				chart.data.refCurves.forEach(function(dataset) {
 					dataset.data = generateData();
 				});
 

@@ -49,7 +49,7 @@
 
 		var data = {
 			labels: generateLabels(),
-			datasets: [{
+			refCurves: [{
 				backgroundColor: utils.transparentize(presets.red),
 				borderColor: presets.red,
 				data: generateData(),
@@ -126,7 +126,7 @@
 
 		function randomize() {
 			inputs.from = [];
-			chart.data.datasets.forEach(function(dataset) {
+			chart.data.refCurves.forEach(function(dataset) {
 				dataset.data = generateData();
 			});
 			chart.update();

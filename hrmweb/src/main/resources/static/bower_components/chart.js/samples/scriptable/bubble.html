@@ -57,7 +57,7 @@
 		}
 
 		var data = {
-			datasets: [{
+			refCurves: [{
 				data: generateData()
 			}, {
 				data: generateData()
@@ -107,21 +107,21 @@
 		});
 
 		function randomize() {
-			chart.data.datasets.forEach(function(dataset) {
+			chart.data.refCurves.forEach(function(dataset) {
 				dataset.data = generateData()
 			});
 			chart.update();
 		}
 
 		function addDataset() {
-			chart.data.datasets.push({
+			chart.data.refCurves.push({
 				data: generateData()
 			});
 			chart.update();
 		}
 
 		function removeDataset() {
-			chart.data.datasets.shift();
+			chart.data.refCurves.shift();
 			chart.update();
 		}
 	</script>

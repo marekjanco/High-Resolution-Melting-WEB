@@ -4,9 +4,11 @@
     <title>High Resolution Melting WEB</title>
 
     <meta charset="UTF-8">
-    <meta name="keywords" content=""/>
-    <meta name="description" content=""/>
+    <meta name="keywords" content="HRMA, High, Resolution, Melting, Analysis, Trichinella, Trihinella species"/>
+    <meta name="description" content="trichinella identify trichinella species"/>
     <meta name="author" content="Marek Jančo">
+
+    <base href="/">
 
     <link rel="stylesheet" type="text/css" href="bower_components/semantic/dist/semantic.min.css"/>
     <link rel="stylesheet" type="text/css" href="css/style.css"/>
@@ -16,30 +18,75 @@
 <!-- Bower components -->
 <script src="bower_components/angular/angular.js"></script>
 <script src="bower_components/jquery/jquery-3.3.1.min.js"></script>
-<script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
-<script src="bower_components/angular-resource/angular-resource.js"></script>
+<script src="bower_components/angular-resource/angular-resource.min.js"></script>
 <script src="bower_components/semantic/dist/semantic.min.js"></script>
 <script src="bower_components/chart.js/Chart.min.js"></script>
 <script src="bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
+<script src="bower_components/bower-angular-route/angular-route.min.js"></script>
+<script src="bower_components/angular-file-saver/dist/angular-file-saver.bundle.min.js"></script>
 
 <!-- App configuration -->
 <script type="text/javascript" src="scripts/app.js"></script>
 <script type="text/javascript" src="scripts/app.state.js"></script>
 
+<!--Interceptors-->
+<script type="text/javascript" src="scripts/auth.interceptor.js"></script>
+
 <!-- Servicies -->
-<script type="text/javascript" src="scripts/service/home.service.js"></script>
+<script type="text/javascript" src="scripts/service/values.service.js"></script>
+<script type="text/javascript" src="scripts/service/login.service.js"></script>
+<script type="text/javascript" src="scripts/service/admin.service.js"></script>
+<script type="text/javascript" src="scripts/service/file.service.js"></script>
+<script type="text/javascript" src="scripts/service/computation.service.js"></script>
 
 <!-- Controllers -->
 <script type="text/javascript" src="scripts/controller/home.controller.js"></script>
 <script type="text/javascript" src="scripts/controller/index.controller.js"></script>
-<!--MENU-->
-<!--
-<div class="ui large secondary pointing menu">
-    <a class="active item" style="margin-left: 5%">Home</a>
+<script type="text/javascript" src="scripts/controller/login.controller.js"></script>
+<script type="text/javascript" src="scripts/controller/admin.controller.js"></script>
+
+<!--loader-->
+<div class="ui active dimmer" style="position: fixed;width: 100%;height: 100%;" ng-show="loading">
+    <div class="ui massive text loader">Loading</div>
 </div>
--->
+<!--end of loader-->
+
+<!--MENU-->
+<div class="ui large secondary pointing menu">
+    <a class="item" href="/" style="margin-left: 5%"><b>Home</b></a>
+    <a class="item" ng-show="indexCtrl.authenticated" href="/admin/refCurves">Admin interface</a>
+    <div class="right menu" style="margin-right:5%;">
+        <a style="color:black" ng-show="!indexCtrl.authenticated" href="/login">
+            <button class="ui secondary basic button">
+                <b>Log in</b>
+            </button>
+        </a>
+        <a class="item" ng-show="indexCtrl.authenticated"><i class="blue user icon"></i> Logged: {{indexCtrl.username}}</a>
+        <a class="item" ng-show="indexCtrl.authenticated" ng-click="indexCtrl.logout()"><i class="sign out red alternate icon"></i></a>
+    </div>
+</div>
 <!--END OF MENU-->
-<div ui-view="main" class="ui container content">
+<div id="message-div" ng-show="showError|| showSuccess">
+    <div class="ui negative message" ng-show="showError">
+        <i class="close icon" ng-click="indexCtrl.closeMessage()"></i>
+        <div class="header">
+            Error message
+        </div>
+        <p>
+            {{errorMessage}}
+        </p>
+    </div>
+    <div class="ui positive message" ng-show="showSuccess">
+        <i class="close icon" ng-click="indexCtrl.closeMessage()"></i>
+        <div class="header">
+            Success message
+        </div>
+        <p>
+            {{successMessage}}
+        </p>
+    </div>
+</div>
+<div class="ui container content" ng-view>
 </div>
 </body>
 </html>

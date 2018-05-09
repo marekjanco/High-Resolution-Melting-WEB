@@ -1,0 +1,28 @@
+<div>
+    <div class="ui middle aligned center aligned grid">
+        <div class="column" style="width:42%;margin-top:4%;">
+            <h2 class="ui teal header" style="margin-bottom:20px">
+                Please log-in to your account.
+            </h2>
+            <form class="ui big form">
+                <div class="ui stacked segment">
+                    <div class="field">
+                        <div class="ui left icon input">
+                            <i class="user icon"></i>
+                            <input id="login" ng-model="loginController.username" type="text" class="form-control"
+                                   required="required" placeholder="Username"/>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui left icon input">
+                            <i class="lock icon"></i>
+                            <input id="password" ng-model="loginController.password" type="password"
+                                   required="required" placeholder="Password"/>
+                        </div>
+                    </div>
+                    <div class="ui fluid teal submit button" ng-click="loginController.login()">Login</div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
