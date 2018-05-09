@@ -22,7 +22,7 @@
     <script>
     var lineChartData = {
         labels: ["January", "February", "March", "April", "May", "June", "July"],
-        datasets: [{
+        refCurves: [{
             label: "My First dataset",
             borderColor: window.chartColors.red,
             backgroundColor: window.chartColors.red,
@@ -90,7 +90,7 @@
     };
 
     document.getElementById('randomizeData').addEventListener('click', function() {
-        lineChartData.datasets.forEach(function(dataset) {
+        lineChartData.refCurves.forEach(function(dataset) {
             dataset.data = dataset.data.map(function() {
                 return randomScalingFactor();
             });

@@ -22,7 +22,7 @@
     var config = {
         type: 'pie',
         data: {
-            datasets: [{
+            refCurves: [{
                 data: [
                     randomScalingFactor(),
                     randomScalingFactor(),
@@ -58,7 +58,7 @@
     };
 
     document.getElementById('randomizeData').addEventListener('click', function() {
-        config.data.datasets.forEach(function(dataset) {
+        config.data.refCurves.forEach(function(dataset) {
             dataset.data = dataset.data.map(function() {
                 return randomScalingFactor();
             });
@@ -72,7 +72,7 @@
         var newDataset = {
             backgroundColor: [],
             data: [],
-            label: 'New dataset ' + config.data.datasets.length,
+            label: 'New dataset ' + config.data.refCurves.length,
         };
 
         for (var index = 0; index < config.data.labels.length; ++index) {
@@ -83,12 +83,12 @@
             newDataset.backgroundColor.push(newColor);
         }
 
-        config.data.datasets.push(newDataset);
+        config.data.refCurves.push(newDataset);
         window.myPie.update();
     });
 
     document.getElementById('removeDataset').addEventListener('click', function() {
-        config.data.datasets.splice(0, 1);
+        config.data.refCurves.splice(0, 1);
         window.myPie.update();
     });
     </script>

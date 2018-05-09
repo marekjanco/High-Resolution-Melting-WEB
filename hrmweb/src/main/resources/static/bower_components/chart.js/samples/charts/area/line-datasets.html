@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>area > datasets | Chart.js sample</title>
+	<title>area > refCurves | Chart.js sample</title>
 	<link rel="stylesheet" type="text/css" href="../../style.css">
 	<script src="../../../Chart.bundle.js"></script>
 	<script src="../../utils.js"></script>
@@ -46,7 +46,7 @@
 
 		var data = {
 			labels: generateLabels(),
-			datasets: [{
+			refCurves: [{
 				backgroundColor: utils.transparentize(presets.red),
 				borderColor: presets.red,
 				data: generateData(),
@@ -147,7 +147,7 @@
 		}
 
 		function randomize() {
-			chart.data.datasets.forEach(function(dataset) {
+			chart.data.refCurves.forEach(function(dataset) {
 				dataset.data = generateData();
 			});
 			chart.update();

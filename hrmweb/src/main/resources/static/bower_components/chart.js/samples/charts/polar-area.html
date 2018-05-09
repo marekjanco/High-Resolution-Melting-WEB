@@ -30,7 +30,7 @@
     var color = Chart.helpers.color;
     var config = {
         data: {
-            datasets: [{
+            refCurves: [{
                 data: [
                     randomScalingFactor(),
                     randomScalingFactor(),
@@ -83,9 +83,9 @@
     };
 
     document.getElementById('randomizeData').addEventListener('click', function() {
-        config.data.datasets.forEach(function(piece, i) {
+        config.data.refCurves.forEach(function(piece, i) {
             piece.data.forEach(function(value, j) {
-                config.data.datasets[i].data[j] = randomScalingFactor();
+                config.data.refCurves[i].data[j] = randomScalingFactor();
             });
         });
         window.myPolarArea.update();
@@ -93,9 +93,9 @@
 
     var colorNames = Object.keys(window.chartColors);
     document.getElementById('addData').addEventListener('click', function() {
-        if (config.data.datasets.length > 0) {
+        if (config.data.refCurves.length > 0) {
             config.data.labels.push('data #' + config.data.labels.length);
-            config.data.datasets.forEach(function(dataset) {
+            config.data.refCurves.forEach(function(dataset) {
                 var colorName = colorNames[config.data.labels.length % colorNames.length];
                 dataset.backgroundColor.push(window.chartColors[colorName]);
                 dataset.data.push(randomScalingFactor());
@@ -105,7 +105,7 @@
     });
     document.getElementById('removeData').addEventListener('click', function() {
         config.data.labels.pop(); // remove the label first
-        config.data.datasets.forEach(function(dataset) {
+        config.data.refCurves.forEach(function(dataset) {
             dataset.backgroundColor.pop();
             dataset.data.pop();
         });
