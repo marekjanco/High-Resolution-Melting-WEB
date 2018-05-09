@@ -56,17 +56,40 @@ public class FileServiceImpl implements FileService {
         } else {
             throw new IllegalArgumentException("Unknown file type");
         }
-        if(curves == null || curves.get(0) == null){
+        if (curves == null || curves.size() == 0 || curves.get(0) == null) {
             throw new IllegalArgumentException("Reading of file was not successful or file is empty");
         }
+        checkCurvesFormat(curves);
         if (this.checkIfCurveIsTemperature(curves.get(0))) {
             curves.get(0).setName("temperature");
             curves = this.checkIntervalOfData(curves,
                     refCurveRepository.findTemperature().getValues().size());
-            curves.get(0).setErrorMargin(new ErrorMarginDTO());
+            if("temperature".equals(curves.get(0).getName())){
+                curves.remove(0); //we dont need temperature no more after adjusting data
+            }
         }
-        curves.remove(0);
         return curves;
+    }
+
+    private void checkCurvesFormat(List<RefCurveDTO> curves) {
+        int valuesCount = 0;
+        for (int i = 0; i < curves.size(); ++i) {
+            if (curves.get(i) == null) {
+                throw new IllegalArgumentException("error while reading " + i + ". collumn");
+            }
+            if (curves.get(i).getName() == null) {
+                throw new IllegalArgumentException("no name found for curve in " + i + ". collumn");
+            }
+            int curveSize = curves.get(i).getValues().size();
+            if (curveSize == 0) {
+                throw new IllegalArgumentException("No values found for user data set in " + i + ". collumn");
+            }
+            if (i == 0) {
+                valuesCount = curveSize;
+            } else if (curveSize != valuesCount) {
+                throw new IllegalArgumentException("Every user data set should be same length as the others");
+            }
+        }
     }
 
     @Override
@@ -92,6 +115,9 @@ public class FileServiceImpl implements FileService {
 
     private List<RefCurveDTO> checkIntervalOfData(List<RefCurveDTO> curves, int max) {
         RefCurveDTO temperature = curves.get(0);
+        if (max < temperature.getValues().size()) {
+            curves = this.adjustBiggerInterval(curves);
+        }
         int index = this.indexOfSubinterval(temperature);
         if (index != -1) {
             for (RefCurveDTO curve : curves) {
@@ -100,7 +126,7 @@ public class FileServiceImpl implements FileService {
                     newValues.add(null);
                 }
                 newValues.addAll(curve.getValues());
-                while(newValues.size() < max) {
+                while (newValues.size() < max) {
                     newValues.add(null);
                 }
                 curve.setValues(newValues);
@@ -111,12 +137,26 @@ public class FileServiceImpl implements FileService {
         return curves;
     }
 
+    private List<RefCurveDTO> adjustBiggerInterval(List<RefCurveDTO> curves) {
+        RefCurve dbTemperature = refCurveRepository.findTemperature();
+        Double min = dbTemperature.getValues().get(0);
+        Double max = dbTemperature.getValues().get(dbTemperature.getValues().size() - 1);
+        for (int i = 0; i < curves.get(0).getValues().size(); ++i) {
+            if(curves.get(0).getValues().get(i) < min || curves.get(0).getValues().get(i) > max){
+                for(RefCurveDTO curve : curves){
+                    curve.getValues().remove(i);
+                }
+            }
+        }
+        return curves;
+    }
+
     private List<RefCurveDTO> interpolateData(List<RefCurveDTO> curves) {
         RefCurve dbTemperature = refCurveRepository.findTemperature();
         RefCurveDTO userTemperature = curves.get(0);
         List<RefCurveDTO> newCurves = new ArrayList<>();
 
-        for(int j = 1; j < curves.size();++j) {
+        for (int j = 1; j < curves.size(); ++j) {
             RefCurveDTO newCurve = new RefCurveDTO();
             int temperatureIndex = 0;
             boolean noMoreTemperatureValues = false;
@@ -135,8 +175,8 @@ public class FileServiceImpl implements FileService {
                     newCurve.getValues().add(curves.get(j).getValues().get(temperatureIndex));
                 } else if (dbTemperature.getValues().get(i) < userTemperatureValue) {
                     newCurve.getValues().add(null);
-                } else if(userTemperatureValue < dbTemperature.getValues().get(i) &&
-                        dbTemperature.getValues().get(i) < userTemperature.getValues().get(temperatureIndex + 1)){
+                } else if (userTemperatureValue < dbTemperature.getValues().get(i) &&
+                        dbTemperature.getValues().get(i) < userTemperature.getValues().get(temperatureIndex + 1)) {
                     Double x0 = userTemperatureValue;
                     Double y0 = curves.get(j).getValues().get(temperatureIndex);
                     Double x1 = userTemperature.getValues().get(temperatureIndex + 1);
@@ -144,7 +184,7 @@ public class FileServiceImpl implements FileService {
                     Double x = dbTemperature.getValues().get(i);
                     Double value = this.interpolate(x0, x1, y0, y1, x);
                     newCurve.getValues().add(value);
-                }else{
+                } else {
                     ++temperatureIndex;
                     --i;
                 }
@@ -155,8 +195,8 @@ public class FileServiceImpl implements FileService {
     }
 
     private Double interpolate(Double x0, Double x1, Double y0, Double y1, Double x) {
-        if(x1-x0 == 0.0) return 0.0;
-        return ((y0*(x1-x)) + (y1)*(x-x0))/(x1-x0);
+        if (x1 - x0 == 0.0) return 0.0;
+        return ((y0 * (x1 - x)) + (y1) * (x - x0)) / (x1 - x0);
     }
 
     private int indexOfSubinterval(RefCurveDTO temperature) {
@@ -276,7 +316,7 @@ public class FileServiceImpl implements FileService {
                         parsed = Double.parseDouble(record.get(i));
                         curves.get(i).values.add(parsed);
                     } catch (Exception e) {
-                        throw new IllegalArgumentException("found data that are not in number format, collumn "+i);
+                        throw new IllegalArgumentException("found data that are not in number format, collumn " + i);
                     }
                 }
             }
@@ -299,7 +339,7 @@ public class FileServiceImpl implements FileService {
                 ret = this.connectMarginsToCurves(ret, errorMargins);
             }
         } catch (IOException e) {
-            throw new IllegalArgumentException(file.getName()+ " cannot read this file.");
+            throw new IllegalArgumentException(file.getName() + " cannot read this file.");
         }
         return ret;
     }
@@ -318,7 +358,7 @@ public class FileServiceImpl implements FileService {
                 ret = this.connectMarginsToCurves(ret, errorMargins);
             }
         } catch (IOException e) {
-            throw new IllegalArgumentException(file.getName()+ " cannot read this file.");
+            throw new IllegalArgumentException(file.getName() + " cannot read this file.");
         }
         return ret;
     }
@@ -356,7 +396,7 @@ public class FileServiceImpl implements FileService {
                 ++i;
             }
         } catch (IOException e) {
-            throw new IllegalArgumentException(file.getName()+ " cannot read this file.");
+            throw new IllegalArgumentException(file.getName() + " cannot read this file.");
         }
         return ret;
 
@@ -387,8 +427,8 @@ public class FileServiceImpl implements FileService {
             int cellCounter = 0;
             while (cellIterator.hasNext()) {
                 Cell cell = cellIterator.next();
-                if(cellCounter >= curves.size()){
-                    throw new IllegalArgumentException("Format violation - there is more cells in values row "+i);
+                if (cellCounter >= curves.size()) {
+                    throw new IllegalArgumentException("Format violation - there is more cells in values row " + i);
                 }
                 switch (cell.getCellTypeEnum()) {
                     case NUMERIC:
@@ -440,7 +480,7 @@ public class FileServiceImpl implements FileService {
                     //FIXME vynimka
                     break;
             }
-            if(curve.name != null || !curve.getValues().isEmpty()){
+            if (curve.name != null || !curve.getValues().isEmpty()) {
                 ret.add(curve);
             }
             ++i;
@@ -501,7 +541,7 @@ public class FileServiceImpl implements FileService {
                         //FIXME vynimka
                         break;
                 }
-                if(index == 0){
+                if (index == 0) {
                     ret.add(curve);
                 }
                 ++i;
@@ -514,10 +554,10 @@ public class FileServiceImpl implements FileService {
     }
 
     private List<RefCurveDTO> connectMarginsToCurves(List<RefCurveDTO> curves, List<ErrorMarginDTO> errorMargins) {
-        for(RefCurveDTO curve: curves){
+        for (RefCurveDTO curve : curves) {
             String name = curve.getName();
-            for(ErrorMarginDTO margin: errorMargins){
-                if(name.equals(margin.name)){
+            for (ErrorMarginDTO margin : errorMargins) {
+                if (name.equals(margin.name)) {
                     curve.setErrorMargin(margin);
                     break;
                 }
