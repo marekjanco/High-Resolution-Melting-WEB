@@ -40,6 +40,7 @@ angular.module('hrm')
         vm.viewUserDataInGraph = function () {
             if(vm.parsedData === undefined){
                 vm.showError();
+                return;
             }
             vm.clearGraph();
             var parsedData = vm.parsedData;
@@ -51,6 +52,7 @@ angular.module('hrm')
         vm.compute = function () {
             if(vm.parsedData === undefined){
                 vm.showError();
+                return;
             }
             $rootScope.loading = true;
             ComputationService.compute(vm.parsedData).then(function (data) {
@@ -71,6 +73,7 @@ angular.module('hrm')
         vm.showAverageCurve = function(){
             if(vm.parsedData === undefined){
                 vm.showError();
+                return;
             }
             $rootScope.loading = true;
             ComputationService.getAverageCurve(vm.parsedData).then(function (data) {
