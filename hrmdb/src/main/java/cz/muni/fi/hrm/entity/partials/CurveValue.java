@@ -12,6 +12,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+/**
+ * entities used because hibernate had problems creating table for List of Double, so this entity represents
+ * Double value
+ */
 @Entity
 @Table(name = "ref_curve_value")
 public class CurveValue {

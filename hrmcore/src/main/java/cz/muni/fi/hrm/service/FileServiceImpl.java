@@ -8,11 +8,10 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.springframework.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Book;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -40,8 +39,13 @@ public class FileServiceImpl implements FileService {
     @Inject
     private RefCurveRepository refCurveRepository;
 
+    private static Logger logger = LoggerFactory.getLogger(FileServiceImpl.class);
     @Override
     public List<RefCurveDTO> readUploadedFile(MultipartFile file, boolean marginErrorSheet) throws IOException {
+        if(file == null){
+            throw new IllegalArgumentException("Cannot read file that is null");
+        }
+        logger.debug("start to read uploaded file", file.getOriginalFilename());
         String filename = file.getOriginalFilename();
         List<RefCurveDTO> curves = null;
         if (filename.endsWith(".csv")) {
@@ -68,9 +72,13 @@ public class FileServiceImpl implements FileService {
                 curves.remove(0); //we dont need temperature no more after adjusting data
             }
         }
+        logger.debug("uploaded file read", file.getOriginalFilename());
         return curves;
     }
 
+    /**
+     * checks if curves are in appropriate format otherwise throw exception to show error on frontend
+     */
     private void checkCurvesFormat(List<RefCurveDTO> curves) {
         int valuesCount = 0;
         for (int i = 0; i < curves.size(); ++i) {
@@ -94,6 +102,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public HSSFWorkbook generateFileOfDbData() throws IOException {
+        logger.debug("start generating data from db");
         RefCurve temperature = refCurveRepository.findTemperature();
         List<RefCurve> refCurves = refCurveRepository.findAll();
 
@@ -110,9 +119,13 @@ public class FileServiceImpl implements FileService {
         try (FileOutputStream outputStream = new FileOutputStream("data.xls")) {
             workbook.write(outputStream);
         }
+        logger.debug("data generated to xls from db");
         return workbook;
     }
 
+    /**
+     * return curves that are defined on whole interval of temperature that we have in db
+     */
     private List<RefCurveDTO> checkIntervalOfData(List<RefCurveDTO> curves, int max) {
         RefCurveDTO temperature = curves.get(0);
         if (max < temperature.getValues().size()) {
@@ -137,6 +150,10 @@ public class FileServiceImpl implements FileService {
         return curves;
     }
 
+    /**
+     * if user temperature is in wider range that temperature in db, so user data are removed on
+     * temperature that we cannot use
+     */
     private List<RefCurveDTO> adjustBiggerInterval(List<RefCurveDTO> curves) {
         RefCurve dbTemperature = refCurveRepository.findTemperature();
         Double min = dbTemperature.getValues().get(0);
@@ -151,6 +168,9 @@ public class FileServiceImpl implements FileService {
         return curves;
     }
 
+    /**
+     * interpolates data to get data, that are on temperature that we have in DB
+     */
     private List<RefCurveDTO> interpolateData(List<RefCurveDTO> curves) {
         RefCurve dbTemperature = refCurveRepository.findTemperature();
         RefCurveDTO userTemperature = curves.get(0);
@@ -199,6 +219,9 @@ public class FileServiceImpl implements FileService {
         return ((y0 * (x1 - x)) + (y1) * (x - x0)) / (x1 - x0);
     }
 
+    /**
+     * find if user temperature is subinterval of temperature that is in database
+     */
     private int indexOfSubinterval(RefCurveDTO temperature) {
         RefCurve dbTemperature = refCurveRepository.findTemperature();
         int index = 0;
@@ -229,6 +252,9 @@ public class FileServiceImpl implements FileService {
         return -1;
     }
 
+    /**
+     * curve is temperature if all values fit into interval (Temperature_min, temperature_max)
+     */
     private boolean checkIfCurveIsTemperature(RefCurveDTO refCurveDTO) {
         List<Double> values = refCurveDTO.getValues();
         Double previous = 0.0;
@@ -259,6 +285,9 @@ public class FileServiceImpl implements FileService {
         }
     }
 
+    /**
+     *  adds values of reference curves to generated excel workbook
+     */
     private void putValuesInSheet(HSSFSheet sheet, RefCurve temperature, List<RefCurve> refCurves) {
         for (int i = 0; i < temperature.getValues().size(); ++i) {
             Row row = sheet.createRow(i + 3); //+3 because of a header
@@ -271,6 +300,9 @@ public class FileServiceImpl implements FileService {
         }
     }
 
+    /**
+     *  adds header to generated excel workbook
+     */
     private void putHeaderInSheet(HSSFSheet sheet, RefCurve temperature, List<RefCurve> refCurves) {
         //names
         Row row = sheet.createRow(0);
@@ -316,6 +348,7 @@ public class FileServiceImpl implements FileService {
                         parsed = Double.parseDouble(record.get(i));
                         curves.get(i).values.add(parsed);
                     } catch (Exception e) {
+                        logger.error("could not parse ",record.get(i), e);
                         throw new IllegalArgumentException("found data that are not in number format, collumn " + i);
                     }
                 }
@@ -339,6 +372,7 @@ public class FileServiceImpl implements FileService {
                 ret = this.connectMarginsToCurves(ret, errorMargins);
             }
         } catch (IOException e) {
+            logger.error("could not read file ",file.getName(), e);
             throw new IllegalArgumentException(file.getName() + " cannot read this file.");
         }
         return ret;
@@ -358,6 +392,7 @@ public class FileServiceImpl implements FileService {
                 ret = this.connectMarginsToCurves(ret, errorMargins);
             }
         } catch (IOException e) {
+            logger.error("could not read file ",file.getName(), e);
             throw new IllegalArgumentException(file.getName() + " cannot read this file.");
         }
         return ret;
@@ -388,14 +423,14 @@ public class FileServiceImpl implements FileService {
                             break;
                         case STRING:
                         case BOOLEAN:
-                            //FIXME vynimka
-                            break;
+                            throw new IllegalArgumentException("found value that was not numeric and is not allowed");
                     }
                     cellCounter++;
                 }
                 ++i;
             }
         } catch (IOException e) {
+            logger.error("could not read file ",file.getName(), e);
             throw new IllegalArgumentException(file.getName() + " cannot read this file.");
         }
         return ret;
@@ -436,8 +471,7 @@ public class FileServiceImpl implements FileService {
                         break;
                     case STRING:
                     case BOOLEAN:
-                        //FIXME vynimka
-                        break;
+                        throw new IllegalArgumentException("found value that was not numeric and is not allowed");
                 }
                 cellCounter++;
             }
@@ -477,7 +511,6 @@ public class FileServiceImpl implements FileService {
                     curve.values.add(cell.getNumericCellValue());
                     break;
                 case BOOLEAN:
-                    //FIXME vynimka
                     break;
             }
             if (curve.name != null || !curve.getValues().isEmpty()) {
@@ -487,7 +520,6 @@ public class FileServiceImpl implements FileService {
         }
         return ret;
     }
-
 
     private List<ErrorMarginDTO> checkExcelHeaderErrorMargin(Iterator<Cell> cellIterator) {
         List<ErrorMarginDTO> ret = new ArrayList<>();
@@ -507,6 +539,9 @@ public class FileServiceImpl implements FileService {
         return ret;
     }
 
+    /**
+     * checks and returns header of data that should be added to DB
+     */
     private List<RefCurveDTO> checkExcelHeaderWithAllValues(Iterator<Row> iterator) {
         int index = 0;
         List<RefCurveDTO> ret = new ArrayList<>();
@@ -538,7 +573,6 @@ public class FileServiceImpl implements FileService {
                         break;
                     case NUMERIC:
                     case BOOLEAN:
-                        //FIXME vynimka
                         break;
                 }
                 if (index == 0) {

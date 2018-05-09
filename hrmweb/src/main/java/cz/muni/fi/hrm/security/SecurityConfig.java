@@ -12,6 +12,9 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 
+/**
+ * security configuration for application, using spring security
+ */
 @Configuration
 @Order(1)
 @EnableWebSecurity
@@ -21,7 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication().
-                withUser("admin").password("admin").roles("ADMIN");
+                withUser("admin").password("xx!tr1ch1n3lla").roles("ADMIN");
     }
 
     @Override

@@ -6,8 +6,8 @@ public class ResultDTO {
     public Integer numberOfPoints;
     public String refCurveName;
     public RefCurveDTO averageCurve;
-    public RefCurveDTO matched;
-    public RefCurveDTO notMatched;
+    public RefCurveDTO matched; //points of averageCurve that match in interval of matched curve
+    public RefCurveDTO notMatched; //points of averageCurve that not match in interval of matched curve
 
     public ResultDTO() {
         this(null, null, null, null, null, null, null);

@@ -2,6 +2,9 @@ package cz.muni.fi.hrm.exception.handling;
 
 import org.springframework.http.HttpStatus;
 
+/**
+ * this class is used as error envelope that is sent to frontend
+ */
 public class ApiError {
 
     private HttpStatus status;

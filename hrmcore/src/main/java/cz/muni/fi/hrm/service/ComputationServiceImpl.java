@@ -4,10 +4,11 @@ import cz.muni.fi.hrm.dto.RefCurveDTO;
 import cz.muni.fi.hrm.dto.ResultDTO;
 import cz.muni.fi.hrm.entity.RefCurve;
 import cz.muni.fi.hrm.repository.RefCurveRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -16,8 +17,11 @@ public class ComputationServiceImpl implements ComputationService {
     @Inject
     private RefCurveRepository refCurveRepository;
 
+    private static Logger logger = LoggerFactory.getLogger(ComputationServiceImpl.class);
+
     @Override
     public ResultDTO compareDataWithRefCurves(List<RefCurveDTO> data) {
+        logger.debug("start comparing data with ref curves", data);
         if(data == null){
             throw new IllegalArgumentException("cannot compute when no data are loaded");
         }
@@ -36,6 +40,8 @@ public class ComputationServiceImpl implements ComputationService {
         if(result.refCurveName == null){
             throw new IllegalArgumentException("some error occured while computing ...");
         }
+
+        logger.debug("end of comparing data with ref curves", data);
         return result;
     }
 
@@ -69,6 +75,7 @@ public class ComputationServiceImpl implements ComputationService {
 
     @Override
     public RefCurveDTO createAverageCurve(List<RefCurveDTO> data){
+        logger.debug("start creating average curve", data);
         if(data == null){
             throw new IllegalArgumentException("Trying to create average curve on null");
         }
@@ -93,6 +100,7 @@ public class ComputationServiceImpl implements ComputationService {
                 ret.values.add(sum/data.size());
             }
         }
+        logger.debug("end of creating average curve", data);
         return ret;
     }
 }

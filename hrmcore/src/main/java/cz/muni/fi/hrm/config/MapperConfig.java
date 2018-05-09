@@ -4,6 +4,9 @@ import org.dozer.DozerBeanMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * configure dozer mapper
+ */
 @Configuration
 public class MapperConfig {
     @Bean

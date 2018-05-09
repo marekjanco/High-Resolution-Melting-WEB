@@ -11,6 +11,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+/**
+ * entities used because hibernate had problems creating table for List of Double, so this entity represents
+ * Double value
+ */
 @Entity
 @Table(name = "error_margin_value")
 public class MarginValue {
@@ -25,7 +29,6 @@ public class MarginValue {
 
     @ManyToOne
     @JoinColumn(name="MARGIN_ID", nullable=false)
- //   @Column(name = "error_margin", nullable = false)
     private ErrorMargin margin;
 
     public MarginValue() {

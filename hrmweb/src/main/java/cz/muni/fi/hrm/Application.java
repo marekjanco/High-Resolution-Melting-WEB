@@ -10,6 +10,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 
+/**
+ * class that start app, contains main method
+ */
 @SpringBootApplication
 @PropertySources({
         @PropertySource("classpath:/application.properties"),

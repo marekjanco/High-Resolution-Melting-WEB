@@ -5,15 +5,22 @@ import cz.muni.fi.hrm.entity.RefCurve;
 
 import java.util.List;
 
+/**
+ * this service provides mainly CRUD operations on Ref Curve entity
+ */
 public interface RefCurveService {
 
-    public List<RefCurveDTO> getNamesAndAcronyms();
-    public List<RefCurveDTO> getAll();
-    public RefCurveDTO getTemperature();
-    public  RefCurveDTO findByName(String name);
+    /**
+     *
+     * @return returns names and acronyms of all reference curves that are in db
+     */
+    List<RefCurveDTO> getNamesAndAcronyms();
+    List<RefCurveDTO> getAll();
+    RefCurveDTO getTemperature();
+    RefCurveDTO findByName(String name);
 
-    public void createOrUpdate(List<RefCurveDTO> dtos);
-    public void create(RefCurve curve);
-    public void delete(RefCurveDTO dto);
+    void createOrUpdate(List<RefCurveDTO> dtos);
+    void create(RefCurve curve);
+    void delete(RefCurveDTO dto);
 
 }
