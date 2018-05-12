@@ -106,4 +106,15 @@ public class RefCurve {
         this.errorMargin = errorMargin;
     }
 
+    @Override
+    public String toString() {
+        return "RefCurve{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", acronym='" + acronym + '\'' +
+                ", note='" + note + '\'' +
+                ", values=" + values.toString() +
+                ", errorMargin=" + errorMargin.toString() +
+                '}';
+    }
 }
