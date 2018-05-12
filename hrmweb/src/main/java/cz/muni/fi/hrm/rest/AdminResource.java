@@ -45,6 +45,6 @@ public class AdminResource {
     public @ResponseBody
     void uploadFileAndSave(@RequestParam(value="file", required=true) MultipartFile file, HttpServletRequest request) throws IOException {
         List<RefCurveDTO> data = fileService.readUploadedFile(file, true);
-        refCurveService.createOrUpdate(data);
+        refCurveService.addNewDataToDB(data);
     }
 }

@@ -66,9 +66,16 @@ angular.module('hrm')
 
         vm.uploadFile = function () {
             var file = document.getElementById('admin_excel_file').files[0];
+            if(file === undefined){
+                $rootScope.showError = true;
+                $rootScope.errorMessage = "There is no file to load";
+                return;
+            }
             $rootScope.loading = true;
             AdminService.uploadFileAndSave(file).then(function (data) {
-                //xxx
+                $window.location.reload();
+                $rootScope.showSuccess = true;
+                $rootScope.successMessage = "New reference curves were successfully added";
             }).finally(function () {
                 $rootScope.loading = false;
             });

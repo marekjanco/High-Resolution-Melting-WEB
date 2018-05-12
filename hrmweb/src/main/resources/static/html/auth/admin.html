@@ -1,6 +1,7 @@
 <div>
     <div>
-        <a href="#" ng-click="adminController.addData()"><i class="large green plus icon"></i> Add new reference curves to DB</a>
+        <a href="#" ng-click="adminController.addData()"><i class="large green plus icon" ng-show="!adminController.newDataField"></i>
+            <i class="large red minus icon" ng-show="adminController.newDataField"></i> Add new reference curves to DB</a>
         <div class="ui segment" ng-show="adminController.newDataField">
             <i class="large question circle outline icon link"></i>
             <!--popup-->
@@ -22,7 +23,7 @@
                 <p>Drag your files here or click in this area.</p>
             </form>
             <div id="uploadButton" class="ui teal button" ng-click="adminController.uploadFile()">
-                Load data
+                Add data to DB
             </div>
         </div>
         <br/>

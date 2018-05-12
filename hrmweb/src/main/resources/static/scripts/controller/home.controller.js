@@ -158,6 +158,11 @@ angular.module('hrm')
 
         vm.uploadFile = function () {
             var file = document.getElementById('excel_file').files[0];
+            if(file === undefined){
+                $rootScope.showError = true;
+                $rootScope.errorMessage = "There is no file to load";
+                return;
+            }
             $rootScope.loading = true;
             FileService.uploadFile(file).then(function (data) {
                 if(data === undefined){
@@ -165,7 +170,6 @@ angular.module('hrm')
                 }
                 vm.parsedData = data;
                 vm.userDataLoaded = true;
-                console.log("parsedData: ",vm.parsedData);
             }).finally(function () {
                 $rootScope.loading = false;
             });
@@ -197,14 +201,12 @@ angular.module('hrm')
         vm.getLabels = function () {
             ValuesService.getTemperature().then(function (data) {
                 $scope.labels = data.values;
-                console.log($scope.labels);
             });
         };
 
         vm.getNames = function () {
             ValuesService.getAllNames().then(function (data) {
                 $scope.names = data;
-                console.log("names: ",$scope.names);
             });
         };
 

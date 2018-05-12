@@ -24,7 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication().
-                withUser("admin").password("xx!tr1ch1n3lla").roles("ADMIN");
+                withUser("admin").password("admin").roles("ADMIN");
     }
 
     @Override
@@ -34,7 +34,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
+        http    .headers().frameOptions().sameOrigin()
+                .and()
                 .httpBasic()
                 .and()
                 .csrf().disable()
