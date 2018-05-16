@@ -76,7 +76,7 @@ public class FileServiceImpl implements FileService {
             }else{
                 checkIfMarginIsPresent(curves);
             }
-        }else if(marginErrorSheet){
+        }else{
             throw new IllegalArgumentException("First collumn is not temperature, please add temperature values");
         }
         logger.debug("uploaded file read", file.getOriginalFilename());
