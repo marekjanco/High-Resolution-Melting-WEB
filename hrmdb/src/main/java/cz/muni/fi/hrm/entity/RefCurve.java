@@ -34,6 +34,9 @@ public class RefCurve {
     @Column(name = "NOTE")
     private String note;
 
+    @Column(name = "NUMBER_OF_SAMPLES")
+    private Integer numberOfSamples;
+
     @NotNull
     @OneToMany(mappedBy = "curve", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<CurveValue> values;
@@ -106,15 +109,23 @@ public class RefCurve {
         this.errorMargin = errorMargin;
     }
 
+    public Integer getNumberOfSamples() {
+        return numberOfSamples;
+    }
+
+    public void setNumberOfSamples(Integer numberOfSamples) {
+        this.numberOfSamples = numberOfSamples;
+    }
+
     @Override
     public String toString() {
         return "RefCurve{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
+                "name='" + name + '\'' +
                 ", acronym='" + acronym + '\'' +
                 ", note='" + note + '\'' +
-                ", values=" + values.toString() +
-                ", errorMargin=" + errorMargin.toString() +
+                ", numberOfSamples=" + numberOfSamples +
+                ", values=" + values +
+                ", errorMargin=" + errorMargin +
                 '}';
     }
 }

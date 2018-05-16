@@ -4,11 +4,14 @@ import cz.muni.fi.hrm.dto.RefCurveDTO;
 import cz.muni.fi.hrm.dto.ResultDTO;
 import cz.muni.fi.hrm.entity.RefCurve;
 import cz.muni.fi.hrm.repository.RefCurveRepository;
+import org.apache.commons.math3.distribution.TDistribution;
+import org.dozer.DozerBeanMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -17,10 +20,13 @@ public class ComputationServiceImpl implements ComputationService {
     @Inject
     private RefCurveRepository refCurveRepository;
 
+    @Inject
+    private DozerBeanMapper mapper;
+
     private static Logger logger = LoggerFactory.getLogger(ComputationServiceImpl.class);
 
     @Override
-    public ResultDTO compareDataWithRefCurves(List<RefCurveDTO> data) {
+    public ResultDTO compareDataWithRefCurves(List<RefCurveDTO> data, int confidenceIntervalInPerc) {
         logger.debug("start comparing data with ref curves", data);
         if(data == null){
             throw new IllegalArgumentException("cannot compute when no data are loaded");
@@ -30,19 +36,39 @@ public class ComputationServiceImpl implements ComputationService {
 
         ResultDTO result = new ResultDTO(0.0, 0, 100, null, null,null,null);
         for(RefCurve refCurve : refData){
-            ResultDTO tempResult = null;
-            tempResult = compareCurves(refCurve, averageCurve);
+            if(confidenceIntervalInPerc != 95){
+                refCurve.getErrorMargin().setValues(this.updateMarginOfErrorValues(refCurve, confidenceIntervalInPerc));
+            }
+            ResultDTO tempResult = compareCurves(refCurve, averageCurve);
             if(tempResult.matchInPerc > result.getMatchInPerc()){
                 result = tempResult;
             }
         }
 
-        if(result.refCurveName == null){
+        if(result.matchedRefCurve == null){
             throw new IllegalArgumentException("some error occured while computing ...");
         }
 
         logger.debug("end of comparing data with ref curves", data);
         return result;
+    }
+
+    private List<Double> updateMarginOfErrorValues(RefCurve refCurve, int confidenceIntervalInPerc) {
+        Double confidenceInterval = tinv(1.0 - (confidenceIntervalInPerc / 100.0), refCurve.getNumberOfSamples() - 1);
+        Double originalInterval = tinv(0.05, refCurve.getNumberOfSamples() -1);
+        List<Double> newErrorMarginValues = new ArrayList<>();
+        List<Double> oldValues = refCurve.getErrorMargin().getValues();
+        for(int i = 0; i < oldValues.size(); ++i){
+            Double smodch = (oldValues.get(i) * Math.pow(refCurve.getNumberOfSamples(), 0.5)) / originalInterval;
+            Double newValue = (confidenceInterval * smodch) / (Math.pow(refCurve.getNumberOfSamples(), 0.5));
+            newErrorMarginValues.add(newValue);
+        }
+        return newErrorMarginValues;
+    }
+
+    private Double tinv(Double probability, Integer deg_freedom){
+        Double ret = new TDistribution(deg_freedom).inverseCumulativeProbability(1 - probability / 2);
+        return ret;
     }
 
     private ResultDTO compareCurves(RefCurve refCurve, RefCurveDTO averageCurve) {
@@ -69,7 +95,7 @@ public class ComputationServiceImpl implements ComputationService {
             all++;
         }
         return new ResultDTO(match*100.0/all, match, all,
-                refCurve.getName(), averageCurve, matched, notMatched);
+                convertToDto(refCurve), averageCurve, matched, notMatched);
     }
 
 
@@ -102,5 +128,9 @@ public class ComputationServiceImpl implements ComputationService {
         }
         logger.debug("end of creating average curve", data);
         return ret;
+    }
+
+    private RefCurveDTO  convertToDto(RefCurve refCurve) {
+        return mapper.map(refCurve, RefCurveDTO.class);
     }
 }

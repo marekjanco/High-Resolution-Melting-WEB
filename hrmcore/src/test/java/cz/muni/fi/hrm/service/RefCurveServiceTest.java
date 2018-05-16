@@ -58,7 +58,7 @@ public class RefCurveServiceTest {
         RefCurve curve = this.getRefCurve();
         Mockito.when(mapper.map(dto, RefCurve.class)).thenReturn(curve);
         refCurveService.addNewDataToDB(Arrays.asList(dto));
-        verify(refCurveRepository, times(1)).save(Arrays.asList(curve));
+        verify(refCurveRepository, times(1)).saveAndFlush(curve);
     }
 
 

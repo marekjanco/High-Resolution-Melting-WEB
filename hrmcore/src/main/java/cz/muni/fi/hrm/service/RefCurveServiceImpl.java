@@ -90,10 +90,10 @@ public class RefCurveServiceImpl implements RefCurveService {
 
     @Override
     public void create(RefCurve curve) {
-        logger.debug("adding curve to DB " + curve.toString());
         if(curve == null || curve.getName() == null || curve.getValues() == null){
             throw new IllegalArgumentException("cannot delete reference curve because name or values are null");
         }
+        logger.debug("adding curve to DB " + curve.toString());
         this.refCurveRepository.saveAndFlush(curve);
         logger.debug("curve was successfully created");
     }

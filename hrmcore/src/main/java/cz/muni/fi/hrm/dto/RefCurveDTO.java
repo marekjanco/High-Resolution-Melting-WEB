@@ -7,19 +7,26 @@ public class RefCurveDTO {
     public String name;
     public String acronym;
     public String note;
+    public Integer numberOfSamples;
     public List<Double> values;
     public ErrorMarginDTO errorMargin;
 
-    public RefCurveDTO(String name, String acronym, String note, List<Double> values) {
+    public RefCurveDTO(String name, String acronym, String note, Integer numberOfSamples
+            , List<Double> values) {
         this.name = name;
         this.acronym = acronym;
         this.note = note;
+        this.numberOfSamples = numberOfSamples;
         this.values = values;
         this.errorMargin = null;
     }
 
+    public RefCurveDTO(String name, String acronym, String note, List<Double> values) {
+        this(name, acronym, note, null, values);
+    }
+
     public RefCurveDTO() {
-        this(null, null, null, new ArrayList<>());
+        this(null, null, null, null, new ArrayList<>());
     }
 
     public List<Double> getValues() {
@@ -60,5 +67,13 @@ public class RefCurveDTO {
 
     public void setErrorMargin(ErrorMarginDTO errorMargin) {
         this.errorMargin = errorMargin;
+    }
+
+    public Integer getNumberOfSamples() {
+        return numberOfSamples;
+    }
+
+    public void setNumberOfSamples(Integer numberOfSamples) {
+        this.numberOfSamples = numberOfSamples;
     }
 }

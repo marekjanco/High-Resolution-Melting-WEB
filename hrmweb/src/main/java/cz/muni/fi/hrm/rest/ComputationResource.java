@@ -5,6 +5,7 @@ import cz.muni.fi.hrm.dto.ResultDTO;
 import cz.muni.fi.hrm.service.ComputationService;
 import cz.muni.fi.hrm.service.RefCurveService;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,10 +25,10 @@ public class ComputationResource {
     @Inject
     private ComputationService computationService;
 
-    @RequestMapping(value = "/" + COMPARE, method = RequestMethod.POST)
+    @RequestMapping(value = "/" + COMPARE + "/{confidenceInterval}", method = RequestMethod.POST)
     public @ResponseBody
-    ResultDTO compute(@RequestBody List<RefCurveDTO> data) {
-        return computationService.compareDataWithRefCurves(data);
+    ResultDTO compute(@RequestBody List<RefCurveDTO> data, @PathVariable("confidenceInterval") int confidenceIntervalInPerc) {
+        return computationService.compareDataWithRefCurves(data, confidenceIntervalInPerc);
     }
 
     @RequestMapping(value = "/" + AVERAGE_CURVE, method = RequestMethod.POST)

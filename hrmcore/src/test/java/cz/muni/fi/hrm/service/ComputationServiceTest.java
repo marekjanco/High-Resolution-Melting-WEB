@@ -5,6 +5,7 @@ import cz.muni.fi.hrm.dto.ResultDTO;
 import cz.muni.fi.hrm.entity.ErrorMargin;
 import cz.muni.fi.hrm.entity.RefCurve;
 import cz.muni.fi.hrm.repository.RefCurveRepository;
+import org.dozer.DozerBeanMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +28,10 @@ public class ComputationServiceTest {
 
     @Mock
     private RefCurveRepository refCurveRepository;
+
+
+    @Mock
+    private DozerBeanMapper mapper;
 
     @InjectMocks
     private final ComputationService computationService = new ComputationServiceImpl();
@@ -67,10 +72,30 @@ public class ComputationServiceTest {
 
     @Test
     public void testResult() {
+        Mockito.when(mapper.map(Mockito.anyObject(), Mockito.anyObject())).thenReturn(
+                new RefCurveDTO("first", "f", "first ref curve", 4, Arrays.asList(1.2, 1.5, 1.8, 2.1, 2.4, 2.7, 3.0))
+        );
         Mockito.when(refCurveRepository.findAll()).thenReturn(findAllRefCurves());
         List<Double> values = Arrays.asList(1.2, 1.55, 1.75, 2.15, 2.35, 2.75, 3.05);
         ResultDTO res = computationService.compareDataWithRefCurves(
-                Arrays.asList(new RefCurveDTO("", "", "", values)));
+                Arrays.asList(new RefCurveDTO("", "", "", values)), 95);
+        Assert.assertEquals(res.getAverageCurve().getValues(), values);
+        Assert.assertEquals(res.getMatched().getValues(), values);
+        Assert.assertEquals(res.getNotMatched().getValues(), Arrays.asList(null, null, null, null, null, null, null));
+        Assert.assertTrue(res.getNumberOfPoints() == 7);
+        Assert.assertTrue(res.getMatchInPerc() == 100.0);
+        Assert.assertTrue(res.getPointsFitInMargin() == 7);
+    }
+
+    @Test
+    public void testResultWithDifferentConfidenceInterval() {
+        Mockito.when(refCurveRepository.findAll()).thenReturn(findAllRefCurves());
+        Mockito.when(mapper.map(Mockito.anyObject(), Mockito.anyObject())).thenReturn(
+                new RefCurveDTO("first", "f", "first ref curve", 4, Arrays.asList(1.2, 1.5, 1.8, 2.1, 2.4, 2.7, 3.0))
+        );
+        List<Double> values = Arrays.asList(1.2, 1.55, 1.75, 2.15, 2.35, 2.75, 3.05);
+        ResultDTO res = computationService.compareDataWithRefCurves(
+                Arrays.asList(new RefCurveDTO("", "", "", null, values)), 98);
         Assert.assertEquals(res.getAverageCurve().getValues(), values);
         Assert.assertEquals(res.getMatched().getValues(), values);
         Assert.assertEquals(res.getNotMatched().getValues(), Arrays.asList(null, null, null, null, null, null, null));
@@ -81,23 +106,29 @@ public class ComputationServiceTest {
 
     @Test
     public void testResultOnInterval() {
+        Mockito.when(mapper.map(Mockito.anyObject(), Mockito.anyObject())).thenReturn(
+                new RefCurveDTO("first", "f", "first ref curve", 4, Arrays.asList(1.2, 1.5, 1.8, 2.1, 2.4, 2.7, 3.0))
+        );
         Mockito.when(refCurveRepository.findAll()).thenReturn(findAllRefCurves());
         List<Double> values = Arrays.asList(null, 1.55, 1.25, 2.15, null, null, null);
         ResultDTO res = computationService.compareDataWithRefCurves(
-                Arrays.asList(new RefCurveDTO("", "", "", values)));
+                Arrays.asList(new RefCurveDTO("", "", "", values)), 95);
         Assert.assertTrue(res.getNumberOfPoints() == 3);
         Assert.assertTrue(res.getPointsFitInMargin() == 2);
     }
 
     @Test
     public void testResultToSecondCurve() {
+        Mockito.when(mapper.map(Mockito.anyObject(), Mockito.anyObject())).thenReturn(
+                new RefCurveDTO("second", "s", "second ref curve", 4, Arrays.asList(1.2, 1.5, 1.95, 2.1, 2.4, 2.7, 3.3))
+        );
         Mockito.when(refCurveRepository.findAll()).thenReturn(findAllRefCurves());
         List<Double> values = Arrays.asList(1.2, 1.5, 1.91, 2.1, 2.4, 2.7, 3.9);
         ResultDTO res = computationService.compareDataWithRefCurves(
-                Arrays.asList(new RefCurveDTO("", "", "", values)));
+                Arrays.asList(new RefCurveDTO("", "", "", values)), 95);
         Assert.assertTrue(res.getNumberOfPoints() == 7);
         Assert.assertTrue(res.getPointsFitInMargin() == 6);
-        Assert.assertEquals(res.getRefCurveName(), "second");
+        Assert.assertEquals(res.getMatchedRefCurve().getName(), "second");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -105,7 +136,7 @@ public class ComputationServiceTest {
         Mockito.when(refCurveRepository.findAll()).thenReturn(findAllRefCurves());
         List<Double> values = Arrays.asList();
         ResultDTO res = computationService.compareDataWithRefCurves(
-                Arrays.asList(new RefCurveDTO("", "", "", values)));
+                Arrays.asList(new RefCurveDTO("", "", "", values)), 95);
     }
 
     private List<RefCurveDTO> getTwoRefCurvesDTOs() {
@@ -129,22 +160,39 @@ public class ComputationServiceTest {
 
     private List<RefCurve> findAllRefCurves() {
         List<RefCurve> curves = new ArrayList<>();
+        RefCurve c1 = findFirstCurve();
+        RefCurve c2 = findSecondCurve();
+        curves.add(c1);
+        curves.add(c2);
+        return curves;
+    }
+
+    private RefCurve findFirstCurve(){
         ErrorMargin m1 = new ErrorMargin();
         m1.setValues(Arrays.asList(0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1));
         RefCurve c1 = new RefCurve();
         c1.setName("first");
         c1.setAcronym("f");
+        c1.setNumberOfSamples(4);
         c1.setNote("first ref curve");
         c1.setValues(Arrays.asList(1.2, 1.5, 1.8, 2.1, 2.4, 2.7, 3.0));
         c1.setErrorMargin(m1);
+        return c1;
+    }
+
+    private RefCurve findSecondCurve(){
+        ErrorMargin m1 = new ErrorMargin();
+        m1.setValues(Arrays.asList(0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1));
         RefCurve c2 = new RefCurve();
         c2.setName("second");
         c2.setAcronym("s");
+        c2.setNumberOfSamples(4);
         c2.setNote("second ref curve");
         c2.setValues(Arrays.asList(1.2, 1.5, 1.95, 2.1, 2.4, 2.7, 3.3));
         c2.setErrorMargin(m1);
-        curves.add(c1);
-        curves.add(c2);
-        return curves;
+        return c2;
     }
+
+
+
 }

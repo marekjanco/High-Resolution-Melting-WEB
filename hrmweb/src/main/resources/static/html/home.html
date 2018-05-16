@@ -1,6 +1,7 @@
 <div>
-    <a href="#" ng-click="homeController.addUserDataField()"ng-show="!homeController.userDataLoaded">
-        <i ng-show="!homeController.userDataField" class="large green plus icon"></i><i ng-show="homeController.userDataField" class="large red minus icon"></i> Add new user data</a>
+    <a href="#" ng-click="homeController.addUserDataField()" ng-show="!homeController.userDataLoaded">
+        <i ng-show="!homeController.userDataField" class="large green plus icon"></i><i
+            ng-show="homeController.userDataField" class="large red minus icon"></i> Add new user data</a>
     <div class="ui segment" ng-show="!homeController.userDataLoaded && homeController.userDataField">
         <i class="large question circle outline icon link"></i>
         <!--popup-->
@@ -64,7 +65,16 @@
         <div class="ui segment" style="width:38%">
             <b>User data(curves): </b> <a ng-show="!homeController.userDataLoaded"
                                           class="ui left pointing red basic label">User data are not loaded !!!</a>
-            <br><br>
+            <br/><br/>
+            <div class="ui right labeled input">
+                <label style="margin-right:10px;font-weight:bold;margin-top:7px;">Confidence interval:</label>
+                <input type="text" style="width:15%" placeholder="Enter confidence interval ..."
+                       ng-model="homeController.confidenceIntervalInPerc">
+                <div class="ui basic label">
+                    %
+                </div>
+            </div>
+            <br/>
             <button class="ui teal button" style="margin-top:5px" ng-click="homeController.viewUserDataInGraph()">
                 Show in graph
             </button>
@@ -96,7 +106,7 @@
             <br>
             <div class="ui compact message" id="computation-results" ng-show="homeController.result != undefined">
                 <i class="close icon" ng-click="homeController.closeResult()"></i>
-                <b>User data matched with: </b>{{homeController.result.refCurveName}}<br>
+                <b>User data matched with: </b>{{homeController.result.matchedRefCurve.name}}<br>
                 <b>Match was: </b>{{homeController.result.matchInPerc}}%<br>
                 {{homeController.result.pointsFitInMargin}}/{{homeController.result.numberOfPoints}}<br>
             </div>
@@ -110,8 +120,14 @@
         </div>
     </div>
     <div class="ui segment">
+        <div style="margin-left:20px; margin-bottom:20px" class="ui checkbox"
+             ng-click="homeController.showPoints()">
+            <input type="checkbox" ng-model="homeController.pointsShown" name="showPoints">
+            <label>Show points</label>
+        </div>
         <canvas class="chart chart-line" chart-data="data" chart-labels="labels"
-                chart-series="series" chart-click="onClick" chart-colors="colors"></canvas>
+                chart-series="series" chart-click="onClick" chart-colors="colors"
+                chart-options="options"></canvas>
     </div>
     <br>
 </div>

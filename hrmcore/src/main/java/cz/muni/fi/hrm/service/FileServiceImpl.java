@@ -311,7 +311,7 @@ public class FileServiceImpl implements FileService {
      */
     private void putValuesInSheet(HSSFSheet sheet, RefCurve temperature, List<RefCurve> refCurves) {
         for (int i = 0; i < temperature.getValues().size(); ++i) {
-            Row row = sheet.createRow(i + 3); //+3 because of a header
+            Row row = sheet.createRow(i + HEADER_SIZE); //+4 because of a header
             Cell cellTemperature = row.createCell(0);
             cellTemperature.setCellValue(temperature.getValues().get(i));
             for (int j = 0; j < refCurves.size(); ++j) {
@@ -341,8 +341,16 @@ public class FileServiceImpl implements FileService {
             Cell c = row.createCell(i + 1);
             c.setCellValue(refCurves.get(i).getAcronym());
         }
-        //notes
+        //number of samples
         row = sheet.createRow(2);
+        cell = row.createCell(0);
+        cell.setCellValue(temperature.getNumberOfSamples());
+        for (int i = 0; i < refCurves.size(); ++i) {
+            Cell c = row.createCell(i + 1);
+            c.setCellValue(refCurves.get(i).getNumberOfSamples());
+        }
+        //notes
+        row = sheet.createRow(3);
         cell = row.createCell(0);
         cell.setCellValue(temperature.getNote());
         for (int i = 0; i < refCurves.size(); ++i) {
@@ -566,7 +574,7 @@ public class FileServiceImpl implements FileService {
     private List<RefCurveDTO> checkExcelHeaderWithAllValues(Iterator<Row> iterator) {
         int index = 0;
         List<RefCurveDTO> ret = new ArrayList<>();
-        while (iterator.hasNext() && index < 3) {
+        while (iterator.hasNext() && index < 4) {
             Row nextRow = iterator.next();
             Iterator<Cell> cellIterator = nextRow.cellIterator();
             int i = 0;
@@ -588,11 +596,15 @@ public class FileServiceImpl implements FileService {
                             case 1:
                                 curve.acronym = str;
                                 break;
-                            case 2:
+                            case 3:
                                 curve.note = str;
+                            break;
                         }
                         break;
                     case NUMERIC:
+                        if(index == 2){
+                            curve.numberOfSamples = new Double(cell.getNumericCellValue()).intValue();
+                        }
                     case BOOLEAN:
                         break;
                 }
