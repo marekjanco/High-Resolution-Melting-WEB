@@ -76,6 +76,10 @@ angular.module('hrm')
                 $window.location.reload();
                 $rootScope.showSuccess = true;
                 $rootScope.successMessage = "New reference curves were successfully added";
+            },
+            function(data) {
+                $rootScope.showError = true;
+                $rootScope.errorMessage = data.data.message;
             }).finally(function () {
                 $rootScope.loading = false;
             });
@@ -83,10 +87,6 @@ angular.module('hrm')
         };
 
         vm.init = function () {
-            if ($location.$$search.success) {
-                vm.successMessage = "New dataset was successfully added to DB";
-                vm.success = true;
-            }
             vm.getAll();
             vm.getTemperature();
         };

@@ -12,6 +12,7 @@ public interface ComputationService {
     /**
      * Method takes user data, create average curve that compares with other curves saved in db
      * @param data user data that should be used for comparing
+     * @param confidenceIntervalInPerc value of confidence interval inserted in percents
      * @return result of comparing with reference curves
      */
     ResultDTO compareDataWithRefCurves(List<RefCurveDTO> data, int confidenceIntervalInPerc);

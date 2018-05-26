@@ -152,7 +152,7 @@ public class FileServiceImpl implements FileService {
         if (max < temperature.getValues().size()) {
             curves = this.adjustBiggerInterval(curves);
         }
-        int index = this.indexOfSubinterval(temperature);
+        int index = this.indexOfSubinterval(temperature.getValues(), refCurveRepository.findTemperature().getValues());
         if (index != -1) {
             for (RefCurveDTO curve : curves) {
                 List<Double> newValues = new ArrayList<>();
@@ -167,10 +167,10 @@ public class FileServiceImpl implements FileService {
             }
         } else {
             curves = this.interpolateData(curves);
+
         }
         return curves;
     }
-
     /**
      * if user temperature is in wider range that temperature in db, so user data are removed on
      * temperature that we cannot use
@@ -184,6 +184,7 @@ public class FileServiceImpl implements FileService {
                 for (RefCurveDTO curve : curves) {
                     curve.getValues().remove(i);
                 }
+                i--;
             }
         }
         return curves;
@@ -243,17 +244,16 @@ public class FileServiceImpl implements FileService {
     /**
      * find if user temperature is subinterval of temperature that is in database
      */
-    private int indexOfSubinterval(RefCurveDTO temperature) {
-        RefCurve dbTemperature = refCurveRepository.findTemperature();
+    private int indexOfSubinterval(List<Double> values1, List<Double> values2) {
         int index = 0;
         int ret = -1;
         boolean sequence = false;
-        for (int i = 0; i < dbTemperature.getValues().size(); ++i) {
-            if (index == temperature.getValues().size()) {
+        for (int i = 0; i < values2.size(); ++i) {
+            if (index == values1.size()) {
                 break;
             }
-            Double dbValue = dbTemperature.getValues().get(i);
-            if (Math.abs(temperature.getValues().get(index) - dbValue) <= 0.00000001) {
+            Double dbValue = values2.get(i);
+            if (Math.abs(values1.get(index) - dbValue) <= 0.00000001) {
                 if (!sequence) {
                     sequence = true;
                     ret = i;
@@ -267,7 +267,7 @@ public class FileServiceImpl implements FileService {
                 }
             }
         }
-        if (index == temperature.getValues().size()) {
+        if (index == values1.size()) {
             return ret;
         }
         return -1;
@@ -311,7 +311,7 @@ public class FileServiceImpl implements FileService {
      */
     private void putValuesInSheet(HSSFSheet sheet, RefCurve temperature, List<RefCurve> refCurves) {
         for (int i = 0; i < temperature.getValues().size(); ++i) {
-            Row row = sheet.createRow(i + HEADER_SIZE); //+4 because of a header
+            Row row = sheet.createRow(i + ADMIN_HEADER_SIZE); //+4 because of a header
             Cell cellTemperature = row.createCell(0);
             cellTemperature.setCellValue(temperature.getValues().get(i));
             for (int j = 0; j < refCurves.size(); ++j) {

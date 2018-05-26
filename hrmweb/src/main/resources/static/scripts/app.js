@@ -32,19 +32,14 @@ angular.module('hrm').config(['ChartJsProvider', '$httpProvider', function (Char
             pointBorderColor: '#3339FF',
         }, {
             backgroundColor: 'transparent',
-            pointBackgroundColor: '#FCFF33',
-            borderColor: '#FCFF33',
-            pointBorderColor: '#FCFF33',
+            pointBackgroundColor: '#009933',
+            borderColor: '#009933',
+            pointBorderColor: '#009933',
         }, {
             backgroundColor: 'transparent',
             pointBackgroundColor: '#FF33FC',
             borderColor: '#FF33FC',
             pointBorderColor: '#FF33FC',
-        }, {
-            backgroundColor: 'transparent',
-            pointBackgroundColor: '#33FF33',
-            borderColor: '#33FF33',
-            pointBorderColor: '#33FF33',
         }, {
             backgroundColor: 'transparent',
             pointBackgroundColor: '#FF8A80',
@@ -91,6 +86,11 @@ angular.module('hrm').config(['ChartJsProvider', '$httpProvider', function (Char
                 pointBackgroundColor: '#999966',
                 borderColor: '#999966',
                 pointBorderColor: '#999966',
+            }, {
+                backgroundColor: 'transparent',
+                pointBackgroundColor: '#33FF33',
+                borderColor: '#33FF33',
+                pointBorderColor: '#33FF33',
             },
             {
                 backgroundColor: 'transparent',

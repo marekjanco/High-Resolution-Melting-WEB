@@ -34,7 +34,7 @@ public class RefCurve {
     @Column(name = "NOTE")
     private String note;
 
-    @Column(name = "NUMBER_OF_SAMPLES")
+    @Column(name = "NUMBER_OF_SAMPLES", nullable = false)
     private Integer numberOfSamples;
 
     @NotNull

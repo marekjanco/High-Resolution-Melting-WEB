@@ -142,7 +142,7 @@ angular.module('hrm')
                 $scope.colors.push(color);
             }else{
                 $scope.colors = [];
-                $scope.colors.push(vm.colors[5]);
+                $scope.colors.push(vm.colors[13]);
                 $scope.colors.push(vm.colors[0]);
                 $scope.colors.push(vm.colors[vm.colors.length - 1]);
                 $scope.colors.push(vm.colors[vm.colors.length - 1]);
@@ -275,24 +275,19 @@ angular.module('hrm')
             pointBorderColor: '#3339FF',
         }, {
             backgroundColor: 'transparent',
-            pointBackgroundColor: '#FCFF33',
-            borderColor: '#FCFF33',
-            pointBorderColor: '#FCFF33',
-        }, {
-            backgroundColor: 'transparent',
-            pointBackgroundColor: '#FF33FC',
-            borderColor: '#FF33FC',
-            pointBorderColor: '#FF33FC',
-        }, {
-            backgroundColor: 'transparent',
-            pointBackgroundColor: '#33FF33',
-            borderColor: '#33FF33',
-            pointBorderColor: '#33FF33',
+            pointBackgroundColor: '#009933',
+            borderColor: '#009933',
+            pointBorderColor: '#009933',
         }, {
             backgroundColor: 'transparent',
             pointBackgroundColor: '#FF8A80',
             borderColor: '#FF8A80',
             pointBorderColor: '#FF8A80',
+        }, {
+            backgroundColor: 'transparent',
+            pointBackgroundColor: '#FF33FC',
+            borderColor: '#FF33FC',
+            pointBorderColor: '#FF33FC',
         }, {
             backgroundColor: 'transparent',
             pointBackgroundColor: '#FCFF33',
@@ -334,6 +329,12 @@ angular.module('hrm')
                 pointBackgroundColor: '#999966',
                 borderColor: '#999966',
                 pointBorderColor: '#999966',
+            },
+            {
+                backgroundColor: 'transparent',
+                pointBackgroundColor: '#33FF33',
+                borderColor: '#33FF33',
+                pointBorderColor: '#33FF33',
             },
             {
                 backgroundColor: 'transparent',

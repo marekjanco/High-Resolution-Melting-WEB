@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/computation")
-public class ComputationResource {
+public class ComputationController {
     static final String COMPARE = "compareData";
     static final String AVERAGE_CURVE = "getAverageCurve";
 

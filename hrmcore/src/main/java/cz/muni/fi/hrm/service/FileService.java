@@ -16,7 +16,7 @@ public interface FileService {
 
     static final Double TEMPERATURE_MAX = 90.0;
     static final Double TEMPERATURE_MIN = 70.0;
-    static final Integer HEADER_SIZE = 4;
+    static final Integer ADMIN_HEADER_SIZE = 4;
 
     /**
      * read and parse excel or csv file

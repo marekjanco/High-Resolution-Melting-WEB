@@ -44,6 +44,7 @@ public class RefCurveRepositoryTest {
         RefCurve curve = new RefCurve();
         curve.setName("Trichenalla xxx");
         curve.setAcronym("txx");
+        curve.setNumberOfSamples(4);
         curve.setNote("this is test trichinella");
         curve.setValues(Arrays.asList(0.0, 1.0, 2.0, 3.0, 5.0, 6.0));
         curve.setErrorMargin(margin);

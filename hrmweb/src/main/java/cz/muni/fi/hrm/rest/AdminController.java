@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
-public class AdminResource {
+public class AdminController {
 
     static final String GET_ALL = "refCurve/getAll";
     static final String DELETE = "refCurve/delete";

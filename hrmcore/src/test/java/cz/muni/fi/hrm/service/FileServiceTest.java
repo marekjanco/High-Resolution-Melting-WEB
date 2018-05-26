@@ -51,12 +51,14 @@ public class FileServiceTest {
 
     @Test
     public void testReadHeaderOfExcelFile() throws Exception {
+        RefCurve c = new RefCurve();
+        c.setValues(Arrays.asList(74.0));
+        Mockito.when(refCurveRepository.findTemperature()).thenReturn(c);
         MultipartFile file = returnMultipartFile("header.xlsx");
         List<RefCurveDTO> curves = fileService.readUploadedFile(file, false);
 
-        Assert.assertEquals(curves.get(0).getName(), "first");
-        Assert.assertEquals(curves.get(1).getName(), "second");
-        Assert.assertEquals(curves.get(2).getName(), "third");
+        Assert.assertEquals(curves.get(0).getName(), "second");
+        Assert.assertEquals(curves.get(1).getName(), "third");
     }
 
     @Test
