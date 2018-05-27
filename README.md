@@ -22,7 +22,7 @@ https://crunchify.com/how-to-setupinstall-maven-classpath-variable-on-windows-7/
 <br/>
 <b>4.</b> `mvn spring-boot:run` 
 <br/>
-<b>5.</b> Application should be avaliable in your browser on link: http://localhost:8080
+<b>5.</b> Application should be available in your browser on link: http://localhost:8080
 
 #### Avaliable users with role ADMIN:
 Usename: <b>admin</b>, password: <b>xxadmin329</b><br/>
