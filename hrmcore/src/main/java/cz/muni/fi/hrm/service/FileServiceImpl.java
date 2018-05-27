@@ -8,10 +8,12 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -73,10 +75,10 @@ public class FileServiceImpl implements FileService {
                 if ("temperature".equals(curves.get(0).getName())) {
                     curves.remove(0); //we dont need temperature no more after adjusting data
                 }
-            }else{
+            } else {
                 checkIfMarginIsPresent(curves);
             }
-        }else{
+        } else {
             throw new IllegalArgumentException("First collumn is not temperature, please add temperature values");
         }
         logger.debug("uploaded file read", file.getOriginalFilename());
@@ -87,11 +89,11 @@ public class FileServiceImpl implements FileService {
      * method checks if for every curve is margin that has same number of points
      */
     private void checkIfMarginIsPresent(List<RefCurveDTO> curves) {
-        for(RefCurveDTO curve : curves){
-            if(!"temperature".equals(curve.getName())){
-                if(curve.getErrorMargin() == null || curve.getValues() == null ||
-                        curve.getValues().size() != curve.getErrorMargin().getValues().size()){
-                    throw new IllegalArgumentException("for curve "+curve.getName()+ " there is different number of values and error margin values");
+        for (RefCurveDTO curve : curves) {
+            if (!"temperature".equals(curve.getName())) {
+                if (curve.getErrorMargin() == null || curve.getValues() == null ||
+                        curve.getValues().size() != curve.getErrorMargin().getValues().size()) {
+                    throw new IllegalArgumentException("for curve " + curve.getName() + " there is different number of values and error margin values");
                 }
             }
         }
@@ -171,6 +173,7 @@ public class FileServiceImpl implements FileService {
         }
         return curves;
     }
+
     /**
      * if user temperature is in wider range that temperature in db, so user data are removed on
      * temperature that we cannot use
@@ -390,7 +393,7 @@ public class FileServiceImpl implements FileService {
 
     private List<RefCurveDTO> parseDataFromXlsx(final MultipartFile file, boolean marginErrorSheet) throws IOException {
         List<RefCurveDTO> ret = null;
-        try (Workbook wb = new XSSFWorkbook(file.getInputStream())) {
+        try (Workbook wb = WorkbookFactory.create(file.getInputStream())) {
             Sheet sheet = wb.getSheetAt(0);
             Iterator<Row> iterator = sheet.iterator();
 
@@ -400,9 +403,9 @@ public class FileServiceImpl implements FileService {
                 errorMargins = this.parseErrorMargins(file);
                 ret = this.connectMarginsToCurves(ret, errorMargins);
             }
-        } catch (IOException e) {
-            logger.error("could not read file ", file.getName(), e);
-            throw new IllegalArgumentException(file.getName() + " cannot read this file.");
+        } catch (Exception e) {
+            logger.error("could not read file " + file.getName() + ", " + e.getMessage());
+            throw new IllegalArgumentException("could not read file " + file.getName());
         }
         return ret;
     }
@@ -429,9 +432,9 @@ public class FileServiceImpl implements FileService {
 
     private List<ErrorMarginDTO> parseErrorMargins(MultipartFile file) {
         List<ErrorMarginDTO> ret = null;
-        try (HSSFWorkbook wb = new HSSFWorkbook(file.getInputStream())) {
+        try (Workbook wb = WorkbookFactory.create(file.getInputStream())) {
 
-            HSSFSheet sheet = wb.getSheetAt(1);
+            Sheet sheet = wb.getSheetAt(1);
             Iterator<Row> iterator = sheet.iterator();
 
             int i = 0;
@@ -458,7 +461,7 @@ public class FileServiceImpl implements FileService {
                 }
                 ++i;
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error("could not read file ", file.getName(), e);
             throw new IllegalArgumentException(file.getName() + " cannot read this file.");
         }
@@ -598,11 +601,11 @@ public class FileServiceImpl implements FileService {
                                 break;
                             case 3:
                                 curve.note = str;
-                            break;
+                                break;
                         }
                         break;
                     case NUMERIC:
-                        if(index == 2){
+                        if (index == 2) {
                             curve.numberOfSamples = new Double(cell.getNumericCellValue()).intValue();
                         }
                     case BOOLEAN:
