@@ -19,7 +19,7 @@ public interface RefCurveService {
     RefCurveDTO getTemperature();
     RefCurveDTO findByName(String name);
 
-    void createOrUpdate(List<RefCurveDTO> dtos);
+    void addNewDataToDB(List<RefCurveDTO> dtos);
     void create(RefCurve curve);
     void delete(RefCurveDTO dto);
 

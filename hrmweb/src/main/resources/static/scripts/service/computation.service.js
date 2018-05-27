@@ -3,28 +3,28 @@
 angular.module('hrm')
     .factory('ComputationService', function ($http, $rootScope) {
         return {
-            compute: function (data) {
+            compute: function (data, confidenceIntervalInPerc) {
                 var config = {
-                    headers : {
+                    headers: {
                         'Content-Type': 'application/json'
                     }
                 };
-                return $http.post('/computation/compareData',data, config).then(
+                return $http.post('/computation/compareData/' + confidenceIntervalInPerc, data, config).then(
                     function (response) {
-                    return response.data;
-                },
-                    function(data) {
+                        return response.data;
+                    },
+                    function (data) {
                         $rootScope.showError = true;
                         $rootScope.errorMessage = 'error occured while computating ...' + data.data.message;
                     });
             },
             getAverageCurve: function (data) {
                 var config = {
-                    headers : {
+                    headers: {
                         'Content-Type': 'application/json'
                     }
                 };
-                return $http.post('/computation/getAverageCurve',data, config).then(function (response) {
+                return $http.post('/computation/getAverageCurve', data, config).then(function (response) {
                     return response.data;
                 })
             }

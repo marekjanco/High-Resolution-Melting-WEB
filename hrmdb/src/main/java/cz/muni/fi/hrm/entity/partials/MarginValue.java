@@ -46,4 +46,9 @@ public class MarginValue {
     public ErrorMargin getErrorMargin() {
         return margin;
     }
+
+    @Override
+    public String toString() {
+        return  ""+value;
+    }
 }

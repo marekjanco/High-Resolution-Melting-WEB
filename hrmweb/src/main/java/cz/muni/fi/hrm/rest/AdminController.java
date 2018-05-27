@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
-public class AdminResource {
+public class AdminController {
 
     static final String GET_ALL = "refCurve/getAll";
     static final String DELETE = "refCurve/delete";
@@ -45,6 +45,6 @@ public class AdminResource {
     public @ResponseBody
     void uploadFileAndSave(@RequestParam(value="file", required=true) MultipartFile file, HttpServletRequest request) throws IOException {
         List<RefCurveDTO> data = fileService.readUploadedFile(file, true);
-        refCurveService.createOrUpdate(data);
+        refCurveService.addNewDataToDB(data);
     }
 }

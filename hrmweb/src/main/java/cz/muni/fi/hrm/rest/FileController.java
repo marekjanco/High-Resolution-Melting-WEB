@@ -23,14 +23,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/file")
-public class FileResource {
+public class FileController {
     final static String UPLOAD_EXCEL = "uploadExcel";
     final static String GENERATE_DB_DATA = "generateFileDbData";
 
     @Inject
     private FileService fileService;
 
-    private static Logger logger = LoggerFactory.getLogger(FileResource.class);
+    private static Logger logger = LoggerFactory.getLogger(FileController.class);
     
     @RequestMapping(value = "/" + UPLOAD_EXCEL, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<RefCurveDTO> uploadFile(@RequestParam(value="file", required=true) MultipartFile file, HttpServletRequest request) throws IOException {
