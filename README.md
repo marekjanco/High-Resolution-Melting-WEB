@@ -27,7 +27,7 @@ https://crunchify.com/how-to-setupinstall-maven-classpath-variable-on-windows-7/
 #### Avaliable users with role ADMIN:
 Usename: <b>admin</b>, password: <b>xxadmin329</b><br/>
 Usename: <b>admin2</b>, password: <b>iAmAdmin2</b>
-<br/><br/><br/>
-Application is under MIT License.
+
 ### Author
+Application is under MIT License.
 &copy; Marek Jančo, 445535@mail.muni.cz
