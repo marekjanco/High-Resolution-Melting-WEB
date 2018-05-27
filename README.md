@@ -30,4 +30,5 @@ Usename: <b>admin2</b>, password: <b>iAmAdmin2</b>
 
 ### Author
 Application is under MIT License.
+<br/>
 &copy; Marek Jančo, 445535@mail.muni.cz
