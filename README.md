@@ -2,7 +2,7 @@
 <b>Web application to identify organisms using the High Resolution Melting Analysis method.</b><br/>
 This application performs fast and reliable diferentiation of 8 <i>Trichinella</i> species using data
 from High Resolution Melting Analysis.
-###Setup enviroment
+<h3>Setup enviroment</h3>
 <b>Download and install JDK 8 (Java Development Kit)</b>
 <br/>
 http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
@@ -13,7 +13,7 @@ http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.h
 https://www.mkyong.com/maven/how-to-install-maven-in-windows/ or<br/> 
 https://crunchify.com/how-to-setupinstall-maven-classpath-variable-on-windows-7/
 
-###How to run application from command line
+<h3>How to run application from command line</h3>
 <b>1. Only if cloning from GitHub</b> git clone https://github.com/marekjanco/High-Resolution-Melting-WEB.git
 <br/>
 <b>2.</b> run `mvn clean install` command in home directory
@@ -24,10 +24,10 @@ https://crunchify.com/how-to-setupinstall-maven-classpath-variable-on-windows-7/
 <br/>
 <b>5.</b> Application should be avaliable in your browser on link http://localhost:8080
 
-####Avaliable users with role ADMIN:
+<h4>Avaliable users with role ADMIN:</h4>
 Usename: <b>admin</b>, password: <b>xxadmin329</b><br/>
 Usename: <b>admin2</b>, password: <b>iAmAdmin2</b>
 <br/><br/><br/>
 Application is under MIT License.
-###Author
+<h3>Author</h3>
 &copy; Marek Jančo, 445535@mail.muni.cz
