@@ -3,7 +3,7 @@
 This application performs fast and reliable diferentiation of 8 <i>Trichinella</i> species using data
 from High Resolution Melting Analysis.
 <h3>Setup enviroment</h3>
-<b>download JDK 8 (Java Development Kit):</b>
+<b>download JDK 8 (Java Development Kit)</b>
 <br/>
 http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 
