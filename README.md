@@ -14,14 +14,14 @@ https://crunchify.com/how-to-setupinstall-maven-classpath-variable-on-windows-7/
 
 <h3>How to run application</h3>
 <b>1. Only if cloning from GitHub</b> git clone https://github.com/marekjanco/High-Resolution-Melting-WEB.git
-<br>
-<b>2.</b> cd High-Resolution-Melting-WEB
-<br>
-<b>3.</b> mvn clean install
-<br>
-<b>4.</b> cd hrmweb
-<br>
-<b>5.</b> mvn spring-boot:run
+<br/>
+<b>2.</b> run `mvn clean install` command in home directory
+<br/>
+<b>3.</b> cd hrmweb
+<br/>
+<b>4.</b> `mvn spring-boot:run` 
+<br/>
+<b>5.</b> Application should be avaliable in your browser on link `http://localhost:8080`
 
 <h4>Avaliable users with role ADMIN:</h4>
 Usename: <b>admin</b>, password: <b>xxadmin329</b><br/>
