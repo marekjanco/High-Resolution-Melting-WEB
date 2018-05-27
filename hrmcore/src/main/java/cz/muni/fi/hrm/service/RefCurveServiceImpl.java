@@ -1,6 +1,7 @@
 package cz.muni.fi.hrm.service;
 
 import cz.muni.fi.hrm.dto.RefCurveDTO;
+import cz.muni.fi.hrm.entity.ErrorMargin;
 import cz.muni.fi.hrm.entity.RefCurve;
 import cz.muni.fi.hrm.repository.RefCurveRepository;
 import org.dozer.DozerBeanMapper;
@@ -63,7 +64,7 @@ public class RefCurveServiceImpl implements RefCurveService {
     }
 
     @Override
-    public void createOrUpdate(List<RefCurveDTO> dtos) {
+    public void addNewDataToDB(List<RefCurveDTO> dtos) {
         if(dtos == null){
             throw new IllegalArgumentException("cannot create reference curves, they were null");
         }
@@ -74,20 +75,27 @@ public class RefCurveServiceImpl implements RefCurveService {
         List<RefCurve> toCreate = new ArrayList<>();
         for(RefCurveDTO dto: dtos){
             RefCurve curve = this.convertFromDto(dto);
+            if(curve.getErrorMargin() == null){
+                curve.setErrorMargin(new ErrorMargin());
+            }
             toCreate.add(curve);
         }
         refCurveRepository.deleteAll();
-        refCurveRepository.save(toCreate);
         refCurveRepository.flush();
+        for(RefCurve curve : toCreate){
+            this.create(curve);
+        }
+        logger.info("adding new curves to db was successful "+ dtos);
     }
 
     @Override
     public void create(RefCurve curve) {
-        logger.debug("creating curve");
         if(curve == null || curve.getName() == null || curve.getValues() == null){
             throw new IllegalArgumentException("cannot delete reference curve because name or values are null");
         }
+        logger.debug("adding curve to DB " + curve.toString());
         this.refCurveRepository.saveAndFlush(curve);
+        logger.debug("curve was successfully created");
     }
 
     @Override

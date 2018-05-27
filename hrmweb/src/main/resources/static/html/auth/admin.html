@@ -1,6 +1,7 @@
 <div>
     <div>
-        <a href="#" ng-click="adminController.addData()"><i class="large green plus icon"></i> Add new reference curves to DB</a>
+        <a href="#" ng-click="adminController.addData()"><i class="large green plus icon" ng-show="!adminController.newDataField"></i>
+            <i class="large red minus icon" ng-show="adminController.newDataField"></i> Add new reference curves to DB</a>
         <div class="ui segment" ng-show="adminController.newDataField">
             <i class="large question circle outline icon link"></i>
             <!--popup-->
@@ -10,7 +11,7 @@
                     <li>Input .xls, .xlsx file with data in correct format</li>
                     <li>Firstly, you should download file with data that are in DB, and use exact same format</li>
                     <li>First sheet is for reference data, second is for margin error to them</li>
-                    <li>Header of reference data is [name, acronym, note]</li>
+                    <li>Header of reference data is [name, acronym, number of samples, note]</li>
                     <li>Be careful to assign margin error to every data set</li>
                     <li style="color:#FF0022">All data in DB will be deleted and replaced with your given data</li>
                 </ul>
@@ -22,7 +23,7 @@
                 <p>Drag your files here or click in this area.</p>
             </form>
             <div id="uploadButton" class="ui teal button" ng-click="adminController.uploadFile()">
-                Load data
+                Add data to DB
             </div>
         </div>
         <br/>
@@ -33,6 +34,7 @@
             <tr>
                 <th>Name</th>
                 <th>Acronym</th>
+                <th>Number of samples</th>
                 <th>Note</th>
                 <th>Delete</th>
             </tr>
@@ -44,6 +46,9 @@
                 </td>
                 <td>
                     {{refCurve.acronym}}
+                </td>
+                <td>
+                    {{refCurve.numberOfSamples}}
                 </td>
                 <td>
                     {{refCurve.note}}

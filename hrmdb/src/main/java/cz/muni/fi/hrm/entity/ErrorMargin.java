@@ -66,4 +66,12 @@ public class ErrorMargin {
         this.curve = curve;
     }
 
+    @Override
+    public String toString() {
+        return "ErrorMargin{" +
+                "id=" + id +
+                ", values=" + values +
+                ", curve=" + curve +
+                '}';
+    }
 }

@@ -40,9 +40,10 @@ public class FileServiceImpl implements FileService {
     private RefCurveRepository refCurveRepository;
 
     private static Logger logger = LoggerFactory.getLogger(FileServiceImpl.class);
+
     @Override
     public List<RefCurveDTO> readUploadedFile(MultipartFile file, boolean marginErrorSheet) throws IOException {
-        if(file == null){
+        if (file == null) {
             throw new IllegalArgumentException("Cannot read file that is null");
         }
         logger.debug("start to read uploaded file", file.getOriginalFilename());
@@ -66,14 +67,34 @@ public class FileServiceImpl implements FileService {
         checkCurvesFormat(curves);
         if (this.checkIfCurveIsTemperature(curves.get(0))) {
             curves.get(0).setName("temperature");
-            curves = this.checkIntervalOfData(curves,
-                    refCurveRepository.findTemperature().getValues().size());
-            if("temperature".equals(curves.get(0).getName())){
-                curves.remove(0); //we dont need temperature no more after adjusting data
+            if (!marginErrorSheet) {
+                curves = this.checkIntervalOfData(curves,
+                        refCurveRepository.findTemperature().getValues().size());
+                if ("temperature".equals(curves.get(0).getName())) {
+                    curves.remove(0); //we dont need temperature no more after adjusting data
+                }
+            }else{
+                checkIfMarginIsPresent(curves);
             }
+        }else{
+            throw new IllegalArgumentException("First collumn is not temperature, please add temperature values");
         }
         logger.debug("uploaded file read", file.getOriginalFilename());
         return curves;
+    }
+
+    /**
+     * method checks if for every curve is margin that has same number of points
+     */
+    private void checkIfMarginIsPresent(List<RefCurveDTO> curves) {
+        for(RefCurveDTO curve : curves){
+            if(!"temperature".equals(curve.getName())){
+                if(curve.getErrorMargin() == null || curve.getValues() == null ||
+                        curve.getValues().size() != curve.getErrorMargin().getValues().size()){
+                    throw new IllegalArgumentException("for curve "+curve.getName()+ " there is different number of values and error margin values");
+                }
+            }
+        }
     }
 
     /**
@@ -131,7 +152,7 @@ public class FileServiceImpl implements FileService {
         if (max < temperature.getValues().size()) {
             curves = this.adjustBiggerInterval(curves);
         }
-        int index = this.indexOfSubinterval(temperature);
+        int index = this.indexOfSubinterval(temperature.getValues(), refCurveRepository.findTemperature().getValues());
         if (index != -1) {
             for (RefCurveDTO curve : curves) {
                 List<Double> newValues = new ArrayList<>();
@@ -146,10 +167,10 @@ public class FileServiceImpl implements FileService {
             }
         } else {
             curves = this.interpolateData(curves);
+
         }
         return curves;
     }
-
     /**
      * if user temperature is in wider range that temperature in db, so user data are removed on
      * temperature that we cannot use
@@ -159,10 +180,11 @@ public class FileServiceImpl implements FileService {
         Double min = dbTemperature.getValues().get(0);
         Double max = dbTemperature.getValues().get(dbTemperature.getValues().size() - 1);
         for (int i = 0; i < curves.get(0).getValues().size(); ++i) {
-            if(curves.get(0).getValues().get(i) < min || curves.get(0).getValues().get(i) > max){
-                for(RefCurveDTO curve : curves){
+            if (curves.get(0).getValues().get(i) < min || curves.get(0).getValues().get(i) > max) {
+                for (RefCurveDTO curve : curves) {
                     curve.getValues().remove(i);
                 }
+                i--;
             }
         }
         return curves;
@@ -222,17 +244,16 @@ public class FileServiceImpl implements FileService {
     /**
      * find if user temperature is subinterval of temperature that is in database
      */
-    private int indexOfSubinterval(RefCurveDTO temperature) {
-        RefCurve dbTemperature = refCurveRepository.findTemperature();
+    private int indexOfSubinterval(List<Double> values1, List<Double> values2) {
         int index = 0;
         int ret = -1;
         boolean sequence = false;
-        for (int i = 0; i < dbTemperature.getValues().size(); ++i) {
-            if (index == temperature.getValues().size()) {
+        for (int i = 0; i < values2.size(); ++i) {
+            if (index == values1.size()) {
                 break;
             }
-            Double dbValue = dbTemperature.getValues().get(i);
-            if (Math.abs(temperature.getValues().get(index) - dbValue) <= 0.00000001) {
+            Double dbValue = values2.get(i);
+            if (Math.abs(values1.get(index) - dbValue) <= 0.00000001) {
                 if (!sequence) {
                     sequence = true;
                     ret = i;
@@ -246,7 +267,7 @@ public class FileServiceImpl implements FileService {
                 }
             }
         }
-        if (index == temperature.getValues().size()) {
+        if (index == values1.size()) {
             return ret;
         }
         return -1;
@@ -286,11 +307,11 @@ public class FileServiceImpl implements FileService {
     }
 
     /**
-     *  adds values of reference curves to generated excel workbook
+     * adds values of reference curves to generated excel workbook
      */
     private void putValuesInSheet(HSSFSheet sheet, RefCurve temperature, List<RefCurve> refCurves) {
         for (int i = 0; i < temperature.getValues().size(); ++i) {
-            Row row = sheet.createRow(i + 3); //+3 because of a header
+            Row row = sheet.createRow(i + ADMIN_HEADER_SIZE); //+4 because of a header
             Cell cellTemperature = row.createCell(0);
             cellTemperature.setCellValue(temperature.getValues().get(i));
             for (int j = 0; j < refCurves.size(); ++j) {
@@ -301,7 +322,7 @@ public class FileServiceImpl implements FileService {
     }
 
     /**
-     *  adds header to generated excel workbook
+     * adds header to generated excel workbook
      */
     private void putHeaderInSheet(HSSFSheet sheet, RefCurve temperature, List<RefCurve> refCurves) {
         //names
@@ -320,8 +341,16 @@ public class FileServiceImpl implements FileService {
             Cell c = row.createCell(i + 1);
             c.setCellValue(refCurves.get(i).getAcronym());
         }
-        //notes
+        //number of samples
         row = sheet.createRow(2);
+        cell = row.createCell(0);
+        cell.setCellValue(temperature.getNumberOfSamples());
+        for (int i = 0; i < refCurves.size(); ++i) {
+            Cell c = row.createCell(i + 1);
+            c.setCellValue(refCurves.get(i).getNumberOfSamples());
+        }
+        //notes
+        row = sheet.createRow(3);
         cell = row.createCell(0);
         cell.setCellValue(temperature.getNote());
         for (int i = 0; i < refCurves.size(); ++i) {
@@ -348,7 +377,7 @@ public class FileServiceImpl implements FileService {
                         parsed = Double.parseDouble(record.get(i));
                         curves.get(i).values.add(parsed);
                     } catch (Exception e) {
-                        logger.error("could not parse ",record.get(i), e);
+                        logger.error("could not parse ", record.get(i), e);
                         throw new IllegalArgumentException("found data that are not in number format, collumn " + i);
                     }
                 }
@@ -372,7 +401,7 @@ public class FileServiceImpl implements FileService {
                 ret = this.connectMarginsToCurves(ret, errorMargins);
             }
         } catch (IOException e) {
-            logger.error("could not read file ",file.getName(), e);
+            logger.error("could not read file ", file.getName(), e);
             throw new IllegalArgumentException(file.getName() + " cannot read this file.");
         }
         return ret;
@@ -392,7 +421,7 @@ public class FileServiceImpl implements FileService {
                 ret = this.connectMarginsToCurves(ret, errorMargins);
             }
         } catch (IOException e) {
-            logger.error("could not read file ",file.getName(), e);
+            logger.error("could not read file ", file.getName(), e);
             throw new IllegalArgumentException(file.getName() + " cannot read this file.");
         }
         return ret;
@@ -430,7 +459,7 @@ public class FileServiceImpl implements FileService {
                 ++i;
             }
         } catch (IOException e) {
-            logger.error("could not read file ",file.getName(), e);
+            logger.error("could not read file ", file.getName(), e);
             throw new IllegalArgumentException(file.getName() + " cannot read this file.");
         }
         return ret;
@@ -545,7 +574,7 @@ public class FileServiceImpl implements FileService {
     private List<RefCurveDTO> checkExcelHeaderWithAllValues(Iterator<Row> iterator) {
         int index = 0;
         List<RefCurveDTO> ret = new ArrayList<>();
-        while (iterator.hasNext() && index < 3) {
+        while (iterator.hasNext() && index < 4) {
             Row nextRow = iterator.next();
             Iterator<Cell> cellIterator = nextRow.cellIterator();
             int i = 0;
@@ -567,11 +596,15 @@ public class FileServiceImpl implements FileService {
                             case 1:
                                 curve.acronym = str;
                                 break;
-                            case 2:
+                            case 3:
                                 curve.note = str;
+                            break;
                         }
                         break;
                     case NUMERIC:
+                        if(index == 2){
+                            curve.numberOfSamples = new Double(cell.getNumericCellValue()).intValue();
+                        }
                     case BOOLEAN:
                         break;
                 }

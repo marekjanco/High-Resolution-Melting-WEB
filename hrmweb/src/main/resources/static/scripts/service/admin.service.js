@@ -21,10 +21,8 @@ angular.module('hrm')
                     transformRequest: angular.identity,
                     headers: {'Content-Type': undefined}
                 }).then(function (response) {
-                    $rootScope.showSuccess = true;
-                    $rootScope.successMessage = 'New reference data were successfully added';
                     return response.data;
-                })
+                });
             }
         }
     });

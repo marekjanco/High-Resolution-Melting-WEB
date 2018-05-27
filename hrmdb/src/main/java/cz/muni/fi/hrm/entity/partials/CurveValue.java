@@ -47,4 +47,9 @@ public class CurveValue {
     public RefCurve getRefCurve() {
         return curve;
     }
+
+    @Override
+    public String toString() {
+        return  ""+value;
+    }
 }

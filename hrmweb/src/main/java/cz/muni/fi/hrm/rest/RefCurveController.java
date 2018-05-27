@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/refCurve")
-public class RefCurveResource {
+public class RefCurveController {
 
     static final String GET_ALL_NAMES = "getAllNames";
     static final String FIND_BY_NAME = "findByName";

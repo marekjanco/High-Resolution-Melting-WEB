@@ -22,7 +22,8 @@ public class ExceptionHandlingController extends ResponseEntityExceptionHandler 
     @ResponseBody
     @ExceptionHandler({IllegalArgumentException.class})
     public ResponseEntity<Object> handleException(IllegalArgumentException e) {
-        logger.error("problem occured and sent to frontend ",e.getMessage());
+        logger.error("problem occured and sent to frontend " + e.getMessage());
+        e.printStackTrace();
         ApiError error = new ApiError(HttpStatus.valueOf(406), e.getMessage());
         return new ResponseEntity<Object>(error, new HttpHeaders(), error.getStatus());
     }
